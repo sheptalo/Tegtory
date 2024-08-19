@@ -1,12 +1,15 @@
 
 # Tegtory
+<p1>
+    <a href="https://github.com/sheptalo/Tegtory/pulse" alt="Activity">
+        <img src="https://img.shields.io/github/commit-activity/m/sheptalo/Tegtory" /></a>
+    <a href="https://github.com/sheptalo/Tegtory/discussions" alt="Discussions">
+        <img src="https://img.shields.io/github/discussions/sheptalo/Tegtory" /></a>
+  <a href='https://t.me/tegtorybot'>Link</a>
+</p1>
 
-
-[Ссылочка](https://t.me/tegtorybot)
-**` Телеграм бот про ФАБРИКИ`** 
 
 ## Описание и функционал
-
 
 Создай свою фабрику и подними ее в вершины таблицы лидеров вместе с друзьями.
 
