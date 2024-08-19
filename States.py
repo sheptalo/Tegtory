@@ -44,3 +44,7 @@ class JoinClan(StatesGroup):
 
 class SellStock(StatesGroup):
     stock = State()
+
+
+class ChangeNick(StatesGroup):
+    new_nickname = State()

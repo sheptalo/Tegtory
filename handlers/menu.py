@@ -8,10 +8,9 @@ from MIddleWares.ChatActionMiddleWare import Typing
 from MIddleWares.UserMiddleWare import UserMiddleWare
 from States import FindFactory
 from bot import bot
-from db import Factory, Player
 from config import mini_games_text, not_enough_points, type_func
-from replys import menu_reply, mini_game_markup, \
-    property_reply, city_markup
+from db import Factory, Player
+from replys import menu_reply, mini_game_markup, city_markup
 
 router = Router()
 router.message.middleware(Typing())
@@ -21,19 +20,6 @@ router.message.middleware(UserMiddleWare())
 @router.message(MenuFilter())
 async def menu_cmd(message: types.Message):
     await message.answer(f'Привет {message.from_user.first_name}\n', reply_markup=menu_reply)
-
-
-
-@router.callback_query(F.data == 'profile')
-async def profile(call: types.CallbackQuery):
-    player = Player(call.from_user.id)
-    await call.message.answer(str(player))
-
-
-@router.message(ProfileFilter())
-async def balance(message: types.Message):
-    player = Player(message.from_user.id)
-    await message.answer(str(player))
 
 
 @router.callback_query(F.data == 'city')
@@ -49,14 +35,6 @@ async def city(message: types.Message):
 @router.message(F.text.lower() == 'мини игры')
 async def mini_games_menu(message: types.Message):
     await message.answer(mini_games_text, reply_markup=mini_game_markup, parse_mode='Markdown')
-
-
-@router.callback_query(F.data == 'имущество')
-async def property_main(call: types.CallbackQuery):
-    await call.message.edit_text('Если вы хотите сохранить ваши богатства,'
-                                 ' приобретите имущество и не потеряете ни копейки.\n'
-                                 'Ваше имущество: У вас нет имущества кроме фабрики',
-                                 reply_markup=property_reply)
 
 
 @router.message(F.text.lower() == 'найти')

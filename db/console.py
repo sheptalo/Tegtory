@@ -3,6 +3,8 @@ import random
 from aioconsole import ainput
 
 from bot import con, cur
+from globalFunc import league
+from globalFunc.lottery import lottery
 
 
 async def console():
@@ -20,6 +22,10 @@ async def console():
         if inp == 'eco':
             cur.execute('UPDATE Factory SET ecology = ecology - 1 WHERE ecology > 0')
             con.commit()
+        if inp == 'league':
+            league.league()
+        if inp == 'lottery':
+            await lottery()
 
         inp = await ainput()
 

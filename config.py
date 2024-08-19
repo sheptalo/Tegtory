@@ -95,17 +95,17 @@ clan_lvl = 'Для создания/вступления в обьединени
 
 # endregion
 
-wood = 'static/pictures/wood/factory_bg1.jfif'
+wood = 'pictures/wood/factory_bg1.jfif'
 
-coal = 'static/pictures/iron/Iron.jpg'
+coal = 'pictures/iron/Iron.jpg'
 
-electro = 'static/pictures/electro/solar_panel.jpg'
+electro = 'pictures/electro/solar_panel.jpg'
 
-nuclear_energy = 'static/pictures/nuclear_electro/nuclear_bg1.jpg'
+nuclear_energy = 'pictures/nuclear_electro/nuclear_bg1.jpg'
 
-star_factory = 'static/pictures/star_factory/star_factory.jpg'
+star_factory = 'pictures/star_factory/star_factory.jpg'
 
-chimicats = 'static/pictures/chimcats/chimicats.webp'
+chimicats = 'pictures/chimcats/chimicats.webp'
 
 coff = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 1.1, 1.4, 1.7]
 

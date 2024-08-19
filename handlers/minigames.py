@@ -21,12 +21,13 @@ def cost_get(message):
     cost = int(cost)
     return cost
 
+
 # region Биржа
 @router.message(F.text.lower().split()[0] == 'биржа')
 async def birzha_main(message: types.Message):
     player = Player(message.from_user.id)
 
-    try: 
+    try:
         message.text.split()[1]
     except:
         return await message.answer('Добро пожаловать на биржу.\n'
@@ -34,7 +35,7 @@ async def birzha_main(message: types.Message):
                                     'и возможно их цена выростет, а вы получите профит\n'
                                     'чтобы отправить деньги на биржу укажи сумму которую тебе не жалко'
                                     '\nпример: биржа 10000000')
-    
+
     try:
         cost = int(cost_get(message))
     except:
@@ -65,7 +66,9 @@ async def farm_main(message: types.Message):
         await message.answer(f'бонус получен в размере {bonus} очков')
         player.money += bonus
     else:
-        await message.answer(f'вы получали бонус сегодня до следующего бонуса {round((player.farm + _time - current_time) / 60 / 60, 5)} часа. ')
+        await message.answer(
+            f'вы получали бонус сегодня до следующего бонуса {round((player.farm + _time - current_time) / 60 / 60, 5)} часа. ')
+
 
 # region fighting
 # @router.callback_query(F.data.split(':')[0] == 'no_fight')

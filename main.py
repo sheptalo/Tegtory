@@ -9,7 +9,7 @@ from MIddleWares.UserMiddleWare import UserMiddleWare
 from bot import bot, dp, con
 from config import welcome
 from db import console
-from handlers import menu, shop_btns, leaderboard, minigames, admin, clanss, checkUser, change_nick, factory
+from handlers import menu, shop, minigames, clanss, factory, user
 from replys import menu_reply
 
 logging.basicConfig(level=logging.INFO)
@@ -43,13 +43,10 @@ async def ping_sql():
 
 
 async def main():
-    dp.include_router(checkUser.router)
-    dp.include_router(change_nick.router)
+    dp.include_router(user.router)
     dp.include_router(menu.router)
-    dp.include_router(shop_btns.router)
-    dp.include_router(leaderboard.router)
+    dp.include_router(shop.router)
     dp.include_router(minigames.router)
-    dp.include_router(admin.router)
     dp.include_router(factory.router)
     dp.include_router(clanss.router)
     task = asyncio.create_task(ping_sql())
