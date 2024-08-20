@@ -1,12 +1,12 @@
 
 # Tegtory
-<p1>
+<p>
     <a href="https://github.com/sheptalo/Tegtory/pulse" alt="Activity">
         <img src="https://img.shields.io/github/commit-activity/m/sheptalo/Tegtory" /></a>
     <a href="https://github.com/sheptalo/Tegtory/discussions" alt="Discussions">
         <img src="https://img.shields.io/github/discussions/sheptalo/Tegtory" /></a>
   <a href='https://t.me/tegtorybot'>Link</a>
-</p1>
+</p>
 
 
 ## Описание и функционал

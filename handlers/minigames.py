@@ -1,3 +1,4 @@
+import asyncio
 import random
 import time
 
@@ -5,7 +6,6 @@ from aiogram import Router, F, types
 
 from Filters import FarmFilter
 from MIddleWares.UserMiddleWare import UserMiddleWare
-from bot import bot
 from config import coff
 from db import Factory, Player
 
@@ -70,8 +70,7 @@ async def farm_main(message: types.Message):
             f'вы получали бонус сегодня до следующего бонуса {round((player.farm + _time - current_time) / 60 / 60, 5)} часа. ')
 
 
-# region fighting
-# @router.callback_query(F.data.split(':')[0] == 'no_fight')
+@router.callback_query(F.data.split(':')[0] == 'no_fight')
 async def no_fight(call: types.CallbackQuery):
     data = call.data.split(':')
     if int(data[1]) == call.from_user.id:
@@ -79,7 +78,7 @@ async def no_fight(call: types.CallbackQuery):
         await call.message.delete()
 
 
-# @router.callback_query(F.data.split(':')[0] == 'accept_fight')
+@router.callback_query(F.data.split(':')[0] == 'accept_fight')
 async def accept_fight(call: types.CallbackQuery):
     data = call.data.split(":")
     player1 = Player(int(data[1]))
@@ -87,71 +86,52 @@ async def accept_fight(call: types.CallbackQuery):
     if int(data[1]) != call.from_user.id and player2.money >= int(data[2]):
         player2.money -= int(data[2])
         await call.message.delete()
-        await call.message.answer('Битва началась')
-        factory_user_1 = find_factory_fight(int(data[1]))
-        factory_user_2 = find_factory_fight(call.from_user.id)
-        phrases = ['Уровень: ', 'Рабочие: ']
-        check = ['level', 'workers']
-        _text = ''
-        counter1 = 0
-        counter2 = 0
-        for i in range(6):
-            if factory_user_1[i] > factory_user_2[i]:
-                _text += f'{phrases[i]}{factory_user_1[i]}>{factory_user_2[i]}\n'
-                counter1 += 1
-            elif factory_user_1[i] < factory_user_2[i]:
-                _text += f'{phrases[i]}{factory_user_1[i]}<{factory_user_2[i]}\n'
-                counter1 += 1
-            else:
-                pass
+        await call.message.answer('Инспектор начал инспекцию')
+        factory_user_1 = Factory(int(data[1]))
+        factory_user_2 = Factory(call.from_user.id)
+        check = ['level', 'workers', 'eco', 'stock']
+        counter = 0
 
-        _text += f'Итог {counter1} и {counter2}'
-        if counter1 > counter2:
-            await call.message.answer('Битва между двумя игроками завершилась.\n'
-                                      f'Результаты: первый игрок: {counter1} < второй игрок: {counter2}\n'
-                                      f'победил тот кто предложил битву.')
-            await bot.send_message(int(data[1]), 'Вы против анонимного игрока\n' + _text)
-            await bot.send_message(call.from_user.id, 'Анонимный игрок против вас\n' + _text)
+        for i in range(len(check)):
+            counter += 1 if factory_user_1[check[i-1]] > factory_user_1[check[i-1]] else 0
+
+        counter2 = len(check) - counter
+        await asyncio.sleep(3)
+        if counter > counter2:
+            await call.message.answer('Инспекция проведена.\n'
+                                      f'По ее результатам инспектор прибавляет рейтинг к фабрике *{factory_user_1.name}*')
             player1.rating += 1
             player2.rating -= 1
 
             player1.money += int(data[2]) * 2
-        elif counter2 > counter1:
-            await call.message.answer('Битва между двумя игроками завершилась.\n'
-                                      f'Результаты: первый игрок: {counter1} < второй игрок: {counter2}\n'
-                                      f'победил тот кто принял битву.')
-            await bot.send_message(call.from_user.id, 'Анонимный игрок против вас\n' + _text)
-            await bot.send_message(int(data[1]), 'Вы против анонимного игрока\n' + _text)
+        elif counter2 > counter:
+            await call.message.answer('Инспекция проведена.\n'
+                                      f'По ее результатам инспектор прибавляет рейтинг к фабрике *{factory_user_2.name}*')
 
             player1.rating -= 1
             player2.rating += 1
 
             player2.money += int(data[2]) * 2
 
-        elif counter2 == counter1:
-            await call.message.answer('Битва между двумя игроками завершилась.\n'
-                                      f'Результаты: первый игрок: {counter1} < второй игрок: {counter2}\n'
-                                      f'Ничья')
-            await bot.send_message(call.from_user.id, 'Анонимный игрок против вас\n' + _text)
-            await bot.send_message(int(data[1]), 'Вы против анонимного игрока\n' + _text)
-            player2.money += int(data[2]) * 2
-            player1.money += int(data[2]) * 2
+        elif counter2 == counter:
+            await call.message.answer('Инспекция проведена.\n'
+                                      'По ее результатам инспектор не прибавляет рейтинг ни одной фабрике')
+            player2.money += int(data[2])
+            player1.money += int(data[2])
 
 
-# endregion
-# region factory fight
-@router.message(F.text.lower().split()[0] == 'битва')
+@router.message(F.text.lower().split()[0] == 'инспекция')
 async def fight_main(message: types.Message):
-    if message.chat.id < 0 and int(message.text.split()[1]) != 'null' and Factory(message.from_user.id).level >= 100:
+    if message.chat.type != 'private' and int(message.text.split()[1]) != 'null' and Factory(message.from_user.id).level >= 50:
         try:
             cost = cost_get(message)
             player = Player(message.from_user.id)
         except:
-            return await message.answer('Неправильная ставка')
+            return await message.answer('Неправильная сумма')
         if cost > player.money:
             return await message.answer('Недостаточно очков')
         if cost < 50000:
-            return await message.answer('Минимальная ставка в сражениях 50,000 очков')
+            return await message.answer('Минимальная стоимость инспекции 50.000')
         await message.delete()
 
         keyboard = [
@@ -164,19 +144,16 @@ async def fight_main(message: types.Message):
         markup = types.InlineKeyboardMarkup(inline_keyboard=keyboard)
 
         player.money -= cost
-        await message.answer('Некий пользователь предложил по соревноваться в прокачке фабриками'
-                             ' и узнать чья лучше\n'
-                             '*За победу:* Рейтинг +1\n'
-                             '*При поражении:* Рейтинг -1\n'
-                             f'*Ставка:* {cost:,}', reply_markup=markup)
+        await message.answer(f'Владелец фабрики предложил провести инспекцию стоимостью в {cost:,},'
+                             f' Тот кто не получит рейтинг от инспектора оплачивает ее', reply_markup=markup)
     else:
-        await message.answer('Добро пожаловать в *битвы* сразитесь за право получить рейтинг и деньги.\n\n'
-                             '*Требования* для участников битвы:\n'
-                             'Уровень фабрики > 100\n'
-                             'Мин. ставка 50,000\n'
+        await message.answer('Добро пожаловать в центр инспекции.\n\n'
+                             '*Требования* для проведения инспекции:\n'
+                             'Количество владельцев: 2\n'
+                             'Уровень фабрики > 50\n'
+                             'Мин. стоимость 50,000\n'
                              '*Участие только в супергруппах*\n\n'
                              'Условие победы:\n'
-                             'По общему счету ваша фабрика лучше фабрики соперника\n\n'
-                             '*Пример:* битва 600000')
+                             'Рейтинг получает та фабрика, которая по мнению инспектора лучше.'
+                             '*Пример:* инспекция 600000')
 
-# endregion

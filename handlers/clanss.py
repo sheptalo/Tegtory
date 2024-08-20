@@ -71,6 +71,11 @@ async def create_clan(message: types.Message):
     except:
         return await message.answer(create_clan_text, parse_mode='HTML')
 
+    try:
+        message.text.split()[2]
+    except:
+        return await message.answer('Чтобы объединение состояло из несколких слов, заменяйте их на _')
+
     if not player.clan.can_create(clan_name):
         return await message.answer('Такое объединение уже существует')
 
@@ -84,8 +89,6 @@ async def create_clan(message: types.Message):
         player.money -= 7500
         player.clan.name = clan_name
         player.clan.leader = 1
-        await message.answer(f'Успешно создано обьединение {clan_name}')
+        await message.answer(f'Успешно создано обьединение {clan_name.replace('_', ' ')}')
     else:
         await message.answer(not_enough_points)
-
-# endregion

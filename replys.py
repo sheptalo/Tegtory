@@ -19,7 +19,7 @@ menu_reply = ReplyKeyboardMarkup(resize_keyboard=True, keyboard=menu_kb)
 
 mini_gms = [
     [
-        KeyboardButton(text='Битва'),
+        KeyboardButton(text='Инспекция'),
         KeyboardButton(text='Биржа')
     ],
     [
@@ -45,7 +45,7 @@ clan_kb = [
     [InlineKeyboardButton(text='лидирующие обьединения', callback_data='clan_leaderboard')],
     [
         InlineKeyboardButton(text='Уровень', callback_data='factory_leaderboard'),
-        InlineKeyboardButton(text='Экология',callback_data='eco_leaderboard')
+        InlineKeyboardButton(text='Экология', callback_data='eco_leaderboard')
     ],
     [
         InlineKeyboardButton(text='Денежная', callback_data='leaderboard'),
@@ -54,7 +54,7 @@ clan_kb = [
     [
         InlineKeyboardButton(text='прошлые сезоны', callback_data='old_leaderboard'),
         InlineKeyboardButton(text='В город', callback_data='city')
-        ]
+    ]
 ]
 leaderboard_inline = InlineKeyboardMarkup(inline_keyboard=clan_kb)
 
@@ -63,8 +63,8 @@ shop_kb = [
     [
         InlineKeyboardButton(text='Донат', callback_data='донат'),
         InlineKeyboardButton(text='Лотерея', callback_data='лотерея')
-        ],
-    [InlineKeyboardButton(text='Имущество', callback_data='имущество')],
+    ],
+    # [InlineKeyboardButton(text='Имущество', callback_data='имущество')],
     [InlineKeyboardButton(text='В город', callback_data='city')]
 ]
 shop_reply = InlineKeyboardMarkup(resize_keyboard=True, inline_keyboard=shop_kb)
@@ -100,7 +100,7 @@ subscribed_channel = ReplyKeyboardMarkup(
 
 tax_markup = InlineKeyboardMarkup(
     inline_keyboard=[[InlineKeyboardButton(text='Оплатить налоги', callback_data='pay_tax')],
-                    [InlineKeyboardButton(text='Обратно', callback_data='back_factory')]])
+                     [InlineKeyboardButton(text='Обратно', callback_data='back_factory')]])
 
 lottery_kb = [
     [InlineKeyboardButton(text='Купить бронзовый билет', callback_data='bronze_ticket')],
@@ -137,6 +137,10 @@ title_shop_kb = [
     [
         InlineKeyboardButton(text='Один из лучших', callback_data='buy_title:Один_из_лучших')
     ],
+    [
+        InlineKeyboardButton(text='Эколог', callback_data='buy_title:Эколог'),
+        InlineKeyboardButton(text='Хранитель', callback_data='buy_title:Хранитель')
+    ],
     [InlineKeyboardButton(text='Обратно', callback_data='back_shop')]
 ]
 titles_shop_markup = InlineKeyboardMarkup(inline_keyboard=title_shop_kb)
@@ -162,21 +166,11 @@ back_shop_markup = InlineKeyboardMarkup(inline_keyboard=[
     [InlineKeyboardButton(text='Обратно', callback_data='back_shop')]])
 
 ecology_kb = [
-    [
-        InlineKeyboardButton(text='Уменьшить выбросы +1 1050', callback_data='ecology:1')
-    ],
-    [
-        InlineKeyboardButton(text='покупка фильтров +2 2050', callback_data='ecology:2'),
-    ],
-    [
-        InlineKeyboardButton(text='рециркуляции воды +5 5050', callback_data='ecology:5')
-    ],
-    [
-        InlineKeyboardButton(text='энергоэффективные технологии +10 1050', callback_data='ecology:10')
-    ],
-    [
-        InlineKeyboardButton(text='Обратно', callback_data='back_factory')
-    ]
+    [InlineKeyboardButton(text='Уменьшить выбросы +1 1050', callback_data='ecology:1')],
+    [InlineKeyboardButton(text='покупка фильтров +2 2050', callback_data='ecology:2'),],
+    [InlineKeyboardButton(text='рециркуляции воды +5 5050', callback_data='ecology:5')],
+    [InlineKeyboardButton(text='энергоэффективные технологии +10 1050', callback_data='ecology:10')],
+    [InlineKeyboardButton(text='Обратно', callback_data='back_factory')]
 ]
 ecology_markup = InlineKeyboardMarkup(inline_keyboard=ecology_kb)
 

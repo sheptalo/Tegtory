@@ -25,8 +25,7 @@ router.include_router(rt)
 async def back_factory(call: types.CallbackQuery):
     await call.message.edit_caption(
                                    caption=str(Factory(call.message.chat.id)),
-                                   reply_markup=factory_reply,
-                                   parse_mode="Markdown")
+                                   reply_markup=factory_reply)
 
 
 @router.message(F.text.lower().split()[0] == 'фабрика', StateFilter(None))
@@ -37,10 +36,9 @@ async def factory_main(message: types.Message):
     _type = type_func(factory.type)
     await message.answer_photo(FSInputFile(_type),
                                str(factory),
-                               reply_markup=factory_reply, parse_mode='Markdown')
+                               reply_markup=factory_reply)
 
 
-# region factory work
 async def factory_working(call: types.CallbackQuery):
     if call.message.chat.type == "private":
 
@@ -69,8 +67,8 @@ async def factory_working(call: types.CallbackQuery):
                 await bot.send_message(member, f"рабочие в чате закончили работу и ваш склад пополнился на {created:,}")
             except:
                 pass
-        await bot.send_message(call.message.chat.id,
-                               f'Рабочие на фабрике закончили работать, в общем произведено {workers * 5 + random.randint(0, 20):,}')
+        await call.message.answer(f'Рабочие на фабрике закончили работать, в общем произведено '
+                                  f'{workers * 5 + random.randint(0, 20):,}')
 
 
 @router.callback_query(F.data == 'start_factory')
@@ -87,8 +85,10 @@ async def start_factory(call: types.CallbackQuery):
         if factory.state == 1:
             factory.state = 0
             return await factory_working(call)
+
         if factory.tax > 20000:
             return await call.message.answer(f'У вас Неуплата налогов оплатите {factory.tax} чтобы запустить фабрику')
+
         await call.message.answer('Рабочие приступили к работе')
         await back_factory(call)
         factory.start_work_at = current_time
@@ -96,6 +96,4 @@ async def start_factory(call: types.CallbackQuery):
     else:
         await call.message.answer(f'Фабрике осталось работать {last_click + _time - current_time} секунд')
 
-
-# endregion
 

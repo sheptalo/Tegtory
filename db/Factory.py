@@ -33,6 +33,9 @@ class Factory:
 {'🔎 _Знак качества_' if self.verification == 1 else ''}
         """
 
+    def __getitem__(self, item):
+        return getattr(self, item)
+
     def create(self, name):
         cur.execute("INSERT INTO Factory (owner_id, name) VALUES (%s, %s)", (self.owner_id, name))
         con.commit()

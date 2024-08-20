@@ -17,3 +17,5 @@ router.include_router(donate)
 router.include_router(exchange)
 router.include_router(items)
 router.include_router(leaderboard)
+
+__all__ = [router,]
