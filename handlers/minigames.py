@@ -13,13 +13,13 @@ router = Router()
 router.message.middleware(UserMiddleWare())
 
 
-def cost_get(message):
+def cost_get(message) -> int:
     if message.text.lower().split()[1] == 'все':
         return Player(message.from_user.id).money
     cost = message.text.lower().split()[1].replace(',', '')
     cost = cost.replace('к', '000')
     cost = int(cost)
-    return cost
+    return abs(cost)
 
 
 # region Биржа
@@ -37,10 +37,11 @@ async def birzha_main(message: types.Message):
                                     '\nпример: биржа 10000000')
 
     try:
-        cost = int(cost_get(message))
+        cost = cost_get(message)
     except:
         return await message.answer('Неправильно указана сумма денег отправляемая на биржу')
-    if cost < 0 or cost > player.money:
+
+    if cost > player.money:
         return await message.answer('Недостаточно очков')
     player.money -= cost
     a = coff

@@ -27,12 +27,13 @@ async def sell_on_market(call: CallbackQuery, state: FSMContext):
 @router.message(SellStock().stock)
 async def amount_to_sell(message: Message, state: FSMContext):
     try:
-        amount = int(message.text)
+        amount = abs(int(message.text))
     except:
-        return await message.answer('Неправильное количество')
+        return await message.answer('Неправильное количество /cancel')
+
     price = GetStockPrice().get
     factory = Factory(message.from_user.id)
-    if amount <= 0 or amount > factory.stock:
+    if amount > factory.stock:
         return await message.answer('Нехватает товара')
 
     factory.stock -= amount
