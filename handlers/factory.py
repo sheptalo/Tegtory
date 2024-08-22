@@ -49,7 +49,7 @@ async def factory_working(call: types.CallbackQuery):
         await bot.send_message(call.message.chat.id,
                                f'Рабочие на фабрике закончили работать, произведенно: {created}')
 
-        factory.tax = (workers * 50) * 0.1
+        factory.tax += workers * 5
 
     else:
         await call.message.answer("Склад фабрики каждого пользователя пополнится в течении пары минут.")

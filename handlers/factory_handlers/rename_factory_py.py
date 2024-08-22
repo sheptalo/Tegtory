@@ -1,9 +1,9 @@
-from aiogram import F, Router, types
+from aiogram import Router, types
 from aiogram.filters import Command, StateFilter
 from aiogram.fsm.context import FSMContext
-from aiogram.types import Message, ChatMemberMember
+from aiogram.types import Message
 
-from States import FactoryName, FactoryNameGroup
+from States import FactoryName
 from bot import bot
 from config import create_factory_caution
 from db.Factory import Factory

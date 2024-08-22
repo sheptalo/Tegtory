@@ -18,7 +18,7 @@ async def leaderboard(call: types.CallbackQuery):
         await call.message.edit_text(f'{Leaderboard().Money()}'
                                      f'\n\nваше место в топе {Leaderboard().Money().me(Player(call.from_user.id).iternal_id)}',
                                      reply_markup=leaderboard_inline)
-    except TelegramBadRequest as e:
+    except TelegramBadRequest:
         pass
 
 
@@ -28,7 +28,7 @@ async def leaderboard_def(message: types.Message):
         await message.answer(f'{Leaderboard().Money()}'
                              f'\n\nваше место в топе {Leaderboard().Money().me(Player(message.from_user.id).iternal_id)}',
                              reply_markup=leaderboard_inline)
-    except TelegramBadRequest as e:
+    except TelegramBadRequest:
         pass
 
 
@@ -38,7 +38,7 @@ async def call_rating_leaderboard(call: types.CallbackQuery):
         await call.message.edit_text(f'{Leaderboard().Rating()}'
                                      f'\n\nВаше место в топе {Leaderboard().Rating().me(Player(call.from_user.id).iternal_id)}',
                                      reply_markup=leaderboard_inline)
-    except TelegramBadRequest as e:
+    except TelegramBadRequest:
         pass
 
 
@@ -48,7 +48,7 @@ async def call_stolar_leaderboard(call: types.CallbackQuery):
         await call.message.edit_text(str(Leaderboard().Stolar()) +
                                      f'\n\nВаше место в топе {Leaderboard().Stolar().me(Player(call.from_user.id).iternal_id)}',
                                      reply_markup=leaderboard_inline)
-    except TelegramBadRequest as e:
+    except TelegramBadRequest:
         pass
 
 
@@ -58,7 +58,7 @@ async def call_clan_leaderboard(call: types.CallbackQuery):
         await call.message.edit_text(str(Leaderboard().Level()) +
                                      f'\n\nВаше место в топе {Leaderboard().Level().me(Player(call.from_user.id).iternal_id)}',
                                      reply_markup=leaderboard_inline)
-    except TelegramBadRequest as e:
+    except TelegramBadRequest:
         pass
 
 
@@ -68,20 +68,23 @@ async def call_clan_leaderboard(call: types.CallbackQuery):
         await call.message.edit_text(str(Leaderboard().Eco()) +
                                      f'\n\nВаше место в топе {Leaderboard().Eco().me(Player(call.from_user.id).iternal_id)}',
                                      reply_markup=leaderboard_inline)
-    except TelegramBadRequest as e:
+    except TelegramBadRequest:
         pass
 
 
 @router.callback_query(F.data == 'clan_leaderboard')
 async def call_clan_leaderboard(call: types.CallbackQuery):
-    await call.message.edit_text(str(Leaderboard().Clans()), reply_markup=leaderboard_inline)
+    try:
+        await call.message.edit_text(str(Leaderboard().Clans()), reply_markup=leaderboard_inline)
+    except TelegramBadRequest:
+        pass
 
 
 @router.callback_query(F.data == 'pre_apha_season')
 async def pre_alpha_leaderboard(call: types.CallbackQuery):
     try:
         await call.message.edit_text(pre_alpha_season_leader, reply_markup=leaderboard_inline)
-    except TelegramBadRequest as e:
+    except TelegramBadRequest:
         pass
 
 
@@ -89,7 +92,7 @@ async def pre_alpha_leaderboard(call: types.CallbackQuery):
 async def pre_alpha_leaderboard(call: types.CallbackQuery):
     try:
         await call.message.edit_text(alpha_season, reply_markup=leaderboard_inline)
-    except TelegramBadRequest as e:
+    except TelegramBadRequest:
         pass
 
 
@@ -100,5 +103,5 @@ async def call_clan_leaderboard(call: types.CallbackQuery):
                                      '*Заметка* дизайн прошлых версий специально сохранен.\n'
                                      '*заметка 2* некоторые имена могут изменены если содержат нецензурные выражения.',
                                      reply_markup=old_seasons_markup)
-    except TelegramBadRequest as e:
+    except TelegramBadRequest:
         pass

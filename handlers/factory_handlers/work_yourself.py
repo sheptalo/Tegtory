@@ -44,4 +44,4 @@ async def workbyyourself_finish(call):
     created = (lvl + 1) * (5 + random.randint(0, 5))
     factory.stock += created
     await call.message.answer(f'Работа окончена! Произведено товаров: {created}')
-    factory.tax = created // 2
+    factory.tax += created // 2

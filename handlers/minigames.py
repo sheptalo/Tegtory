@@ -129,10 +129,13 @@ async def fight_main(message: types.Message):
             player = Player(message.from_user.id)
         except:
             return await message.answer('Неправильная сумма')
+
         if cost > player.money:
             return await message.answer('Недостаточно очков')
+
         if cost < 50000:
             return await message.answer('Минимальная стоимость инспекции 50.000')
+
         await message.delete()
 
         keyboard = [

@@ -189,3 +189,5 @@ city_markup = InlineKeyboardMarkup(inline_keyboard=city_kb)
 lottery_back_markup = InlineKeyboardMarkup(inline_keyboard=[
     [InlineKeyboardButton(text='Обратно', callback_data='Лотерея')]
 ])
+
+back_city = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text='Обратно', callback_data='city')]])

@@ -4,7 +4,7 @@ from aiogram.types import CallbackQuery, Message
 
 from States import SellStock
 from db import GetStockPrice, Factory, Player
-from replys import market_markup, back_shop_markup
+from replys import market_markup, back_city
 
 router = Router()
 
@@ -20,7 +20,7 @@ async def market(call: CallbackQuery):
 async def sell_on_market(call: CallbackQuery, state: FSMContext):
     await call.message.edit_text(
         f'Введите сколько хотите продать товара. У вас есть {Factory(call.from_user.id).stock}',
-        reply_markup=back_shop_markup)
+        reply_markup=back_city)
     await state.set_state(SellStock().stock)
 
 

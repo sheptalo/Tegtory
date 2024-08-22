@@ -3,7 +3,7 @@ from aiogram.filters import StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.types import FSInputFile
 
-from Filters import ProfileFilter, MenuFilter
+from Filters import MenuFilter
 from MIddleWares.ChatActionMiddleWare import Typing
 from MIddleWares.UserMiddleWare import UserMiddleWare
 from States import FindFactory
@@ -55,7 +55,7 @@ async def answer_finded_factory(message: types.Message, state: FSMContext):
                                f'🔧 *Текущий уровень:* {factory.level} \n'
                                f'⚙️ *Тип фабрики:* {factory.type}\n'
                                f'🚧 *Статус фабрики:* {factory.state} \n'
-                               f'👷‍ *Количество работников на фабрике:* {factory.workers}', parse_mode='Markdown')
+                               f'👷‍ *Количество работников на фабрике:* {factory.workers}')
     await state.clear()
 
 
@@ -63,11 +63,11 @@ async def answer_finded_factory(message: types.Message, state: FSMContext):
 async def give_money(message: types.Message):
     try:
         _id = str(message.text.split()[1])
-        _money = int(message.text.split()[2])
+        _money = abs(int(message.text.split()[2]))
         player = Player(message.from_user.id)
     except:
-        return await message.answer('Принцип передачи денег: передать ID 1203')
-    if 0 > _money or _money > player.money:
+        return await message.answer('Принцип передачи денег: передать @username 1203')
+    if _money > player.money:
         return await message.answer(not_enough_points + '\nили сумма меньше 0')
 
     try:
@@ -75,7 +75,8 @@ async def give_money(message: types.Message):
         player2.money += _money
         player.money -= _money
     except:
-        return await message.answer('видимо вы неверно указали айди')
-    await bot.send_message(player2.user_id, f'вам перевели {int(_money):,}')
-    await message.answer(f'перевод выполнен')
+        return await message.answer('видимо вы неверно указали username')
+
+    await bot.send_message(player2.user_id, f'Вам передали {int(_money):,}')
+    await message.answer(f'Успешно')
     await bot.send_message(1405684214, f'кому {_id} {_money} от {message.from_user.id}')

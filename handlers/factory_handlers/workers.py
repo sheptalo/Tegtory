@@ -1,5 +1,4 @@
 from aiogram import F, types, Router
-router = Router()
 
 from db.Factory import Factory
 from db.Player import Player
@@ -8,6 +7,9 @@ from config import max_workers, not_enough_points
 from replys import hire_markup
 
 from .work_yourself import work_by_yourself
+
+router = Router()
+
 
 @router.callback_query(F.data == 'workers')
 async def buy_workers(call: types.CallbackQuery):

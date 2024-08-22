@@ -1,5 +1,3 @@
-import logging
-
 from aiogram import Router, types
 from aiogram.filters import Command, StateFilter
 from aiogram.fsm.context import FSMContext
@@ -7,8 +5,7 @@ from aiogram.types import Message
 
 from States import DeleteFactory
 from bot import bot
-from db.Factory import Factory
-from db.Player import Player
+from db import Factory, Player
 from replys import menu_reply
 
 router = Router()
