@@ -1,37 +1,15 @@
 import asyncio
 import logging
 
-from aiogram import types, F
-from aiogram.filters.command import Command
-from aiogram.fsm.context import FSMContext
-
 from MIddleWares.UserMiddleWare import UserMiddleWare
 from bot import bot, dp, con
-from config import welcome
 from db import console
-from handlers import menu, shop, minigames, clanss, factory, user
-from replys import menu_reply
+from handlers import menu, shop, minigames, clanss, factory, user, start, ref
 
 logging.basicConfig(level=logging.INFO)
 
 last_user = 0
 last_button_click = 0
-
-
-@dp.message(Command("cancel"))
-async def cancel(message: types.Message, state: FSMContext):
-    await state.clear()
-    await message.answer('отменено')
-
-
-@dp.message(Command("start"))
-async def start_func(message: types.Message):
-    await message.answer(welcome, reply_markup=menu_reply, parse_mode='HTML')
-
-
-@dp.message(F.text == 'Я подписался')
-async def check_text(message: types.Message):
-    await message.answer(f'Вижу. удачной игры', reply_markup=menu_reply)
 
 dp.message.middleware(UserMiddleWare())
 
@@ -44,6 +22,8 @@ async def ping_sql():
 
 async def main():
     dp.include_router(user.router)
+    dp.include_router(start.router)
+    dp.include_router(ref.router)
     dp.include_router(menu.router)
     dp.include_router(shop.router)
     dp.include_router(minigames.router)

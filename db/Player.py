@@ -15,7 +15,7 @@ class Player:
         if _clan == '0':
             _clan = 'Не в обьединении'
         _text = f"""
-🌟*{self.username}*🌟
+🌟*{self.nickname}*🌟
 
 💲 *Баланс:* {self.money:,}
 ⚔️ *Столар:* {self.stolar_coin:,}
@@ -50,14 +50,25 @@ class Player:
         return not (cur.fetchone() is None)
 
     @property
-    def username(self):
+    def nickname(self):
         cur.execute("SELECT name FROM Users WHERE telegram_id=%s", (self.user_id,))
         return cur.fetchone()[0]
 
-    @username.setter
-    def username(self, value: str):
+    @nickname.setter
+    def nickname(self, value: str):
         cur.execute("UPDATE Users SET name=%s WHERE telegram_id=%s", (self.user_id, value))
         con.commit()
+
+    @property
+    def username(self):
+        cur.execute("SELECT username FROM Users WHERE telegram_id=%s", (self.user_id,))
+        return cur.fetchone()[0]
+
+    @username.setter
+    def username(self, value):
+        cur.execute("UPDATE Users SET username=%s WHERE telegram_id=%s", (value, self.user_id, ))
+        con.commit()
+
 
     @property
     def titles(self) -> str:
@@ -185,3 +196,13 @@ class Player:
         @leader.setter
         def leader(self, value: int):
             cur.execute(f'UPDATE Users SET clan_leader = {value} WHERE telegram_id = {self.player.user_id}')
+
+    @property
+    def ref(self):
+        cur.execute('SELECT ref FROM Users WHERE telegram_id = %s', (self.user_id,))
+        return cur.fetchone()[0]
+
+    @ref.setter
+    def ref(self, value):
+        cur.execute(f'UPDATE Users SET ref = {value} WHERE telegram_id = {self.user_id}')
+        con.commit()

@@ -33,7 +33,7 @@ async def change_nick(message: types.Message, state: FSMContext):
 @router.message(StateFilter(ChangeNick.new_nickname))
 async def confirm_changes(message: types.Message, state: FSMContext):
     if len(message.text) < 20:
-        Player(message.from_user.id).username = message.text
+        Player(message.from_user.id).nickname = message.text
         await state.clear()
 
 
