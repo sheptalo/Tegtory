@@ -12,7 +12,7 @@ last_user = 0
 class MenuFilter(BaseFilter):
     async def __call__(self, message: types.Message) -> bool:
         try:
-            if message.text.lower() == 'меню' or message.text.lower() == 'предыдущая страница':
+            if message.text.lower() == 'меню':
                 return True
         except:
             return False

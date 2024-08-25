@@ -8,7 +8,7 @@ from MIddleWares.ChatActionMiddleWare import Typing
 from MIddleWares.UserMiddleWare import UserMiddleWare
 from States import FindFactory
 from bot import bot
-from config import mini_games_text, not_enough_points, type_func
+from config import not_enough_points, type_func
 from db import Factory, Player
 from replys import menu_reply, mini_game_markup, city_markup
 
@@ -17,19 +17,35 @@ router.message.middleware(Typing())
 router.message.middleware(UserMiddleWare())
 
 
+city_text = 'Вы в центре города'
+mini_games_text = ('''
+🎮 Мини игры 🎮
+
+🌾 *Ферма:* ежедневный бонус 
+
+⚔️ *Инспекция:*
+Инспектор сравнит твою фабрику с фабрикой другого игрока и добавить тебе рейтинг
+
+🎲 *Биржа:*
+Вложитесь в товар и узнайте выростет ли он в цене
+
+🎲 *Казино:* @an\_casino\_bot
+''')
+
+
 @router.message(MenuFilter())
 async def menu_cmd(message: types.Message):
-    await message.answer(f'Привет {message.from_user.first_name}\n', reply_markup=menu_reply)
+    await message.answer(f'Привет {message.from_user.first_name}.', reply_markup=menu_reply)
 
 
 @router.callback_query(F.data == 'city')
 async def back_city(call: types.CallbackQuery):
-    await call.message.edit_text('Вы в центре города', reply_markup=city_markup)
+    await call.message.edit_text(city_text, reply_markup=city_markup)
 
 
 @router.message(F.text.lower() == 'город')
 async def city(message: types.Message):
-    await message.answer('Вы в центре города.', reply_markup=city_markup)
+    await message.answer(city_text, reply_markup=city_markup)
 
 
 @router.message(F.text.lower() == 'мини игры')
@@ -68,8 +84,7 @@ async def give_money(message: types.Message):
     except:
         return await message.answer('Принцип передачи денег: передать @username 1203')
     if _money > player.money:
-        return await message.answer(not_enough_points + '\nили сумма меньше 0')
-
+        return await message.answer(not_enough_points)
     try:
         player2 = Player(_id)
         player2.money += _money

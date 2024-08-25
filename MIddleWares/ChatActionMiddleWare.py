@@ -1,4 +1,4 @@
-import asyncio
+from asyncio import sleep
 
 from aiogram.types import Message
 from aiogram.utils.chat_action import ChatActionSender
@@ -15,5 +15,5 @@ class Typing(BaseMiddleware):
         data: Dict[str, Any]
     ) -> Any:
         async with ChatActionSender.typing(bot=bot, chat_id=event.chat.id):
-            await asyncio.sleep(1)
+            await sleep(1)
             return await handler(event, data)

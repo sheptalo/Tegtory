@@ -3,13 +3,16 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery
 
 from MIddleWares.UserMiddleWare import UserMiddleWare
-from config import shop_text
 from replys import shop_reply
 from handlers.city import router as shop
 
 router = Router()
 router.message.middleware(UserMiddleWare())
 router.include_router(shop)
+
+shop_text = ('🎁🔥 Добро пожаловать в магазин! Здесь вы можете '
+             'приобрести билеты для участия в лотерееи многое другое! 🏪💸\n'
+             '💰🎉 Желаем вам удачных покупок и больших выигрышей! ')
 
 
 @router.callback_query(F.data == 'back_shop')

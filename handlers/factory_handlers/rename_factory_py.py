@@ -5,10 +5,10 @@ from aiogram.types import Message
 
 from States import FactoryName
 from bot import bot
-from config import create_factory_caution
 from db.Factory import Factory
 
 router = Router()
+create_factory_caution = 'максимальная длина названия 20 символов'
 
 
 @router.message(StateFilter(None), Command('rename_factory'))

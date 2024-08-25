@@ -2,11 +2,30 @@
 from aiogram import F, Router
 from aiogram.types import CallbackQuery
 
-from config import title_shop, not_enough_points, have_title
+from config import not_enough_points
 from db import Player, Factory, Leaderboard
 from replys import titles_shop_markup, title_error_markup
 
 router = Router()
+title_shop = """
+Добро пожаловать в магазин *титулов!*
+вы можете приобрести следующие титулы
+
+*Богач* - 1млн очков.
+
+*Магнат* - 100,000,000 очков и уровень фабрики выше 100.
+
+*Один из лучших* - можно получить когда ты находишься в топ 3 по деньгам.
+
+*Эколог* - скоро будет доступен.
+
+*Хранитель* - скоро будет доступен.
+
+*Качественный* - скоро будет доступен
+
+Ассортимент будет пополняться
+"""
+have_title = 'У вас уже есть этот титул'
 
 
 @router.callback_query(F.data == 'титулы')

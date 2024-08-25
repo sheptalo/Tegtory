@@ -4,12 +4,12 @@ from aiogram.fsm.context import FSMContext
 from aiogram.utils.payload import decode_payload
 
 from bot import bot
-from config import welcome
 from db import Player
 from replys import menu_reply
 
 
 router = Router()
+welcome = 'Добро пожаловать! Время стать владельцем фабрики и заработать крупные суммы. /create_factory'
 
 
 @router.message(Command("cancel"))
@@ -33,6 +33,11 @@ async def start_func(message: types.Message, command: CommandObject):
                          reply_markup=menu_reply, parse_mode='HTML')
     await bot.send_message(payload, 'По вашей ссылке перешёл новый игрок +250')
     Player(payload).money += 250
+
+
+@router.message(CommandStart())
+async def start(message: types.Message):
+    return await message.answer(welcome, reply_markup=menu_reply, parse_mode='HTML')
 
 
 @router.message(F.text == 'Я подписался')

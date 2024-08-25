@@ -3,7 +3,7 @@ from typing import Callable, Dict, Any, Awaitable
 from aiogram import BaseMiddleware
 from aiogram.types import Message
 
-from db.Player import Player
+from db import Player
 
 
 class UserMiddleWare(BaseMiddleware):

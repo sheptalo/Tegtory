@@ -6,11 +6,11 @@ from aiogram import Router, F, types
 
 from Filters import FarmFilter
 from MIddleWares.UserMiddleWare import UserMiddleWare
-from config import coff
 from db import Factory, Player
 
 router = Router()
 router.message.middleware(UserMiddleWare())
+coff = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 1.1, 1.4, 1.7]
 
 
 def cost_get(message) -> int:

@@ -3,14 +3,22 @@ from aiogram.filters import Command
 
 from MIddleWares.UserMiddleWare import UserMiddleWare
 
-from config import clan_lvl, create_clan_text, not_in_clan, not_enough_points
-
-from db.Factory import Factory
-from db.Player import Player
-from db.leaderboard import Leaderboard
+from config import not_enough_points
+from db import Factory, Player, Leaderboard
 
 router = Router()
 router.message.middleware(UserMiddleWare())
+
+clan_lvl = 'Для создания/вступления в обьединение необходимо иметь 10 уровень фабрики'
+create_clan_text = (f'Чтобы создать обьединение и захватывать мир с друзьями '
+                    f'воспользуйся форматом: \n'
+                    f'<i>/create_clan your_name</i> \n'
+                    f'где name название будущего обьединения пример: \n'
+                    f'<i>/create_clan Крутой_Чел</i>\n'
+                    f'Стоимость создания обьединения 7500 очков')
+not_in_clan = ('В данный момент ты не состоишь в объединении \n'
+               'Чтобы вступить в объединение попроси команду у того кто в нем состоит\n'
+               '\nВступить в обьединение можно с 10 уровня фабрики \n/create_clan чтобы создать объединение')
 
 
 @router.message(F.text.lower() == 'объединение')

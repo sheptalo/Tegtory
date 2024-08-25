@@ -1,7 +1,6 @@
 from aiogram import Router, types, F
 
-from db.Factory import Factory
-from db.Player import Player
+from db import Factory, Player
 
 from replys import upgrade_markup
 from config import not_enough_points

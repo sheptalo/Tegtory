@@ -1,7 +1,6 @@
 from aiogram import types, Router, F
 
-from db.Player import Player
-from db.Factory import Factory
+from db import Player, Factory
 
 import time
 import random

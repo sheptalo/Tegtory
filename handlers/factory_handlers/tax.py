@@ -1,7 +1,6 @@
 from aiogram import types, F, Router
 
-from db.Player import Player
-from db.Factory import Factory
+from db import Factory, Player
 
 from replys import tax_markup
 

@@ -3,12 +3,13 @@ from aiogram import F, types, Router
 from db.Factory import Factory
 from db.Player import Player
 
-from config import max_workers, not_enough_points
+from config import not_enough_points
 from replys import hire_markup
 
 from .work_yourself import work_by_yourself
 
 router = Router()
+max_workers = 'Максимальное количество работников на фабрике для данного уровня достигнуто, больше нанять не получится'
 
 
 @router.callback_query(F.data == 'workers')
