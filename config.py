@@ -10,33 +10,20 @@ factory_not_finded = 'Фабрика не найдена Попробуйте е
 
 # endregion
 
-wood = 'pictures/wood/factory_bg1.jfif'
-
-coal = 'pictures/iron/Iron.jpg'
-
-electro = 'pictures/electro/solar_panel.jpg'
-
-nuclear_energy = 'pictures/nuclear_electro/nuclear_bg1.jpg'
-
-star_factory = 'pictures/star_factory/star_factory.jpg'
-
-chimicats = 'pictures/chimcats/chimicats.webp'
-
-
 factory_types = ['Древесина', 'Железо', 'Химикаты', 'Солнечная энергия' 'Атомная энергия']
 
 
 def type_func(_type):
     if _type == 'Древесина':
-        _type = wood
+        _type = 'pictures/wood/factory_bg1.jfif'
     if _type == 'Железо':
-        _type = coal
+        _type = 'pictures/iron/Iron.jpg'
     if _type == 'Химикаты':
-        _type = chimicats
+        _type = 'pictures/chimcats/chimicats.webp'
     if _type == 'Солнечная энергия':
-        _type = electro
+        _type = 'pictures/electro/solar_panel.jpg'
     if _type == 'Атомная энергия':
-        _type = nuclear_energy
+        _type = 'pictures/nuclear_electro/nuclear_bg1.jpg'
     if _type == 'Звездная энергия':
-        _type = star_factory
+        _type = 'pictures/star_factory/star_factory.jpg'
     return _type
