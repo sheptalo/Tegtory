@@ -7,19 +7,6 @@ import os
 load_dotenv('.env')
 
 
-async def is_subscribed(user_id):
-    chat_id = '@tegtory'
-    try:
-
-        chat_member = await bot.get_chat_member(chat_id, user_id)
-        if chat_member.status == 'left':
-            return False
-        else:
-            return True
-    except:
-        return False
-
-
 dp = Dispatcher(storage=MemoryStorage())
 bot = Bot(os.getenv('BETA_API_TOKEN'), default=DefaultBotProperties(parse_mode='Markdown'))
 

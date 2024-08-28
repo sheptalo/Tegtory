@@ -22,8 +22,8 @@ async def ping_sql():
 
 
 async def main():
-    dp.include_routers(user.router, start.router, ref.router, menu.router, shop.router,
-                       minigames.router, clanss.router, factory.router)
+    dp.include_routers(start.router, user.router, ref.router, menu.router, shop.router, minigames.router, clanss.router,
+                       factory.router)
     task = asyncio.create_task(ping_sql())
     cons = asyncio.create_task(console())
     polling = asyncio.create_task(dp.start_polling(bot))

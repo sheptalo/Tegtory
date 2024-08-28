@@ -60,7 +60,7 @@ async def find_factory(message: types.Message, state: FSMContext):
 
 
 @router.message(StateFilter(FindFactory.name))
-async def answer_finded_factory(message: types.Message, state: FSMContext):
+async def answer_found_factory(message: types.Message, state: FSMContext):
     factory = Factory.find(message.text)
     if not factory.exists():
         return await message.answer('Фабрика не найдена')

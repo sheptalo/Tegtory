@@ -3,10 +3,23 @@ import time
 from aiogram.filters import BaseFilter
 from aiogram import types
 
-from bot import is_subscribed
+from bot import bot
 
 last_button_click = 0
 last_user = 0
+
+
+async def is_subscribed(user_id):
+    chat_id = '@tegtory'
+    try:
+
+        chat_member = await bot.get_chat_member(chat_id, user_id)
+        if chat_member.status == 'left':
+            return False
+        else:
+            return True
+    except:
+        return False
 
 
 class MenuFilter(BaseFilter):
@@ -52,6 +65,14 @@ class SubscribeFilter(BaseFilter):
         except:
             pass
 
+
+class SubscribeFilterCallBack(BaseFilter):
+    async def __call__(self, call: types.CallbackQuery) -> bool:
+        try:
+            if not await is_subscribed(call.from_user.id):
+                return True
+        except:
+            pass
 
 class ProfileFilter(BaseFilter):
     async def __call__(self, message: types.Message) -> bool:

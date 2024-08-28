@@ -2,7 +2,7 @@ from aiogram import types, F, Router
 
 from db import Factory, Player
 
-from replys import tax_markup
+from replys import tax_markup, back_factory
 
 # region TAX
 
@@ -15,13 +15,9 @@ async def check_tax(call: types.CallbackQuery):
     if not factory.exists():
         return await call.message.answer('У вас нет фабрики а значит и налогов')
     tax = factory.tax
-    await call.message.edit_caption(caption=f'💸*Налоги на фабрику:*\n\n'
-                                            f'💸*Налоги на электричество:* {round(tax * 0.05, 3)} очков \n'
-                                            f'💸*Налоги на прозводство:* {round(tax * 0.15, 3)} очков \n'
-                                            f'💸*Налог на землю:* {round(tax * 0.1)}\n'
-                                            f'💸*Налог на Оборудование:* {round(tax * 0.2)} \n'
-                                            f'💸*Налог на название фабрики:* {round(tax * 0.5)} \n\n'
-                                            f'💸💸*итоговая сумма налогов:* {tax}',
+    if factory.tax == 0:
+        return await call.message.edit_text('У вас нет налогов', reply_markup=back_factory)
+    await call.message.edit_caption(caption=f'💸*Налоги на фабрику:* {tax}',
                                     reply_markup=tax_markup,
                                     parse_mode='Markdown')
 
@@ -33,9 +29,7 @@ async def pay_tax(call: types.CallbackQuery):
         factory = Factory(call.from_user.id)
     else:
         factory = Factory(call.message.chat.id)
-    if factory.tax == 0:
-        return await call.message.answer('У вас нет налогов')
-    elif player.money < factory.tax:
+    if player.money < factory.tax:
         return await call.message.answer('Недостаточно очков для оплаты налога')
     else:
         player.money -= factory.tax

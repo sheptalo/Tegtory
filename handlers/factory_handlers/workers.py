@@ -32,8 +32,8 @@ async def hire_worker(call: types.CallbackQuery):
 
     if factory.level == factory.workers:
         return await call.message.answer(max_workers)
-    if player.money < (1 + factory.workers) * 500:
+    if player.money < (1 + factory.workers) * 300:
         return await call.message.answer(not_enough_points)
-    player.money -= (1 + factory.workers) * 500
+    player.money -= (1 + factory.workers) * 300
     factory.workers += 1
     await buy_workers(call)

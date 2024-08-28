@@ -94,9 +94,8 @@ upgrade_markup = InlineKeyboardMarkup(inline_keyboard=[
     [InlineKeyboardButton(text='улучшить', callback_data='upgrade_factory_conf')],
     [InlineKeyboardButton(text='Обратно', callback_data='back_factory')]])
 
-subscribed_channel = ReplyKeyboardMarkup(
-    resize_keyboard=True,
-    keyboard=[[KeyboardButton(text='Я подписался')]])
+subscribed_channel = InlineKeyboardMarkup(
+    inline_keyboard=[[InlineKeyboardButton(text='Готово', callback_data='subscribe')],])
 
 tax_markup = InlineKeyboardMarkup(
     inline_keyboard=[[InlineKeyboardButton(text='Оплатить налоги', callback_data='pay_tax')],
@@ -191,3 +190,7 @@ lottery_back_markup = InlineKeyboardMarkup(inline_keyboard=[
 ])
 
 back_city = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text='Обратно', callback_data='city')]])
+
+
+back_factory = InlineKeyboardMarkup(inline_keyboard=[
+    [InlineKeyboardButton(text='Обратно', callback_data='back_factory')]])

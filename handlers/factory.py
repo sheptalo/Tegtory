@@ -12,7 +12,7 @@ from config import type_func
 from db import Factory
 
 from pyrogram_main import get_chat_members
-from replys import factory_reply
+from replys import factory_reply, tax_markup
 from aiogram.types import FSInputFile
 from handlers.factory_handlers import router as rt
 
@@ -32,7 +32,7 @@ async def back_factory(call: types.CallbackQuery):
 async def factory_main(message: types.Message):
     factory = Factory(message.chat.id)
     if not factory.exists():
-        return await message.reply('у тебя еще нет фабрики')
+        return await message.reply('у тебя еще нет фабрики /create_factory')
     _type = type_func(factory.type)
     await message.answer_photo(FSInputFile(_type),
                                str(factory),
@@ -87,7 +87,8 @@ async def start_factory(call: types.CallbackQuery):
             return await factory_working(call)
 
         if factory.tax > 20000:
-            return await call.message.answer(f'У вас Неуплата налогов оплатите {factory.tax} чтобы запустить фабрику')
+            return await call.message.edit_text(f'У вас Неуплата налогов оплатите {factory.tax} чтобы запустить фабрику',
+                                                reply_markup=tax_markup)
 
         await call.message.answer('Рабочие приступили к работе')
         await back_factory(call)

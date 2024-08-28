@@ -49,12 +49,7 @@ async def lottery():
             continue
         win_tickets_stolar_text += f' {i},'
         counter += 1
-    text = ('*Розыгрыш* билетов *произошел*, '
-            'к сожалению все номера выигрышных билеты показать не получиться, но вот *некоторые* из них:\n\n'
-            f'*Бронзовые билеты:* {win_tickets_bronze_text}...\n\n'
-            f'*Серебряные билеты:* {win_tickets_serebro_text}...\n\n'
-            f'*Золотые билеты:* {win_tickets_gold_text}...\n\n'
-            f'*Столар билеты:* {win_tickets_stolar_text}...')
+    text = 'Проходит розыгрыш билетов'
     _user = await give_money_l(win_tickets_bronze, win_tickets_serebro, win_tickets_gold, win_tickets_stolar)
     await bot.send_message('@tegtory', text)
     for user in _user:
@@ -66,7 +61,7 @@ async def lottery():
 async def give_money_l(bronze, serebro, gold, stolar):
     cur.execute('SELECT telegram_id, tickets FROM Users')
     a = cur.fetchall()
-    cur.execute('UPDATE Users SET tickets = 0')
+    cur.execute('UPDATE Users SET tickets = ""')
     con.commit()
 
     won_user = []
