@@ -2,6 +2,11 @@ from bot import con, cur
 
 
 class Player:
+    """
+    :type user_id: int | str
+    A class to represent a player
+    connects to player database
+    """
     def __init__(self, user_id):
         try:
             self.user_id = int(user_id)
@@ -34,23 +39,36 @@ class Player:
                 _text += f"- {name.replace('_', ' ')}\n"
         return _text
 
-    async def create(self, username, user):
+    async def create(self, username: str, user: str):
+        """
+        creates a new player and adds it to the database
+        """
         cur.execute("INSERT INTO"
                     " Users(telegram_id, name, league, username) VALUES (%s, %s, '', %s)", (self.user_id, username, user))
         con.commit()
 
     @property
-    def iternal_id(self):
+    def iternal_id(self) -> int:
+        """
+        returns the iternal id of player in database
+        """
         cur.execute("SELECT id FROM Users WHERE telegram_id = %s", (self.user_id,))
         return cur.fetchone()[0]
 
     @property
-    def exist(self):
+    def exist(self) -> bool:
+        """
+        checks if the player exists
+        """
         cur.execute("SELECT telegram_id FROM Users WHERE telegram_id = %s", (self.user_id,))
         return not (cur.fetchone() is None)
 
     @property
-    def nickname(self):
+    def nickname(self) -> str:
+        """
+        returns the nickname of player
+        :return: nickname
+        """
         cur.execute("SELECT name FROM Users WHERE telegram_id=%s", (self.user_id,))
         return cur.fetchone()[0]
 
@@ -121,22 +139,22 @@ class Player:
         con.commit()
 
     @property
-    def farm(self):
+    def farm(self) -> int:
         cur.execute(f'SELECT farm_click FROM Users WHERE telegram_id = {self.user_id}')
         return cur.fetchone()[0]
 
     @farm.setter
-    def farm(self, value):
+    def farm(self, value: int):
         cur.execute(f'UPDATE Users SET farm_click = {value} WHERE telegram_id = {self.user_id}')
         con.commit()
 
     @property
-    def is_working(self):
+    def is_working(self) -> int:
         cur.execute(f'SELECT isWorking FROM Users WHERE telegram_id = {self.user_id}')
         return bool(cur.fetchone()[0])
 
     @is_working.setter
-    def is_working(self, value):
+    def is_working(self, value: int):
         cur.execute(f'UPDATE Users SET isWorking = {value} WHERE telegram_id = {self.user_id}')
         con.commit()
 
@@ -146,17 +164,17 @@ class Player:
         return cur.fetchone()[0]
 
     @tickets.setter
-    def tickets(self, value):
+    def tickets(self, value: str):
         cur.execute(f'UPDATE Users SET tickets = %s WHERE telegram_id = {self.user_id}', (value,))
         con.commit()
 
     @property
-    def work_at(self):
+    def work_at(self) -> int:
         cur.execute(f'SELECT WorkedAt FROM Users WHERE telegram_id = {self.user_id}')
         return cur.fetchone()[0]
 
     @work_at.setter
-    def work_at(self, value):
+    def work_at(self, value: int):
         cur.execute(f'UPDATE Users SET workedAt = {value} WHERE telegram_id = {self.user_id}')
         con.commit()
 
@@ -174,22 +192,22 @@ class Player:
             return cur.fetchone() is None
 
         @staticmethod
-        def exists(name):
+        def exists(name) -> bool:
             cur.execute(f'SELECT clan_name FROM Users WHERE clan_name=%s', (name,))
             return cur.fetchone() is not None
 
         @property
-        def name(self):
+        def name(self) -> str:
             cur.execute(f'SELECT clan_name FROM Users WHERE telegram_id = {self.player.user_id}')
             return cur.fetchone()[0]
 
         @name.setter
-        def name(self, value):
+        def name(self, value: str):
             cur.execute(f'UPDATE Users SET clan_name = %s WHERE telegram_id = {self.player.user_id}', (value,))
             con.commit()
 
         @property
-        def leader(self):
+        def leader(self) -> int:
             cur.execute(f'SELECT clan_leader FROM Users WHERE telegram_id = {self.player.user_id}')
             return cur.fetchone()[0]
 
@@ -198,11 +216,11 @@ class Player:
             cur.execute(f'UPDATE Users SET clan_leader = {value} WHERE telegram_id = {self.player.user_id}')
 
     @property
-    def ref(self):
+    def ref(self) -> str:
         cur.execute('SELECT ref FROM Users WHERE telegram_id = %s', (self.user_id,))
         return cur.fetchone()[0]
 
     @ref.setter
-    def ref(self, value):
+    def ref(self, value: str):
         cur.execute(f'UPDATE Users SET ref = {value} WHERE telegram_id = {self.user_id}')
         con.commit()

@@ -8,7 +8,7 @@ from MIddleWares.ChatActionMiddleWare import Typing
 from MIddleWares.UserMiddleWare import UserMiddleWare
 from States import FindFactory
 from bot import bot
-from config import not_enough_points, type_func
+from config import not_enough_points, factory_image
 from db import Factory, Player
 from replys import menu_reply, mini_game_markup, city_markup
 
@@ -64,7 +64,7 @@ async def answer_found_factory(message: types.Message, state: FSMContext):
     factory = Factory.find(message.text)
     if not factory.exists():
         return await message.answer('Фабрика не найдена')
-    _type = type_func(factory.type)
+    _type = factory_image(factory.type)
     await message.answer_photo(FSInputFile(_type),
                                f'* Фабрика пользователя:* \n\n'
                                f'🏭 *Название фабрики:* {factory.name} \n'

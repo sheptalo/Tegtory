@@ -7,7 +7,7 @@ import time
 
 from MIddleWares.UserMiddleWare import UserMiddleWare
 from bot import bot
-from config import type_func
+from config import factory_image
 
 from db import Factory
 
@@ -33,7 +33,7 @@ async def factory_main(message: types.Message):
     factory = Factory(message.chat.id)
     if not factory.exists():
         return await message.reply('у тебя еще нет фабрики /create_factory')
-    _type = type_func(factory.type)
+    _type = factory_image(factory.type)
     await message.answer_photo(FSInputFile(_type),
                                str(factory),
                                reply_markup=factory_reply)

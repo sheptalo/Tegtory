@@ -8,7 +8,7 @@ not_enough_points = 'Не хватает очков'
 factory_not_finded = 'Фабрика не найдена Попробуйте еще раз'
 
 
-def type_func(_type):
+def factory_image(_type):
     if _type == 'Древесина':
         _type = 'pictures/wood/factory_bg1.jfif'
     if _type == 'Железо':

@@ -3,8 +3,20 @@ from db.Player import Player
 
 
 class Factory:
+    """
+    :type owner_id: int | str
+    Connects with user factory
+    Recomend to use self.exists() to check if factory exists
+    :return: factory
+    """
     @staticmethod
     def find(name):
+        """
+        :type name: str
+        use this to find factory using name
+        :param name:
+        :return: factory
+        """
         cur.execute(f'SELECT owner_id from Factory where name = %s', (name,))
         res = cur.fetchone()
         return Factory(res[0], True)
@@ -18,16 +30,13 @@ class Factory:
             self.owner_id = owner_id
 
     def __str__(self):
-        a = [self.name, self.level,
-             self.type, self.state, self.tax,
-             self.workers]
         return f"""
-🏭 *{a[0].replace('_',' ')}*
-🔧 *Уровень:* {a[1]}
-⚙️ *Тип:* {a[2]}
-🚧 *Статус:* {'Работает' if a[3] == 1 else 'Не работает'}
-💸 *Налоги:* {a[4]}
-👷‍ *Работники на фабрике:* {a[5]}
+🏭 *{self.name.replace('_',' ')}*
+🔧 *Уровень:* {self.level}
+⚙️ *Тип:* {self.type}
+🚧 *Статус:* {'Работает' if self.state == 1 else 'Не работает'}
+💸 *Налоги:* {self.tax}
+👷‍ *Работники на фабрике:* {self.workers}
 ♻️ *Вклад в экологию:* {self.eco}
 📦 *Товара на складе:* {self.stock}
 {'🔎 _Знак качества_' if self.verification == 1 else ''}
@@ -36,11 +45,21 @@ class Factory:
     def __getitem__(self, item):
         return getattr(self, item)
 
-    def create(self, name):
+    def create(self, name: str):
+        """
+        :type name: str
+        creates a new factory
+        :param name: name of new factory
+        :return: None
+        """
         cur.execute("INSERT INTO Factory (owner_id, name) VALUES (%s, %s)", (self.owner_id, name))
         con.commit()
 
     def delete(self):
+        """
+        deletes a factory
+        :return: None
+        """
         cur.execute("DELETE FROM Factory WHERE owner_id = %s", (self.owner_id,))
         con.commit()
 
@@ -49,11 +68,17 @@ class Factory:
         return self.owner_id
 
     def exists(self) -> bool:
+        """
+        checks if factory exists
+        """
         cur.execute("SELECT owner_id FROM Factory WHERE owner_id = %s", (self.owner_id,))
         return not (cur.fetchone() is None)
 
     @property
     def type(self):
+        """
+        :return: type of factory
+        """
         lvl = self.level
 
         if lvl >= 1000:
@@ -71,6 +96,9 @@ class Factory:
 
     @property
     def state(self):
+        """
+        :return: state of factory
+        """
         cur.execute("SELECT state FROM Factory WHERE owner_id = %s", (self.owner_id,))
         return cur.fetchone()[0]
 
@@ -80,7 +108,10 @@ class Factory:
         con.commit()
 
     @property
-    def start_work_at(self):
+    def start_work_at(self) -> int:
+        """
+        :return: start work at
+        """
         cur.execute("SELECT started_work_at FROM Factory WHERE owner_id = %s", (self.owner_id,))
         return cur.fetchone()[0]
 
@@ -91,6 +122,9 @@ class Factory:
 
     @property
     def level(self) -> int:
+        """
+        :return: level of factory
+        """
         cur.execute("SELECT lvl FROM Factory WHERE owner_id = %s", (self.owner_id,))
         return cur.fetchone()[0]
 
@@ -111,6 +145,9 @@ class Factory:
 
     @property
     def workers(self):
+        """
+        :return: number of workers
+        """
         cur.execute("SELECT workers FROM Factory WHERE owner_id = %s", (self.owner_id,))
         return cur.fetchone()[0]
 
@@ -121,6 +158,9 @@ class Factory:
 
     @property
     def tax(self) -> int:
+        """
+        :return: taxes of factory
+        """
         cur.execute("SELECT tax FROM Factory WHERE owner_id = %s", (self.owner_id,))
         return cur.fetchone()[0]
 
@@ -131,6 +171,9 @@ class Factory:
 
     @property
     def eco(self):
+        """
+        :return: eco amount of factory
+        """
         cur.execute("SELECT ecology FROM Factory WHERE owner_id = %s", (self.owner_id,))
         return cur.fetchone()[0]
 
@@ -150,7 +193,11 @@ class Factory:
         con.commit()
 
     @property
-    def stock(self):
+    def stock(self) -> int:
+        """
+        check stock amount from factory
+        :return: stock amount
+        """
         cur.execute("SELECT stock FROM Factory WHERE owner_id = %s", (self.owner_id,))
         return cur.fetchone()[0]
 
