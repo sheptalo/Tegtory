@@ -1,4 +1,5 @@
-from aiogram.types import LabeledPrice, InlineKeyboardMarkup, InlineKeyboardButton, KeyboardButton, ReplyKeyboardMarkup
+from aiogram.types import LabeledPrice, InlineKeyboardMarkup, InlineKeyboardButton, KeyboardButton, ReplyKeyboardMarkup, \
+    WebAppInfo
 
 working_on_kb = [
     [InlineKeyboardButton(text='Разрабатывается', callback_data='working_on')]
@@ -8,9 +9,10 @@ working_on = InlineKeyboardMarkup(inline_keyboard=working_on_kb)
 menu_kb = [
     [
         KeyboardButton(text="Фабрика"),
+        KeyboardButton(text='Город'),
+        KeyboardButton(text='Помощь', web_app=WebAppInfo(url='https://telegra.ph/Obuchenie-Tegtory-08-30'))
     ],
     [
-        KeyboardButton(text='Город'),
         KeyboardButton(text='Объединение'),
         KeyboardButton(text='Мини игры')
     ]
