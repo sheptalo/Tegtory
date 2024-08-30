@@ -5,7 +5,6 @@ from aiogram.types import FSInputFile
 
 from Filters import MenuFilter
 from MIddleWares.ChatActionMiddleWare import Typing
-from MIddleWares.UserMiddleWare import UserMiddleWare
 from States import FindFactory
 from bot import bot
 from config import not_enough_points, factory_image
@@ -52,10 +51,15 @@ async def mini_games_menu(message: types.Message):
     await message.answer(mini_games_text, reply_markup=mini_game_markup, parse_mode='Markdown')
 
 
+@router.message(F.text.lower() == 'помощь')
+async def guide(message: types.Message):
+    await message.answer('Гайд со всем необходимым: https://telegra.ph/Obuchenie-Tegtory-08-30')
+
+
 @router.message(F.text.lower() == 'найти')
 async def find_factory(message: types.Message, state: FSMContext):
     await state.set_state(FindFactory.name)
-    await message.answer('Впишите название фабрики которую хотите найти')
+    await message.answer('Напишите название фабрики которую хотите найти')
 
 
 @router.message(StateFilter(FindFactory.name))
@@ -65,12 +69,11 @@ async def answer_found_factory(message: types.Message, state: FSMContext):
         return await message.answer('Фабрика не найдена')
     _type = factory_image(factory.type)
     await message.answer_photo(FSInputFile(_type),
-                               f'* Фабрика пользователя:* \n\n'
-                               f'🏭 *Название фабрики:* {factory.name} \n'
-                               f'🔧 *Текущий уровень:* {factory.level} \n'
-                               f'⚙️ *Тип фабрики:* {factory.type}\n'
-                               f'🚧 *Статус фабрики:* {factory.state} \n'
-                               f'👷‍ *Количество работников на фабрике:* {factory.workers}')
+                               f'*Фабрика {factory.name}:* \n\n'
+                               f'🔧 *{factory.level} уровень*\n'
+                               f'⚙️ *Тип {factory.type}* \n'
+                               f'🚧 *Статус {factory.state}*  \n'
+                               f'👷‍ *{factory.workers} работников* ')
     await state.clear()
 
 

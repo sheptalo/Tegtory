@@ -15,10 +15,8 @@ async def check_tax(call: types.CallbackQuery):
         return await call.message.answer('У вас нет фабрики а значит и налогов')
     tax = factory.tax
     if factory.tax == 0:
-        return await call.message.edit_text('У вас нет налогов', reply_markup=back_factory)
-    await call.message.edit_caption(caption=f'💸*Налоги на фабрику:* {tax}',
-                                    reply_markup=tax_markup,
-                                    parse_mode='Markdown')
+        return await call.message.edit_caption(caption='У вас нет налогов', reply_markup=back_factory)
+    await call.message.edit_caption(caption=f'💸*Налоги на фабрику:* {tax}', reply_markup=tax_markup)
 
 
 @router.callback_query(F.data == 'pay_tax')

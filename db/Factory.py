@@ -35,7 +35,7 @@ class Factory:
 ⚙️ *Тип:* {self.type}
 🚧 *Статус:* {'Работает' if self.state == 1 else 'Не работает'}
 💸 *Налоги:* {self.tax}
-👷‍ *Работники на фабрике:* {self.workers}
+👷‍ *Работники:* {self.workers}
 ♻️ *Вклад в экологию:* {self.eco}
 📦 *Товара на складе:* {self.stock}
 {'🔎 _Знак качества_' if self.verification == 1 else ''}

@@ -10,7 +10,7 @@ menu_kb = [
     [
         KeyboardButton(text="Фабрика"),
         KeyboardButton(text='Город'),
-        KeyboardButton(text='Помощь', web_app=WebAppInfo(url='https://telegra.ph/Obuchenie-Tegtory-08-30'))
+        KeyboardButton(text='Помощь')
     ],
     [
         KeyboardButton(text='Объединение'),
