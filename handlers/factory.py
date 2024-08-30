@@ -12,7 +12,7 @@ from config import factory_image
 from db import Factory
 
 from pyrogram_main import get_chat_members
-from replys import factory_reply, tax_markup
+from replys import factory_reply, tax_markup, create_factory_markup
 from aiogram.types import FSInputFile
 from handlers.factory_handlers import router as rt
 
@@ -32,7 +32,7 @@ async def back_factory(call: types.CallbackQuery):
 async def factory_main(message: types.Message):
     factory = Factory(message.chat.id)
     if not factory.exists():
-        return await message.reply('у тебя еще нет фабрики /create_factory')
+        return await message.reply('у тебя еще нет фабрики', reply_markup=create_factory_markup)
     _type = factory_image(factory.type)
     await message.answer_photo(FSInputFile(_type),
                                str(factory),

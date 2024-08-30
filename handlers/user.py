@@ -10,7 +10,6 @@ from db import Player
 from replys import subscribed_channel, menu_reply
 
 router = Router()
-router.message.middleware(UserMiddleWare())
 exactly = 'Telegram server says - Bad Request: message is not modified: specified new message content and reply markup are exactly the same as a current content and reply markup of the message'
 
 

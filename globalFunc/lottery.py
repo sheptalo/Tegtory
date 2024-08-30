@@ -54,7 +54,7 @@ async def lottery():
     await bot.send_message('@tegtory', text)
     for user in _user:
         Player(str(user[1])).money += user[0]
-        Player(user[1]).stolar_coin += user[3]
+        Player(user[1]).stolar += user[3]
         await bot.send_message(user[1], f'Ваш билет {user[2]} выйграл')
 
 

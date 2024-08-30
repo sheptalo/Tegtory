@@ -194,3 +194,6 @@ back_city = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text='О
 
 back_factory = InlineKeyboardMarkup(inline_keyboard=[
     [InlineKeyboardButton(text='Обратно', callback_data='back_factory')]])
+
+create_factory_markup = InlineKeyboardMarkup(inline_keyboard=[
+    [InlineKeyboardButton(text='Создать фабрику', callback_data='create_factory')]])

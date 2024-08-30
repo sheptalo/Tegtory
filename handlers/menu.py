@@ -14,7 +14,6 @@ from replys import menu_reply, mini_game_markup, city_markup
 
 router = Router()
 router.message.middleware(Typing())
-router.message.middleware(UserMiddleWare())
 
 
 city_text = 'Вы в центре города'

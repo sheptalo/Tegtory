@@ -38,10 +38,10 @@ async def set_stolar_for_sale(message: Message, state: FSMContext):
     amount = message.text
     player = Player(message.from_user.id)
 
-    if player.stolar_coin < int(amount) or 0 > int(amount):
+    if player.stolar < int(amount) or 0 > int(amount):
         return await message.answer('Недостаточно столар коинов')
 
-    player.stolar_coin -= int(amount)
+    player.stolar -= int(amount)
     await message.answer('Введите цену за которую пользователи могут купить ваши столар коины\n'
                          'Рекомендуется продать за: '
                          f'{int(amount) * 1000000000:,} разрешено использовать \"к\" для обозначения тысячи')
@@ -88,7 +88,7 @@ async def buy_on_channel(call: CallbackQuery):
     if player.money < int(data[1]):
         return
     player.money -= int(data[1])
-    player.stolar_coin += int(data[2])
+    player.stolar += int(data[2])
     Player(data[3]).money += int(data[1])
     await bot.delete_message("@tegtoryshop", call.message.message_id)
     await bot.send_message(data[3], f'У вас купили столар коины {data[2]} на сумму {int(data[1]):,}')
@@ -99,7 +99,7 @@ async def buy_stolar_coin_10(call: CallbackQuery):
     player = Player(call.from_user.id)
     if player.money >= 10000000000:
         player.money -= 10000000000
-        player.stolar_coin += 10
+        player.stolar += 10
         await call.message.answer('куплено 10 столар коинов')
     else:
         await call.message.answer(not_enough_points)
@@ -110,7 +110,7 @@ async def buy_stolar_coin_100(call: CallbackQuery):
     player = Player(call.from_user.id)
     if player.money >= 100000000000:
         player.money -= 100000000000
-        player.stolar_coin += 100
+        player.stolar += 100
         await call.message.answer('куплено 100 столар коинов')
     else:
         await call.message.answer(not_enough_points)
@@ -122,7 +122,7 @@ async def buy_stolar_coin(call: CallbackQuery):
 
     if player.money > 1000000000:
         player.money -= 1000000000
-        player.stolar_coin += 1
+        player.stolar += 1
         await call.message.answer('куплен столар коин')
     else:
         await call.message.answer(not_enough_points)

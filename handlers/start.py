@@ -9,7 +9,7 @@ from replys import menu_reply
 
 
 router = Router()
-welcome = 'Добро пожаловать! Время стать владельцем фабрики и заработать крупные суммы. /create_factory'
+welcome = 'Добро пожаловать! Время стать владельцем фабрики и заработать крупные суммы.'
 
 
 @router.message(Command("cancel"))

@@ -23,7 +23,7 @@ class Player:
 🌟*{self.nickname}*🌟
 
 💲 *Баланс:* {self.money:,}
-⚔️ *Столар:* {self.stolar_coin:,}
+⚔️ *Столар:* {self.stolar:,}
 
 🏆 *Рейтинг:* {self.rating}
 🛡️ *Лига:* {self.league}
@@ -87,7 +87,6 @@ class Player:
         cur.execute("UPDATE Users SET username=%s WHERE telegram_id=%s", (value, self.user_id, ))
         con.commit()
 
-
     @property
     def titles(self) -> str:
         cur.execute("SELECT Titles FROM Users WHERE telegram_id=%s", (self.user_id,))
@@ -109,12 +108,12 @@ class Player:
         con.commit()
 
     @property
-    def stolar_coin(self):
+    def stolar(self):
         cur.execute(f'SELECT stolar FROM Users WHERE telegram_id = {self.user_id}')
         return cur.fetchone()[0]
 
-    @stolar_coin.setter
-    def stolar_coin(self, value: int):
+    @stolar.setter
+    def stolar(self, value: int):
         cur.execute(f"UPDATE Users SET stolar = {value} WHERE telegram_id = {self.user_id}")
         con.commit()
 

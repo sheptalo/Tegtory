@@ -7,7 +7,6 @@ from replys import shop_reply
 from handlers.city import router as shop
 
 router = Router()
-router.message.middleware(UserMiddleWare())
 router.include_router(shop)
 
 shop_text = ('🎁🔥 Добро пожаловать в магазин! Здесь вы можете '

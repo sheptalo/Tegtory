@@ -6,8 +6,7 @@ class Factory:
     """
     :type owner_id: int | str
     Connects with user factory
-    Recomend to use self.exists() to check if factory exists
-    :return: factory
+    Recommend to use self.exists() to check if factory exists
     """
     @staticmethod
     def find(name):

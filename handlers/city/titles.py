@@ -12,16 +12,15 @@ title_shop = """
 вы можете приобрести следующие титулы
 
 *Богач* - 1млн очков.
-
 *Магнат* - 100,000,000 очков и уровень фабрики выше 100.
 
 *Один из лучших* - можно получить когда ты находишься в топ 3 по деньгам.
 
-*Эколог* - скоро будет доступен.
+*Эколог* - Баллы вашей экологии больше 500.
 
-*Хранитель* - скоро будет доступен.
+*Хранитель* - У вас на фабрике Более 5000 товаров.
 
-*Качественный* - скоро будет доступен
+*Качественный* - скоро будет доступен.
 
 Ассортимент будет пополняться
 """
@@ -30,6 +29,8 @@ have_title = 'У вас уже есть этот титул'
 
 @router.callback_query(F.data == 'титулы')
 async def buy_title_main(call: CallbackQuery):
+    if not Factory(call.from_user.id).exists():
+        return await call.message.answer('Без фабрики вас не пустят в магазин титулов.')
     await call.message.edit_text(title_shop, reply_markup=titles_shop_markup)
 
 
@@ -37,7 +38,6 @@ async def buy_title_main(call: CallbackQuery):
 async def buy_title_call(call: CallbackQuery):
     player = Player(call.from_user.id)
     factory = Factory(call.from_user.id)
-    bought = ''
     title = call.data.split(":")[1]
 
     if title == 'Богач':
@@ -51,8 +51,6 @@ async def buy_title_call(call: CallbackQuery):
 
         player.titles += " Богач"
 
-        bought = 'Богач'
-
     elif title == 'Магнат':
         if player.money < 100000000:
             return await call.message.edit_text(not_enough_points, reply_markup=title_error_markup)
@@ -65,7 +63,6 @@ async def buy_title_call(call: CallbackQuery):
 
         player.money -= 100000000
         player.titles += ' Магнат'
-        bought = 'Магнат'
 
     elif title == 'Один_из_лучших' and Leaderboard().Money().me(Player(call.from_user.id).iternal_id) <= 3:
         if 'Один_из_лучших' in player.titles.split():
@@ -73,8 +70,19 @@ async def buy_title_call(call: CallbackQuery):
 
         player.titles += ' Один_из_лучших'
 
-        bought = 'Один из лучших'
-    await call.message.edit_text(f'Куплен титул *{bought}* ', reply_markup=title_error_markup)
+    elif title == 'Эколог' and Factory(call.from_user.id).eco >= 500:
+        if 'Эколог' in player.titles.split():
+            return call.message.edit_text('У вас уже есть этот титул', reply_markup=title_error_markup)
+
+        player.titles += ' Эколог'
+
+    elif title == 'Хранитель' and Factory(call.from_user.id).stock > 5000:
+        if 'Хранитель' in player.titles.split():
+            return call.message.edit_text('У вас уже есть этот титул', reply_markup=title_error_markup)
+
+        player.titles += ' Хранитель'
+
+    await call.message.edit_text(f'Куплен титул *{player.titles.split()[-1]}* ', reply_markup=title_error_markup)
 
 
 # endregion

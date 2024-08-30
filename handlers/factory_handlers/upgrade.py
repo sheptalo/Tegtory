@@ -39,10 +39,10 @@ async def upgrade_factory(call: types.CallbackQuery):
         else:
             return await call.message.answer(not_enough_points)
     else:
-        if player.stolar_coin < lvl - 499:
+        if player.stolar < lvl - 499:
             return await call.message.answer('Недостаточно столар коинов')
         else:
-            player.stolar_coin -= lvl - 499
+            player.stolar -= lvl - 499
     lvl += 1
     factory.level = lvl
     factory.start_work_at = 0

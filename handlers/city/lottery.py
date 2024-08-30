@@ -72,8 +72,8 @@ async def buy_stolar_ticket(call: CallbackQuery):
     new_ticket = random.randint(1000000, 1500000)
     while new_ticket in player.tickets.split():
         new_ticket = random.randint(1000000, 1500000)
-    if player.stolar_coin >= 10:
-        player.stolar_coin -= 10
+    if player.stolar >= 10:
+        player.stolar -= 10
         player.tickets += f' {new_ticket}'
         await call.message.edit_text(f'Куплен столар билет с номером {new_ticket}', reply_markup=lottery_back_markup)
     else:

@@ -6,6 +6,7 @@ from aiogram.types import Message
 from States import FactoryName
 from bot import bot
 from db.Factory import Factory
+from replys import create_factory_markup
 
 router = Router()
 create_factory_caution = 'максимальная длина названия 20 символов'
@@ -13,6 +14,8 @@ create_factory_caution = 'максимальная длина названия 2
 
 @router.message(StateFilter(None), Command('rename_factory'))
 async def rename_factory_yes(message: Message, state: FSMContext):
+    if not Factory(message.from_user.id).exists():
+        return await message.reply('у вас нету фабрики', reply_markup=create_factory_markup)
     await message.answer("Введите новое название фабрики")
     await state.set_state(FactoryName.new_factory_name)
 

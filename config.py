@@ -5,7 +5,7 @@ subscribe_channel = ('Чтобы пользоваться ботом и стро
 not_enough_points = 'Не хватает очков'
 
 
-factory_not_finded = 'Фабрика не найдена Попробуйте еще раз'
+factory_not_found: str = 'Фабрика не найдена Попробуйте еще раз'
 
 
 def factory_image(_type):

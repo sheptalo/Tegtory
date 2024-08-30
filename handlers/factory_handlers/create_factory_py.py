@@ -1,7 +1,7 @@
 from aiogram import Router, F, types
 from aiogram.filters import Command, StateFilter
 from aiogram.fsm.context import FSMContext
-from aiogram.types import Message
+from aiogram.types import Message, CallbackQuery
 
 from States import CreateFactory
 from bot import bot
@@ -11,9 +11,9 @@ router = Router()
 create_factory_caution = 'максимальная длина названия 20 символов'
 
 
-@router.message(StateFilter(None), Command('create_factory'))
-async def rename_factory_yes(message: Message, state: FSMContext):
-    await message.answer("Придумайте название фабрики /cancel")
+@router.callback_query(F.data == 'create_factory')
+async def callback_create_factory(call: CallbackQuery, state: FSMContext):
+    await call.message.edit_text("Придумайте название фабрики /cancel")
     await state.set_state(CreateFactory.new_factory_name)
 
 

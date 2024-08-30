@@ -26,12 +26,12 @@ class Leaderboard:
 
     class Stolar:
         def __str__(self):
-            cur.execute('SELECT * FROM Users WHERE id > 5000 ORDER BY stolar DESC')
+            cur.execute('SELECT name, stolar FROM Users WHERE id > 5000 ORDER BY stolar DESC')
             rows = cur.fetchmany(10)
             text = 'Таблица лидеров по столар коинам:\n\n'
             place = 1
             for row in rows:
-                text += f'{__reward__(place)} {row[2]}: {row[6]:,}\n\n'
+                text += f'{__reward__(place)} {row[0]}: {row[1]:,}\n\n'
                 place += 1
             return text
 
@@ -75,7 +75,7 @@ class Leaderboard:
             text = '*Лучшие фабрики*\n\n'
             place = 1
             for row in rows:
-                text += f'{__reward__(place)} {row[1]}: {row[2]} {'*Групповая*' if row[0] < 0 else ''}\n\n'
+                text += f'{__reward__(place)} {row[1]}: {row[2]} уровень. {'*Групповая*' if row[0] < 0 else ''}\n\n'
                 place += 1
             return text
 

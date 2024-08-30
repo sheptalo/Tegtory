@@ -4,7 +4,6 @@ from db import Factory, Player
 
 from replys import tax_markup, back_factory
 
-# region TAX
 
 router = Router()
 
@@ -35,5 +34,3 @@ async def pay_tax(call: types.CallbackQuery):
         player.money -= factory.tax
         factory.tax = 0
         return await check_tax(call)
-
-# endregion

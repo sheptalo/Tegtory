@@ -4,13 +4,16 @@ from aiogram.types import CallbackQuery, Message
 
 from States import SellStock
 from db import GetStockPrice, Factory, Player
-from replys import market_markup, back_city
+from replys import market_markup, back_city, create_factory_markup
 
 router = Router()
 
 
 @router.callback_query(F.data == 'маркет')
 async def market(call: CallbackQuery):
+    if not Factory(call.from_user.id).exists():
+        return await call.message.edit_text('На маркете продают товары только магнаты.',
+                                            reply_markup=create_factory_markup)
     await call.message.edit_text('Продайте свой товар на маркете, осторожно цена может упасть в любой момент\n'
                                  f'Текущая цена: {GetStockPrice().get} за штуку',
                                  reply_markup=market_markup)
