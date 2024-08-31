@@ -23,9 +23,12 @@ router.include_router(rt)
 
 @router.callback_query(F.data == 'back_factory')
 async def back_factory(call: types.CallbackQuery):
-    await call.message.edit_caption(
-                                   caption=str(Factory(call.message.chat.id)),
-                                   reply_markup=factory_reply)
+    try:
+        await call.message.edit_caption(
+                                       caption=str(Factory(call.message.chat.id)),
+                                       reply_markup=factory_reply)
+    except:
+        pass
 
 
 @router.message(F.text.lower().split()[0] == 'фабрика', StateFilter(None))
@@ -91,9 +94,10 @@ async def start_factory(call: types.CallbackQuery):
                                                 reply_markup=tax_markup)
 
         await call.message.answer('Рабочие приступили к работе')
-        await back_factory(call)
+
         factory.start_work_at = current_time
         factory.state = 1
+        await back_factory(call)
     else:
         await call.message.answer(f'Фабрике осталось работать {last_click + _time - current_time} секунд')
 
