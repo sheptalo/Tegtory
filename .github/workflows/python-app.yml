@@ -17,7 +17,8 @@ jobs:
       USER_NAME: ${{ secrets.USER_NAME }}
       PASSWORD: ${{ secrets.PASSWORD }}
       DB_NAME: ${{ secrets.DB_NAME }}
-      
+      API_ID: ${{ secrets.API_ID }}
+      API_HASH: ${{ secrets.API_HASH }}
     runs-on: ubuntu-latest
 
     steps:
