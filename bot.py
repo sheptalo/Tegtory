@@ -8,14 +8,14 @@ load_dotenv('.env')
 
 
 dp = Dispatcher(storage=MemoryStorage())
-bot = Bot(os.getenv('API_TOKEN'), default=DefaultBotProperties(parse_mode='Markdown'))
+bot = Bot(os.environ['BETA_API_TOKEN'], default=DefaultBotProperties(parse_mode='Markdown'))
 
 con = connect(
-        host=os.getenv('DB_HOST'),
+        host=os.environ['DB_HOST'],
         port=3306,
-        user=os.getenv('USER_NAME'),
-        password=os.getenv('PASSWORD'),
-        database=os.getenv('DB_NAME'),
+        user=os.environ['USER_NAME'],
+        password=os.environ['PASSWORD'],
+        database=os.environ['DB_NAME'],
         autocommit=True
     )
 cur = con.cursor(buffered=True)
