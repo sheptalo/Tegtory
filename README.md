@@ -6,8 +6,10 @@
     <a href="https://github.com/sheptalo/Tegtory/discussions" alt="Discussions">
         <img src="https://img.shields.io/github/discussions/sheptalo/Tegtory" /></a>
   <a href='https://t.me/tegtorybot'>Link</a>
+    
 </p>
-
+    
+[![Tegtory functions](https://github.com/sheptalo/Tegtory/actions/workflows/python-app.yml/badge.svg)](https://github.com/sheptalo/Tegtory/actions/workflows/python-app.yml)
 
 ## Описание и функционал
 
