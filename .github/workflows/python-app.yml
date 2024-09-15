@@ -7,11 +7,17 @@ on:
     branches: [ "master" ]
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   build:
-
+    env:
+      API_TOKEN: ${{ secrets.API_TOKEN }} 
+      DB_HOST: ${{ secrets.DB_HOST }}
+      USER_NAME: ${{ secrets.USER_NAME }}
+      PASSWORD: ${{ secrets.PASSWORD }}
+      DB_NAME: ${{ secrets.DB_NAME }}
+      
     runs-on: ubuntu-latest
 
     steps:
@@ -25,12 +31,10 @@ jobs:
         python -m pip install --upgrade pip
         pip install pytest
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
     - name: Test with pytest
       run: |
         pytest --doctest-modules
-        env:
-          API_TOKEN: ${{ secrets.API_TOKEN }} 
-          DB_HOST: ${{ secrets.DB_HOST }}
-          USER_NAME: ${{ secrets.USER_NAME }}
-          PASSWORD: ${{ secrets.PASSWORD }}
-          DB_NAME: ${{ secrets.DB_NAME }}
+        
+        
+
