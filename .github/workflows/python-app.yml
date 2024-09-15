@@ -1,6 +1,5 @@
 name: Test Tegtory modules
-env:
-  TEST: 123
+
 on:
   push:
     branches: [ "master" ]
@@ -8,11 +7,12 @@ on:
     branches: [ "master" ]
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   build:
-
+    env:
+      TEST: 123
     runs-on: ubuntu-latest
 
     steps:
