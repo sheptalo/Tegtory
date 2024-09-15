@@ -25,12 +25,23 @@ jobs:
         python -m pip install --upgrade pip
         pip install pytest
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+    - name: test envs
+      run: |
+        python -c 'import os;print(os.environ)'
+        env:
+          API_TOKEN:${{ secrets.API_TOKEN }} 
+          DB_HOST:${{ secrets.DB_HOST }}
+          USER_NAME=${{ secrets.USER_NAME }}
+          PASSWORD=${{ secrets.PASSWORD }}
+          DB_NAME=${{ secrets.DB_NAME }}
     - name: Test with pytest
-          API_TOKEN=${{ secrets.API_TOKEN }} 
+      run: |
+        pytest --doctest-modules
+        env:
+        API_TOKEN=${{ secrets.API_TOKEN }} 
           DB_HOST=${{ secrets.DB_HOST }}
           USER_NAME=${{ secrets.USER_NAME }}
           PASSWORD=${{ secrets.PASSWORD }}
           DB_NAME=${{ secrets.DB_NAME }}
-      run: |
-        pytest --doctest-modules
+        
 
