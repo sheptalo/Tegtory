@@ -2,7 +2,6 @@ from aiogram import F, Router, types
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery
 
-from MIddleWares.UserMiddleWare import UserMiddleWare
 from replys import shop_reply
 from handlers.city import router as shop
 

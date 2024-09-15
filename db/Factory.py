@@ -15,6 +15,8 @@ class Factory:
         use this to find factory using name
         :param name:
         :return: factory
+        >>> type(Factory.find(0))
+        <class 'db.Factory.Factory'>
         """
         cur.execute(f'SELECT owner_id from Factory where name = %s', (name,))
         res = cur.fetchone()
@@ -30,7 +32,7 @@ class Factory:
 
     def __str__(self):
         return f"""
-🏭 *{self.name.replace('_',' ')}*
+🏭 *{self.name.replace('_', ' ')}*
 🔧 *Уровень:* {self.level}
 ⚙️ *Тип:* {self.type}
 🚧 *Статус:* {'Работает' if self.state == 1 else 'Не работает'}
@@ -42,6 +44,14 @@ class Factory:
         """
 
     def __getitem__(self, item):
+        """
+        :param item:
+        :return:
+        >>> factory = Factory(1405684214)
+        >>> factory['owner']
+        1
+
+        """
         return getattr(self, item)
 
     def create(self, name: str):
@@ -69,6 +79,11 @@ class Factory:
     def exists(self) -> bool:
         """
         checks if factory exists
+
+        >>> Factory(1405684214).exists()
+        True
+        >>> Factory(0, True).exists()
+        False
         """
         cur.execute("SELECT owner_id FROM Factory WHERE owner_id = %s", (self.owner_id,))
         return not (cur.fetchone() is None)
@@ -77,6 +92,9 @@ class Factory:
     def type(self):
         """
         :return: type of factory
+
+        >>> Factory(10, True).type
+        'Звездная энергия'
         """
         lvl = self.level
 
@@ -97,12 +115,25 @@ class Factory:
     def state(self):
         """
         :return: state of factory
+
+        >>> Factory(10, True).state
+        0
         """
         cur.execute("SELECT state FROM Factory WHERE owner_id = %s", (self.owner_id,))
         return cur.fetchone()[0]
 
     @state.setter
     def state(self, value):
+        """
+        sets state of factory
+
+        :type value: int
+        >>> factory = Factory(10, True)
+        >>> factory.state = 1
+        >>> factory.state
+        1
+        >>> factory.state = 0
+        """
         cur.execute("UPDATE Factory SET state = %s WHERE owner_id = %s", (value, self.owner_id))
         con.commit()
 
@@ -110,12 +141,25 @@ class Factory:
     def start_work_at(self) -> int:
         """
         :return: start work at
+
+        >>> Factory(10, True).start_work_at
+        0
         """
         cur.execute("SELECT started_work_at FROM Factory WHERE owner_id = %s", (self.owner_id,))
         return cur.fetchone()[0]
 
     @start_work_at.setter
     def start_work_at(self, value):
+        """
+
+        :param value:
+        :return:
+        >>> factory = Factory(10, True)
+        >>> factory.start_work_at = 10
+        >>> factory.start_work_at
+        10
+        >>> factory.start_work_at = 0
+        """
         cur.execute("UPDATE Factory SET started_work_at = %s WHERE owner_id = %s", (value, self.owner_id))
         con.commit()
 
@@ -123,22 +167,50 @@ class Factory:
     def level(self) -> int:
         """
         :return: level of factory
+
+        >>> Factory(10, True).level
+        1000
         """
         cur.execute("SELECT lvl FROM Factory WHERE owner_id = %s", (self.owner_id,))
         return cur.fetchone()[0]
 
     @level.setter
     def level(self, value):
+        """
+
+        :param value:
+        :return: factory lvl
+
+
+        >>> factory = Factory(10, True)
+        >>> factory.level = 10
+        10
+        >>> factory.level = 1000
+        """
         cur.execute("UPDATE Factory SET lvl = %s WHERE owner_id=%s", (value, self.owner_id,))
         con.commit()
 
     @property
     def name(self) -> str:
+        """
+        :return: name of factory
+
+        >>> Factory(10, True).name
+        'Мегалодон'
+        """
         cur.execute("SELECT name FROM Factory WHERE owner_id = %s", (self.owner_id,))
         return cur.fetchone()[0]
 
     @name.setter
     def name(self, value):
+        """
+
+        >>> factory = Factory(10, True)
+        >>> factory.name = 'test'
+        >>> factory.name
+        'test'
+        >>> factory.name = 'Мегалодон'
+        """
         cur.execute("UPDATE Factory SET name = %s WHERE owner_id=%s", (value, self.owner_id,))
         con.commit()
 
@@ -146,6 +218,9 @@ class Factory:
     def workers(self):
         """
         :return: number of workers
+
+        >>> Factory(10, True).workers
+        100
         """
         cur.execute("SELECT workers FROM Factory WHERE owner_id = %s", (self.owner_id,))
         return cur.fetchone()[0]
@@ -159,6 +234,9 @@ class Factory:
     def tax(self) -> int:
         """
         :return: taxes of factory
+
+        >>> Factory(10, True).tax
+        234
         """
         cur.execute("SELECT tax FROM Factory WHERE owner_id = %s", (self.owner_id,))
         return cur.fetchone()[0]
