@@ -4,7 +4,6 @@ from aiogram.filters import Command, StateFilter
 from aiogram.fsm.context import FSMContext
 
 from Filters import SubscribeFilter, SpamFilter, SpamFilterCallBack, ProfileFilter, SubscribeFilterCallBack
-from MIddleWares.UserMiddleWare import UserMiddleWare
 from States import ChangeNick
 from db import Player
 from replys import subscribed_channel, menu_reply
@@ -14,13 +13,13 @@ exactly = 'Telegram server says - Bad Request: message is not modified: specifie
 
 
 @router.message(SubscribeFilter())
-async def not_subscribed(message: types.Message):
+async def subscribe(message: types.Message):
     await message.answer('Подпишитесь на канал @tegtory',
                          reply_markup=subscribed_channel)
 
 
 @router.callback_query(SubscribeFilterCallBack())
-async def not_subscribed(call: types.CallbackQuery):
+async def subscribe_call(call: types.CallbackQuery):
     try:
         await call.message.edit_text('Подпишитесь на канал @tegtory',
                                      reply_markup=subscribed_channel)
@@ -34,7 +33,8 @@ async def not_subscribed(call: types.CallbackQuery):
 
 
 @router.message(SpamFilter(), F.text)
-async def not_subscribed(message: types.Message):
+async def stop_spam(message: types.Message):
+
     await message.answer('Не спамьте!')
     await message.delete()
 
@@ -65,12 +65,12 @@ async def confirm_changes(message: types.Message, state: FSMContext):
 
 
 @router.message(SpamFilterCallBack(), F.data)
-async def not_subscribed(_: types.CallbackQuery):
+async def spam(_: types.CallbackQuery):
     return 0
 
 
 @router.callback_query(F.data == 'subscribe')
-async def not_subscribed(call: types.CallbackQuery):
+async def subscribe_check(call: types.CallbackQuery):
     try:
         await call.message.delete()
         await call.message.answer('Меню', reply_markup=menu_reply)

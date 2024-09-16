@@ -2,7 +2,7 @@ from bot import cur, con
 
 
 def league():
-    cur.execute('UPDATE Users SET league = ? WHERE money < 10000', ('Новичок',))
+    cur.execute('UPDATE Users SET league = ? WHERE money < 10000 AND money > 1000', ('Новичок',))
     cur.execute('UPDATE Users SET league = ? WHERE money >=10000 AND money < 50000',
                 ('Любитель',))
     cur.execute('UPDATE Users SET league = ? WHERE money >=50000 AND money < 100000',

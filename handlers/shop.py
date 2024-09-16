@@ -3,10 +3,10 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery
 
 from replys import shop_reply
-from handlers.city import router as shop
+from handlers.city import router as city_router
 
 router = Router()
-router.include_router(shop)
+router.include_router(city_router)
 
 shop_text = ('🎁🔥 Добро пожаловать в магазин! Здесь вы можете '
              'приобрести билеты для участия в лотерееи многое другое! 🏪💸\n'

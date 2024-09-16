@@ -219,8 +219,15 @@ class Factory:
         """
         :return: number of workers
 
-        >>> Factory(10, True).workers
-        100
+        >>> factory = Factory(10, True)
+        >>> old_value = factory.workers
+        >>> factory.workers = 1230
+        >>> factory.workers
+        1230
+        >>> factory.workers = 5000
+        >>> factory.workers
+        5000
+        >>> factory.workers = old_value
         """
         cur.execute("SELECT workers FROM Factory WHERE owner_id = %s", (self.owner_id,))
         return cur.fetchone()[0]
@@ -243,6 +250,18 @@ class Factory:
 
     @tax.setter
     def tax(self, value):
+        """
+
+        >>> factory = Factory(10, True)
+        >>> old_value = factory.tax
+        >>> factory.tax = 1230
+        >>> factory.tax
+        '1230'
+        >>> factory.tax = 5000
+        >>> factory.tax
+        '5000'
+        >>> factory.tax = old_value
+        """
         cur.execute("UPDATE Factory SET tax = %s WHERE owner_id=%s", (value, self.owner_id,))
         con.commit()
 
@@ -250,6 +269,17 @@ class Factory:
     def eco(self):
         """
         :return: eco amount of factory
+
+
+        >>> factory = Factory(10, True)
+        >>> old_value = factory.eco
+        >>> factory.eco = 1230
+        >>> factory.eco
+        1230
+        >>> factory.eco = 5000
+        >>> factory.eco
+        5000
+        >>> factory.eco = old_value
         """
         cur.execute("SELECT ecology FROM Factory WHERE owner_id = %s", (self.owner_id,))
         return cur.fetchone()[0]
@@ -261,6 +291,19 @@ class Factory:
 
     @property
     def verification(self):
+        """
+        :return: verification of factory
+
+        >>> factory = Factory(10, True)
+        >>> old_value = factory.verification
+        >>> factory.verification = 1
+        >>> factory.verification
+        1
+        >>> factory.verification = 0
+        >>> factory.verification
+        0
+        >>> factory.verification = old_value
+        """
         cur.execute("SELECT verification FROM Factory WHERE owner_id = %s", (self.owner_id,))
         return cur.fetchone()[0]
 
@@ -274,6 +317,16 @@ class Factory:
         """
         check stock amount from factory
         :return: stock amount
+
+        >>> factory = Factory(10, True)
+        >>> old_value = factory.stock
+        >>> factory.stock = 1230
+        >>> factory.stock
+        1230
+        >>> factory.stock = 5000
+        >>> factory.stock
+        5000
+        >>> factory.stock = old_value
         """
         cur.execute("SELECT stock FROM Factory WHERE owner_id = %s", (self.owner_id,))
         return cur.fetchone()[0]
