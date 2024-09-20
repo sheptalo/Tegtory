@@ -1,5 +1,5 @@
 multidict==6.0.5
-aiogram~=3.12.0
+aiogram
 pyrogram~=2.0.106
 mysql-connector-python~=9.0.0
 aioconsole

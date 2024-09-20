@@ -75,16 +75,8 @@ async def test_confirm_changes():
 
 @pytest.mark.asyncio
 async def test_subscribe_check():
-    def raise_exception():
-        raise BaseException
-
     call = AsyncMock()
     await user.subscribe_check(call)
 
     call.message.delete.assert_called()
     call.message.answer.assert_called()
-
-    # call.message.delete = raise_exception
-
-    # await user.subscribe_check(call)
-    # call.message.answer.assert_not_called()

@@ -1,9 +1,10 @@
 from aiogram import Router, types, F
+from aiogram.types import InputMediaPhoto, InputFile, URLInputFile
 
 from db import Factory, Player
 
 from replys import upgrade_markup
-from config import not_enough_points
+from config import not_enough_points, factory_image
 from .work_yourself import work_by_yourself
 
 router = Router()
@@ -16,11 +17,14 @@ async def upgrade_factory_price(call: types.CallbackQuery):
         return await work_by_yourself(call)
     factory = Factory(call.message.chat.id)
     lvl = factory.level
-    await call.message.edit_caption(caption=f'Текущий уровень {lvl}\n'
-                                            f'Стоимость улучшения '
-                                            f'{f'{(lvl + 3) * 400} очков' if lvl < 500 else f'{lvl - 499} столар'}\n'
-                                            f'улучшить?',
-                                            reply_markup=upgrade_markup)
+    text = (f'Текущий уровень {lvl}\n'
+            f'Стоимость улучшения '
+            f'{f'{(lvl + 3) * 400} очков' if lvl < 500 else f'{lvl - 499} столар'}\n'
+            f'улучшить?')
+    # await call.message.edit_caption(caption=text, reply_markup=upgrade_markup)
+    await call.message.edit_media(media=InputMediaPhoto(media=URLInputFile(factory_image(factory.type)),
+                                                        caption=text),
+                                  reply_markup=upgrade_markup)
 
 
 @router.callback_query(F.data == 'upgrade_factory_conf')
