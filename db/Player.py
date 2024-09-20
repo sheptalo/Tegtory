@@ -99,7 +99,7 @@ class Player:
         'user'
         >>> player.nickname = old_value
         """
-        cur.execute("UPDATE Users SET name=%s WHERE telegram_id=%s", (self.user_id, value))
+        cur.execute("UPDATE Users SET name=%s WHERE telegram_id=%s", (value, self.user_id))
         con.commit()
 
     @property
