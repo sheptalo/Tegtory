@@ -5,3 +5,4 @@ mysql-connector-python~=9.0.0
 aioconsole
 python-dotenv
 pytest
+pytest-asyncio
