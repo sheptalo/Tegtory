@@ -6,7 +6,7 @@ from db.Player import Player
 from config import not_enough_points
 from replys import hire_markup
 
-from .work_yourself import work_by_yourself
+from .work_yourself import work
 
 router = Router()
 max_workers = 'Максимальное количество работников на фабрике для данного уровня достигнуто, больше нанять не получится'
@@ -16,7 +16,7 @@ max_workers = 'Максимальное количество работнико�
 async def buy_workers(call: types.CallbackQuery):
     player = Player(call.from_user.id)
     if player.is_working:
-        return await work_by_yourself(call)
+        return await work(call)
     factory = Factory(call.message.chat.id)
     workers_amount = factory.workers
     await call.message.edit_caption(caption=f'сейчас на Фабрике нанято {workers_amount} человек \n'

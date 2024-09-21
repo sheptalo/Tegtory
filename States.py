@@ -5,16 +5,7 @@ class CreateFactory(StatesGroup):
     new_factory_name = State()
 
 
-class CreateFactoryGroup(StatesGroup):
-    new_factory_name = State()
-
-
 class FactoryName(StatesGroup):
-    new_factory_name = State()
-    confirm = State()
-
-
-class FactoryNameGroup(StatesGroup):
     new_factory_name = State()
     confirm = State()
 
@@ -35,11 +26,6 @@ class SellStolar(StatesGroup):
 
 class FindFactory(StatesGroup):
     name = State()
-
-
-class JoinClan(StatesGroup):
-    name = State()
-    confirm = State()
 
 
 class SellStock(StatesGroup):

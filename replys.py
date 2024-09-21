@@ -1,5 +1,4 @@
-from aiogram.types import LabeledPrice, InlineKeyboardMarkup, InlineKeyboardButton, KeyboardButton, ReplyKeyboardMarkup, \
-    WebAppInfo
+from aiogram.types import LabeledPrice, InlineKeyboardMarkup, InlineKeyboardButton, KeyboardButton, ReplyKeyboardMarkup
 
 working_on_kb = [
     [InlineKeyboardButton(text='Разрабатывается', callback_data='working_on')]

@@ -74,6 +74,7 @@ class SubscribeFilterCallBack(BaseFilter):
         except:
             pass
 
+
 class ProfileFilter(BaseFilter):
     async def __call__(self, message: types.Message) -> bool:
         try:

@@ -9,7 +9,7 @@ router = Router()
 
 
 @router.callback_query(F.data == 'work')
-async def work_by_yourself(call: types.CallbackQuery):
+async def work(call: types.CallbackQuery):
     current_time = int(time.time())
     factory = Factory(call.message.chat.id)
     player = Player(call.from_user.id)
@@ -18,7 +18,7 @@ async def work_by_yourself(call: types.CallbackQuery):
     if not last_click or current_time - last_click >= _time:
         if player.is_working:
             player.is_working = 0
-            return await workbyyourself_finish(call)
+            return await work_finish(call)
         await call.message.answer('Вы приступили к работе. '
                                   'Чтобы прекратить досрочно пишите отлучиться\n\nсовет:\n'
                                   'Если вы начали работать на фабрике в чате, '
@@ -37,7 +37,7 @@ async def drop_work(message: types.Message):
     player.work_at = 0
 
 
-async def workbyyourself_finish(call):
+async def work_finish(call):
     factory = Factory(call.message.chat.id)
     lvl = factory.level
     created = (lvl + 1) * (5 + random.randint(0, 5))

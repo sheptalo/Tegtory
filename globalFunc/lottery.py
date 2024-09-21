@@ -15,40 +15,12 @@ async def lottery():
     for i in range(1000):
         win_tickets_serebro += f' {random.randint(10000, 15000)}'
 
-    for i in range(100000):
+    for i in range(10000):
         win_tickets_gold += f' {random.randint(100000, 150000)}'
 
-    for i in range(1000000):
+    for i in range(100000):
         win_tickets_stolar += f' {random.randint(1000000, 1500000)}'
 
-    counter = 0
-    win_tickets_bronze_text = ''
-    for i in win_tickets_bronze.split():
-        if counter > 10:
-            continue
-        win_tickets_bronze_text += f' {i},'
-        counter += 1
-    counter = 0
-    win_tickets_serebro_text = ''
-    for i in win_tickets_serebro.split():
-        if counter > 10:
-            continue
-        win_tickets_serebro_text += f' {i},'
-        counter += 1
-    counter = 0
-    win_tickets_gold_text = ''
-    for i in win_tickets_gold.split():
-        if counter > 10:
-            continue
-        win_tickets_gold_text += f' {i},'
-        counter += 1
-    counter = 0
-    win_tickets_stolar_text = ''
-    for i in win_tickets_stolar.split():
-        if counter > 10:
-            continue
-        win_tickets_stolar_text += f' {i},'
-        counter += 1
     text = 'Проходит розыгрыш билетов'
     _user = await give_money_l(win_tickets_bronze, win_tickets_serebro, win_tickets_gold, win_tickets_stolar)
     await bot.send_message('@tegtory', text)
@@ -60,13 +32,13 @@ async def lottery():
 
 async def give_money_l(bronze, serebro, gold, stolar):
     cur.execute('SELECT telegram_id, tickets FROM Users')
-    a = cur.fetchall()
-    cur.execute('UPDATE Users SET tickets = ""')
+    users = cur.fetchall()
+    cur.execute('UPDATE Users SET tickets = %s', ('',))
     con.commit()
 
     won_user = []
 
-    for user_id, ticket_ids in a:
+    for user_id, ticket_ids in users:
         user_tickets = ticket_ids.split()
         for user_ticket in user_tickets:
             if user_ticket in bronze.split():

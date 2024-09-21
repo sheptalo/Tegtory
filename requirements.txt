@@ -1,8 +1,7 @@
-multidict==6.0.5
 aiogram
 pyrogram~=2.0.106
-mysql-connector-python~=9.0.0
+mysql-connector-python
 aioconsole
-python-dotenv
 pytest
 pytest-asyncio
+python-dotenv

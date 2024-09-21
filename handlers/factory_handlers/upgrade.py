@@ -1,5 +1,5 @@
 from aiogram import Router, types, F
-from aiogram.types import InputMediaPhoto, InputFile, URLInputFile
+from aiogram.types import InputMediaPhoto, URLInputFile
 
 from db import Factory, Player
 
