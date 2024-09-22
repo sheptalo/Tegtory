@@ -25,7 +25,8 @@ async def back_factory(call: types.CallbackQuery):
     try:
         # await call.message.edit_caption(caption=str(Factory(call.message.chat.id)), reply_markup=factory_reply)
         await call.message.edit_media(media=InputMediaPhoto(
-                                        media=URLInputFile(factory_image(Factory(call.message.chat.id).type))),
+                                        media=URLInputFile(factory_image(Factory(call.message.chat.id).type)),
+                                        caption=str(Factory(call.message.chat.id))),
                                       caption=str(Factory(call.message.chat.id)),
                                       reply_markup=factory_reply)
     except:
@@ -39,7 +40,7 @@ async def factory_main(message: types.Message):
         return await message.reply('у тебя еще нет фабрики', reply_markup=create_factory_markup)
     _type = factory_image(factory.type)
     await message.answer_photo(URLInputFile(url=_type),
-                               str(factory),
+                               caption=str(factory),
                                reply_markup=factory_reply)
 
 
