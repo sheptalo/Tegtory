@@ -22,7 +22,7 @@ async def upgrade_factory_price(call: types.CallbackQuery):
             f'{f'{(lvl + 3) * 400} очков' if lvl < 500 else f'{lvl - 499} столар'}\n'
             f'улучшить?')
     # await call.message.edit_caption(caption=text, reply_markup=upgrade_markup)
-    await call.message.edit_media(media=InputMediaPhoto(media=FSInputFile(factory_image(factory.type)),
+    await call.message.edit_media(media=InputMediaPhoto(media=URLInputFile(factory_image(factory.type)),
                                                         caption=text),
                                   reply_markup=upgrade_markup)
 
