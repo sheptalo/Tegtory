@@ -1,11 +1,11 @@
 from aiogram import Router, types, F
-from aiogram.types import InputMediaPhoto, URLInputFile
+from aiogram.types import InputMediaPhoto, URLInputFile, FSInputFile
 
 from db import Factory, Player
 
 from replys import upgrade_markup
 from config import not_enough_points, factory_image
-from .work_yourself import work_by_yourself
+from .work_yourself import work
 
 router = Router()
 
@@ -14,7 +14,7 @@ router = Router()
 async def upgrade_factory_price(call: types.CallbackQuery):
     player = Player(call.from_user.id)
     if player.is_working:
-        return await work_by_yourself(call)
+        return await work(call)
     factory = Factory(call.message.chat.id)
     lvl = factory.level
     text = (f'Текущий уровень {lvl}\n'
@@ -22,7 +22,7 @@ async def upgrade_factory_price(call: types.CallbackQuery):
             f'{f'{(lvl + 3) * 400} очков' if lvl < 500 else f'{lvl - 499} столар'}\n'
             f'улучшить?')
     # await call.message.edit_caption(caption=text, reply_markup=upgrade_markup)
-    await call.message.edit_media(media=InputMediaPhoto(media=URLInputFile(factory_image(factory.type)),
+    await call.message.edit_media(media=InputMediaPhoto(media=FSInputFile(factory_image(factory.type)),
                                                         caption=text),
                                   reply_markup=upgrade_markup)
 
