@@ -3,8 +3,9 @@ from aiogram import F, Router
 from aiogram.types import CallbackQuery
 
 from config import not_enough_points
-from db import Player, Factory, Leaderboard
+from db import Leaderboard
 from replys import titles_shop_markup, title_error_markup
+from api import api
 
 router = Router()
 title_shop = """
@@ -29,15 +30,15 @@ have_title = 'У вас уже есть этот титул'
 
 @router.callback_query(F.data == 'титулы')
 async def buy_title_main(call: CallbackQuery):
-    if not Factory(call.from_user.id).exists():
+    if not api.factory(call.from_user.id).exists():
         return await call.message.answer('Без фабрики вас не пустят в магазин титулов.')
     await call.message.edit_text(title_shop, reply_markup=titles_shop_markup)
 
 
 @router.callback_query(F.data.split(':')[0] == 'buy_title')
 async def buy_title_call(call: CallbackQuery):
-    player = Player(call.from_user.id)
-    factory = Factory(call.from_user.id)
+    player = api.player(call.from_user.id)
+    factory = api.factory(call.from_user.id)
     title = call.data.split(":")[1]
 
     if title == 'Богач':
@@ -58,25 +59,25 @@ async def buy_title_call(call: CallbackQuery):
         if "Магнат" in player.titles.split():
             return await call.message.edit_text(have_title, reply_markup=title_error_markup)
 
-        if factory.level < 100:
+        if factory.lvl < 100:
             return await call.message.edit_text('недостаточный уровень', reply_markup=title_error_markup)
 
         player.money -= 100000000
         player.titles += ' Магнат'
 
-    elif title == 'Один_из_лучших' and Leaderboard().Money().me(Player(call.from_user.id).iternal_id) <= 3:
+    elif title == 'Один_из_лучших' and Leaderboard().Money().me(api.player(call.from_user.id).iternal_id) <= 3:
         if 'Один_из_лучших' in player.titles.split():
             return call.message.edit_text('У вас уже есть этот титул', reply_markup=title_error_markup)
 
         player.titles += ' Один_из_лучших'
 
-    elif title == 'Эколог' and Factory(call.from_user.id).eco >= 500:
+    elif title == 'Эколог' and api.factory(call.from_user.id).eco >= 500:
         if 'Эколог' in player.titles.split():
             return call.message.edit_text('У вас уже есть этот титул', reply_markup=title_error_markup)
 
         player.titles += ' Эколог'
 
-    elif title == 'Хранитель' and Factory(call.from_user.id).stock > 5000:
+    elif title == 'Хранитель' and api.factory(call.from_user.id).stock > 5000:
         if 'Хранитель' in player.titles.split():
             return call.message.edit_text('У вас уже есть этот титул', reply_markup=title_error_markup)
 

@@ -1,7 +1,6 @@
 from aiogram import F, types, Router
 
-from db.Factory import Factory
-from db.Player import Player
+from api import api
 
 from config import not_enough_points
 from replys import hire_markup
@@ -14,23 +13,23 @@ max_workers = 'Максимальное количество работнико�
 
 @router.callback_query(F.data == 'workers')
 async def buy_workers(call: types.CallbackQuery):
-    player = Player(call.from_user.id)
-    if player.is_working:
+    player = api.player(call.from_user.id)
+    if player.isWorking:
         return await work(call)
-    factory = Factory(call.message.chat.id)
+    factory = api.factory(call.message.chat.id)
     workers_amount = factory.workers
     await call.message.edit_caption(caption=f'сейчас на Фабрике нанято {workers_amount} человек \n'
-                                            f'Можно нанять {factory.level - workers_amount} \n'
+                                            f'Можно нанять {factory.lvl - workers_amount} \n'
                                             f'Стоимость найма {(1 + workers_amount) * 300}',
                                     reply_markup=hire_markup)
 
 
 @router.callback_query(F.data == 'hire_worker')
 async def hire_worker(call: types.CallbackQuery):
-    player = Player(call.from_user.id)
-    factory = Factory(call.message.chat.id)
+    player = api.player(call.from_user.id)
+    factory = api.factory(call.message.chat.id)
 
-    if factory.level == factory.workers:
+    if factory.lvl == factory.workers:
         return await call.message.answer(max_workers)
     if player.money < (1 + factory.workers) * 300:
         return await call.message.answer(not_enough_points)

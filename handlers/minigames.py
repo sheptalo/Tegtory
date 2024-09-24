@@ -5,8 +5,7 @@ import time
 from aiogram import Router, F, types
 
 from Filters import FarmFilter
-from MIddleWares.UserMiddleWare import UserMiddleWare
-from db import Factory, Player
+from api import api
 
 router = Router()
 coff = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 1.1, 1.4, 1.7]
@@ -14,7 +13,7 @@ coff = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 1.1, 1.4, 1.7]
 
 def cost_get(message) -> int:
     if message.text.lower().split()[1] == 'все':
-        return Player(message.from_user.id).money
+        return api.player(message.from_user.id).money
     cost = message.text.lower().split()[1].replace(',', '')
     cost = cost.replace('к', '000')
     cost = int(cost)
@@ -24,7 +23,7 @@ def cost_get(message) -> int:
 # region Биржа
 @router.message(F.text.lower().split()[0] == 'биржа')
 async def birzha_main(message: types.Message):
-    player = Player(message.from_user.id)
+    player = api.player(message.from_user.id)
 
     try:
         message.text.split()[1]
@@ -57,10 +56,10 @@ async def birzha_main(message: types.Message):
 @router.message(FarmFilter())
 async def farm_main(message: types.Message):
     current_time = int(time.time())
-    player = Player(message.from_user.id)
+    player = api.player(message.from_user.id)
     _time = 86400
-    if current_time - player.farm >= _time:
-        player.farm = current_time
+    if current_time - player.farm_click >= _time:
+        player.farm_click = current_time
         time.sleep(0.1)
         bonus = random.randint(20, 200)
         await message.answer(f'бонус получен в размере {bonus} очков')
@@ -74,21 +73,21 @@ async def farm_main(message: types.Message):
 async def no_fight(call: types.CallbackQuery):
     data = call.data.split(':')
     if int(data[1]) == call.from_user.id:
-        Player(call.from_user.id).money += round(int(data[2]))
+        api.player(call.from_user.id).money += round(int(data[2]))
         await call.message.delete()
 
 
 @router.callback_query(F.data.split(':')[0] == 'accept_fight')
 async def accept_fight(call: types.CallbackQuery):
     data = call.data.split(":")
-    player1 = Player(int(data[1]))
-    player2 = Player(call.from_user.id)
+    player1 = api.player(int(data[1]))
+    player2 = api.player(call.from_user.id)
     if int(data[1]) != call.from_user.id and player2.money >= int(data[2]):
         player2.money -= int(data[2])
         await call.message.delete()
         await call.message.answer('Инспектор начал инспекцию')
-        factory_user_1 = Factory(int(data[1]))
-        factory_user_2 = Factory(call.from_user.id)
+        factory_user_1 = api.factory(int(data[1]))
+        factory_user_2 = api.factory(call.from_user.id)
         check = ['level', 'workers', 'eco', 'stock']
         counter = 0
 
@@ -122,10 +121,10 @@ async def accept_fight(call: types.CallbackQuery):
 
 @router.message(F.text.lower().split()[0] == 'инспекция')
 async def fight_main(message: types.Message):
-    if message.chat.type != 'private' and int(message.text.split()[1]) != 'null' and Factory(message.from_user.id).level >= 50:
+    if message.chat.type != 'private' and int(message.text.split()[1]) != 'null' and api.factory(message.from_user.id).level >= 50:
         try:
             cost = cost_get(message)
-            player = Player(message.from_user.id)
+            player = api.player(message.from_user.id)
         except:
             return await message.answer('Неправильная сумма')
 

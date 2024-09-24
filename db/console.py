@@ -1,29 +1,19 @@
-import random
-
 from aioconsole import ainput
-
-from bot import con, cur
-from globalFunc import league
 from globalFunc.lottery import lottery
 
 
 async def console():
     inp = await ainput()
     while inp != 'exit':
-        if inp == 'ping':
-            con.ping(True)
-
+        from api import api
         if inp == 'stock':
-            new_price = random.randint(2, 8)
-            cur.execute(f'UPDATE stock_price SET price = {new_price}')
-            con.commit()
+            api.stock_update()
 
         if inp == 'eco':
-            cur.execute('UPDATE Factory SET ecology = ecology - 1 WHERE ecology > 0')
-            con.commit()
+            api.eco_update()
 
         if inp == 'league':
-            league.league()
+            api.league_update()
 
         if inp == 'lottery':
             await lottery()

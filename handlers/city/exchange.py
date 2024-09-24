@@ -4,10 +4,10 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, Message, InlineKeyboardMarkup, InlineKeyboardButton
 
 from States import SellStolar
+from api import api
 from bot import bot
 from config import not_enough_points
-from db import Player
-from replys import rinok_markup
+from replys import rinok_markup, back_exchange
 
 router = Router()
 
@@ -15,15 +15,15 @@ router = Router()
 @router.callback_query(F.data == 'рынок')
 async def shop_stolar(call: CallbackQuery):
     await call.message.edit_text('🌟 Добро пожаловать на рынок! 🌟 Я - торговец столар коинов.'
-                                 '\n🪙 Я могу продать вам парочку за 1 млрд штука.\n'
-                                 '🤩 Но если вам это не подходит, '
+                                 '\n🪙 Я могу продать вам парочку за 1 млрд штука.🤩 \n'
+                                 'Но если вам это не подходит, '
                                  'можете заглянуть на наш магазин @tegtoryshop для большего выбора. 🛍️🔥',
                                  reply_markup=rinok_markup)
 
 
 @router.callback_query(F.data == 'sellonrinok')
 async def sell_stolar_on_tegtory(call: CallbackQuery):
-    await call.message.answer('чтобы продать на @tegtoryshop пиши: продать')
+    await call.message.edit_text('чтобы продать на @tegtoryshop пиши: продать', reply_markup=back_exchange)
 
 
 @router.message(F.text.lower().split()[0] == 'продать')
@@ -36,7 +36,7 @@ async def sell_on_channel(message: Message, state: FSMContext):
 @router.message(StateFilter(SellStolar.stolar_on_sell))
 async def set_stolar_for_sale(message: Message, state: FSMContext):
     amount = message.text
-    player = Player(message.from_user.id)
+    player = api.player(message.from_user.id)
 
     if player.stolar < int(amount) or 0 > int(amount):
         return await message.answer('Недостаточно столар коинов')
@@ -44,7 +44,7 @@ async def set_stolar_for_sale(message: Message, state: FSMContext):
     player.stolar -= int(amount)
     await message.answer('Введите цену за которую пользователи могут купить ваши столар коины\n'
                          'Рекомендуется продать за: '
-                         f'{int(amount) * 1000000000:,} разрешено использовать \"к\" для обозначения тысячи')
+                         f'{int(amount) * 1000000000:,} \nразрешено использовать \"к\" для обозначения тысячи')
     await state.update_data(stolar_on_sell=amount)
     await state.set_state(SellStolar.money_buy)
 
@@ -84,45 +84,24 @@ async def create_message_sell(message: Message, state: FSMContext):
 @router.callback_query(F.data.split(':')[0] == 'buy_stolar')
 async def buy_on_channel(call: CallbackQuery):
     data = call.data.split(':')
-    player = Player(call.from_user.id)
+    player = api.player(call.from_user.id)
     if player.money < int(data[1]):
         return
     player.money -= int(data[1])
     player.stolar += int(data[2])
-    Player(data[3]).money += int(data[1])
+    api.player(data[3]).money += int(data[1])
     await bot.delete_message("@tegtoryshop", call.message.message_id)
     await bot.send_message(data[3], f'У вас купили столар коины {data[2]} на сумму {int(data[1]):,}')
 
 
-@router.callback_query(F.data == 'buy_stolar_coin_10x')
+@router.callback_query(F.data.split(':')[0] == 'buy_stolar_coin')
 async def buy_stolar_coin_10(call: CallbackQuery):
-    player = Player(call.from_user.id)
-    if player.money >= 10000000000:
-        player.money -= 10000000000
-        player.stolar += 10
-        await call.message.answer('куплено 10 столар коинов')
-    else:
-        await call.message.answer(not_enough_points)
-
-
-@router.callback_query(F.data == 'buy_stolar_coin_100x')
-async def buy_stolar_coin_100(call: CallbackQuery):
-    player = Player(call.from_user.id)
-    if player.money >= 100000000000:
-        player.money -= 100000000000
-        player.stolar += 100
-        await call.message.answer('куплено 100 столар коинов')
-    else:
-        await call.message.answer(not_enough_points)
-
-
-@router.callback_query(F.data == 'buy_stolar_coin')
-async def buy_stolar_coin(call: CallbackQuery):
-    player = Player(call.from_user.id)
-
-    if player.money > 1000000000:
-        player.money -= 1000000000
-        player.stolar += 1
-        await call.message.answer('куплен столар коин')
+    player = api.player(call.from_user.id)
+    amount = int(call.data.split(':')[1])
+    if player.money >= 1000000000 * amount:
+        player.money -= 1000000000 * amount
+        player.stolar += 1 * amount
+        await call.message.edit_text(f'куплено {amount} столар коинов за {1000000000 * amount}',
+                                     reply_markup=back_exchange)
     else:
         await call.message.answer(not_enough_points)

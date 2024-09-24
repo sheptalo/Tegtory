@@ -9,10 +9,10 @@ menu_kb = [
     [
         KeyboardButton(text="Фабрика"),
         KeyboardButton(text='Город'),
-        KeyboardButton(text='Помощь')
+
     ],
     [
-        KeyboardButton(text='Объединение'),
+        KeyboardButton(text='Помощь'),
         KeyboardButton(text='Мини игры')
     ]
 ]
@@ -32,18 +32,18 @@ mini_game_markup = ReplyKeyboardMarkup(resize_keyboard=True, keyboard=mini_gms)
 rinok_kb = [
     [
         InlineKeyboardButton(text='Продать на @tegtoryshop', callback_data='sellonrinok'),
-        InlineKeyboardButton(text='Купить', callback_data='buy_stolar_coin')
+        InlineKeyboardButton(text='Купить', callback_data='buy_stolar_coin:1')
     ],
     [
-        InlineKeyboardButton(text='Купить 10x', callback_data='buy_stolar_coin_10x'),
-        InlineKeyboardButton(text='Купить 100x', callback_data='buy_stolar_coin_100x')
+        InlineKeyboardButton(text='Купить 10x', callback_data='buy_stolar_coin:100'),
+        InlineKeyboardButton(text='Купить 100x', callback_data='buy_stolar_coin:100')
     ],
     [InlineKeyboardButton(text='Обратно', callback_data='city')]
 ]
 rinok_markup = InlineKeyboardMarkup(inline_keyboard=rinok_kb)
 
 clan_kb = [
-    [InlineKeyboardButton(text='лидирующие обьединения', callback_data='clan_leaderboard')],
+    [InlineKeyboardButton(text='Лидирующие обьединения', callback_data='clan_leaderboard')],
     [
         InlineKeyboardButton(text='Уровень', callback_data='factory_leaderboard'),
         InlineKeyboardButton(text='Экология', callback_data='eco_leaderboard')
@@ -53,7 +53,7 @@ clan_kb = [
         InlineKeyboardButton(text='Столар', callback_data='stolar_leaderboard')],
     [InlineKeyboardButton(text='Рейтинг', callback_data='rating_leaderboard')],
     [
-        InlineKeyboardButton(text='прошлые сезоны', callback_data='old_leaderboard'),
+        InlineKeyboardButton(text='Прошлые сезоны', callback_data='old_leaderboard'),
         InlineKeyboardButton(text='В город', callback_data='city')
     ]
 ]
@@ -169,7 +169,7 @@ ecology_kb = [
     [InlineKeyboardButton(text='Уменьшить выбросы +1 1050', callback_data='ecology:1')],
     [InlineKeyboardButton(text='покупка фильтров +2 2050', callback_data='ecology:2'),],
     [InlineKeyboardButton(text='рециркуляции воды +5 5050', callback_data='ecology:5')],
-    [InlineKeyboardButton(text='энергоэффективные технологии +10 1050', callback_data='ecology:10')],
+    [InlineKeyboardButton(text='энергоэффективные технологии +10 10050', callback_data='ecology:10')],
     [InlineKeyboardButton(text='Обратно', callback_data='back_factory')]
 ]
 ecology_markup = InlineKeyboardMarkup(inline_keyboard=ecology_kb)
@@ -182,6 +182,9 @@ city_kb = [
     [
         InlineKeyboardButton(text='Рынок', callback_data='рынок'),
         InlineKeyboardButton(text='Маркет', callback_data='маркет')
+    ],
+    [
+        InlineKeyboardButton(text='Объединение', callback_data='open_clan')
     ]
 ]
 city_markup = InlineKeyboardMarkup(inline_keyboard=city_kb)
@@ -198,3 +201,7 @@ back_factory = InlineKeyboardMarkup(inline_keyboard=[
 
 create_factory_markup = InlineKeyboardMarkup(inline_keyboard=[
     [InlineKeyboardButton(text='Создать фабрику', callback_data='create_factory')]])
+
+back_exchange = InlineKeyboardMarkup(inline_keyboard=[
+    [InlineKeyboardButton(text='Назад', callback_data='рынок')]
+])

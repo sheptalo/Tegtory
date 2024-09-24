@@ -5,7 +5,7 @@ from aiogram.fsm.context import FSMContext
 
 from Filters import SubscribeFilter, SpamFilter, SpamFilterCallBack, ProfileFilter, SubscribeFilterCallBack
 from States import ChangeNick
-from db import Player
+from api import api
 from replys import subscribed_channel, menu_reply
 
 router = Router()
@@ -41,13 +41,13 @@ async def stop_spam(message: types.Message):
 
 @router.callback_query(F.data == 'profile')
 async def profile(call: types.CallbackQuery):
-    player = Player(call.from_user.id)
+    player = api.player(call.from_user.id)
     await call.message.answer(str(player))
 
 
 @router.message(ProfileFilter())
 async def balance(message: types.Message):
-    player = Player(message.from_user.id)
+    player = api.player(message.from_user.id)
     await message.answer(str(player))
 
 
@@ -60,7 +60,7 @@ async def change_nick(message: types.Message, state: FSMContext):
 @router.message(StateFilter(ChangeNick.new_nickname))
 async def confirm_changes(message: types.Message, state: FSMContext):
     if len(message.text) < 20:
-        Player(message.from_user.id).nickname = message.text
+        api.player(message.from_user.id).name = message.text
         await state.clear()
 
 

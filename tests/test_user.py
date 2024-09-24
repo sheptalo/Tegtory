@@ -24,11 +24,11 @@ async def test_subscribe_call():
     await user.subscribe_call(call)
     call.message.edit_text.assert_called()
 
-
     from aiogram.exceptions import TelegramBadRequest
 
-    def err(*args, **kwargs):
+    def err():
         raise TelegramBadRequest(AsyncMock(), AsyncMock())
+
     call = AsyncMock()
     call.message.edit_text = err
 
