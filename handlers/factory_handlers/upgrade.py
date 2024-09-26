@@ -31,23 +31,24 @@ async def upgrade_factory(call: types.CallbackQuery):
     player = api.player(call.from_user.id)
 
     if player.isWorking:
-        return await call.message.answer(f'Во время работы нельзя прокачивать фабрику')
+        return await call.answer(f'Во время работы нельзя прокачивать фабрику', show_alert=True)
 
     factory = api.factory(call.message.chat.id)
     lvl = factory.lvl
-
+    money, stolar = player.get('money,stolar')
     if lvl < 500:
-        if player.money >= (lvl + 3) * 400:
+        if money >= (lvl + 3) * 400:
             player.money -= (lvl + 3) * 400
         else:
-            return await call.message.answer(not_enough_points)
+            return await call.answer(not_enough_points, show_alert=True)
     else:
-        if player.stolar < lvl - 499:
-            return await call.message.answer('Недостаточно столар коинов')
+        if stolar < lvl - 499:
+            return await call.answer('Недостаточно столар коинов', show_alert=True)
         else:
             player.stolar -= (lvl - 499)
-    print(factory.lvl)
-    factory.lvl += 1
-    factory.started_work_at = 0
-    print(factory.lvl)
+    factory.global_change({
+        'owner_id': factory.player.id,
+        'started_work_at': 0,
+        'lvl': lvl + 1,
+    })
     await upgrade_factory_price(call)

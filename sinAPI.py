@@ -1,10 +1,19 @@
 from requests import get, post
-from bot import cur, con
 from dotenv import load_dotenv
 from os import environ
+from mysql.connector import connect
 
 load_dotenv()
 api_url = environ.get('API_URL')
+con = connect(
+        host=environ['DB_HOST'],
+        port=3306,
+        user=environ['USER_NAME'],
+        password=environ['PASSWORD'],
+        database=environ['DB_NAME'],
+        autocommit=True
+    )
+cur = con.cursor(buffered=True)
 
 
 class Base:
@@ -12,7 +21,7 @@ class Base:
         self.headers = {"Authorization": f"Bearer {api_key}"}
         self.player_id = user_id
         self.get_url = f"{api_url}/api/v1/{self.__class__.__name__}/{user_id}/"
-        self.post_url = f"{api_url}/api/v1/{self.__class__.__name__}/"
+        self.post_url = f"{api_url}/api/v1/{self.__class__.__name__}"
 
     def __getitem__(self, name):
         if name not in ['headers', 'player_id', 'get_url', 'post_url', 'type', 'create', 'delete', 'exists', 'exist']:
@@ -37,6 +46,12 @@ class Base:
                  json={"telegram_id" if self.__class__.__name__ == 'Player' else 'owner_id': self.player_id, name: value})
         else:
             self.__dict__[name] = value
+
+    def global_change(self, values: dict):
+        req = post(self.post_url, json=values, headers=self.headers)
+
+    def get(self, values: str):
+        return eval(get(self.get_url + values, headers=self.headers).text)
 
 
 class SinApi:
@@ -85,20 +100,22 @@ class SinApi:
             super().__init__(user_id, api_key)
 
         def __str__(self):
+            user_data = eval(get(self.get_url + 'name,money,stolar,rating,league,clan_name,id,titles',
+                                 headers=self.headers).text)
             _text = f"""
-🌟*{self.name}*🌟
+🌟*{user_data[0]}*🌟
 
-💲 *Баланс:* {self.money:,}
-⚔️ *Столар:* {self.stolar:,}
+💲 *Баланс:* {user_data[1]:,}
+⚔️ *Столар:* {user_data[2]:,}
 
-🏆 *Рейтинг:* {self.rating}
-🛡️ *Лига:* {self.league}
+🏆 *Рейтинг:* {user_data[3]:,}
+🛡️ *Лига:* {user_data[4]}
 
-🌎 *Oбъединение:* {self.clan_name.replace('_', ' ')}
+🌎 *Oбъединение:* {user_data[5].replace('_', ' ')}
 
-*Идентификатор*: {self.id}
+*Идентификатор*: {user_data[6]}
         """
-            title = self.titles
+            title = user_data[7]
             if title:
                 _text += f'\n\n🏆 *Титулы:* \n'
                 for name in title.split():
@@ -126,16 +143,18 @@ class SinApi:
                 pass
 
         def __str__(self):
+            factory_data = eval(get(self.get_url + 'name,lvl,state,tax,workers,ecology,stock,verification',
+                                    headers=self.headers).text)
             return f"""
-🏭 *{self.name.replace('_', ' ')}*
-🔧 *Уровень:* {self.lvl}
+🏭 *{factory_data[0].replace('_', ' ')}*
+🔧 *Уровень:* {factory_data[1]}
 ⚙️ *Тип:* {self.type}
-🚧 *Статус:* {'Работает' if self.state == 1 else 'Не работает'}
-💸 *Налоги:* {self.tax}
-👷‍ *Работники:* {self.workers}
-♻️ *Вклад в экологию:* {self.ecology}
-📦 *Товара на складе:* {self.stock}
-{'🔎 _Знак качества_' if self.verification == 1 else ''}
+🚧 *Статус:* {'Работает' if factory_data[2] == 1 else 'Не работает'}
+💸 *Налоги:* {factory_data[3]}
+👷‍ *Работники:* {factory_data[4]}
+♻️ *Вклад в экологию:* {factory_data[5]}
+📦 *Товара на складе:* {factory_data[6]}
+{'🔎 _Знак качества_' if factory_data[7] == 1 else ''}
                 """
 
         @property
@@ -171,3 +190,5 @@ class SinApi:
 
             cur.execute("SELECT owner_id FROM Factory WHERE owner_id = %s", (self.player_id,))
             return not (cur.fetchone() is None)
+
+

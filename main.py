@@ -2,6 +2,7 @@ import asyncio
 import logging
 
 from MIddleWares.UserMiddleWare import UserMiddleWare
+
 from bot import bot, dp
 from db import console
 from handlers import menu, shop, minigames, clanss, factory, user, start, ref

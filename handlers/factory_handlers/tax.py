@@ -12,9 +12,9 @@ router = Router()
 async def check_tax(call: types.CallbackQuery):
     factory = api.factory(call.message.chat.id)
     if not factory.exists():
-        return await call.message.answer('У вас нет фабрики а значит и налогов')
+        return await call.answer('У вас нет фабрики а значит и налогов', show_alert=True)
     tax = factory.tax
-    if factory.tax == 0:
+    if tax == 0:
         return await call.message.edit_caption(caption='У вас нет налогов', reply_markup=back_factory)
     await call.message.edit_caption(caption=f'💸*Налоги на фабрику:* {tax}', reply_markup=tax_markup)
 
@@ -24,7 +24,7 @@ async def pay_tax(call: types.CallbackQuery):
     player = api.player(call.from_user.id)
     factory = api.factory(call.message.chat.id)
     if player.money < factory.tax:
-        return await call.message.answer('Недостаточно очков для оплаты налога')
+        return await call.answer('Недостаточно очков для оплаты налога', show_alert=True)
     else:
         player.money -= factory.tax
         factory.tax = 0

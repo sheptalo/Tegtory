@@ -68,12 +68,7 @@ async def answer_found_factory(message: types.Message, state: FSMContext):
     if not factory.exists():
         return await message.answer('Фабрика не найдена')
     _type = factory_image(factory.type)
-    await message.answer_photo(URLInputFile(_type),
-                               f'*{factory.name}:* \n\n'
-                               f'🔧 *{factory.lvl} уровень*\n'
-                               f'⚙️ *Тип {factory.type}* \n'
-                               f'🚧 *Статус {'Не работает' if factory.state == 0 else 'Работает'}*  \n'
-                               f'👷‍ *{factory.workers} работников* ')
+    await message.answer_photo(URLInputFile(_type), str(factory))
     await state.clear()
 
 

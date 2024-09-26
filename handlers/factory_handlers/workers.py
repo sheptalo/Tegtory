@@ -28,11 +28,11 @@ async def buy_workers(call: types.CallbackQuery):
 async def hire_worker(call: types.CallbackQuery):
     player = api.player(call.from_user.id)
     factory = api.factory(call.message.chat.id)
-
-    if factory.lvl == factory.workers:
-        return await call.message.answer(max_workers)
-    if player.money < (1 + factory.workers) * 300:
-        return await call.message.answer(not_enough_points)
-    player.money -= (1 + factory.workers) * 300
+    lvl, workers = factory.get('lvl,workers')
+    if lvl == workers:
+        return await call.answer(max_workers, show_alert=True)
+    if player.money < (1 + workers) * 300:
+        return await call.answer(not_enough_points, show_alert=True)
+    player.money -= (1 + workers) * 300
     factory.workers += 1
     await buy_workers(call)

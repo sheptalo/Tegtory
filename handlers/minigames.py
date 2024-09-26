@@ -14,10 +14,7 @@ coff = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 1.1, 1.4, 1.7]
 def cost_get(message) -> int:
     if message.text.lower().split()[1] == 'все':
         return api.player(message.from_user.id).money
-    cost = message.text.lower().split()[1].replace(',', '')
-    cost = cost.replace('к', '000')
-    cost = int(cost)
-    return abs(cost)
+    return abs(int(message.text.lower().split()[1].replace(',', '').replace('к', '000')))
 
 
 # region Биржа
@@ -57,13 +54,19 @@ async def birzha_main(message: types.Message):
 async def farm_main(message: types.Message):
     current_time = int(time.time())
     player = api.player(message.from_user.id)
+    money, farm_click = player.get('money,farm_click')
     _time = 86400
-    if current_time - player.farm_click >= _time:
-        player.farm_click = current_time
+    if current_time - farm_click >= _time:
         time.sleep(0.1)
         bonus = random.randint(20, 200)
         await message.answer(f'бонус получен в размере {bonus} очков')
-        player.money += bonus
+        farm_click = current_time
+        money += bonus
+        player.global_change({
+            'telegram_id': message.from_user.id,
+            'money': money,
+            'farm_click': farm_click
+        })
     else:
         await message.answer(
             f'вы получали бонус сегодня до следующего бонуса {round((player.farm + _time - current_time) / 60 / 60, 5)} часа. ')

@@ -34,7 +34,6 @@ async def subscribe_call(call: types.CallbackQuery):
 
 @router.message(SpamFilter(), F.text)
 async def stop_spam(message: types.Message):
-
     await message.answer('Не спамьте!')
     await message.delete()
 
@@ -59,8 +58,9 @@ async def change_nick(message: types.Message, state: FSMContext):
 
 @router.message(StateFilter(ChangeNick.new_nickname))
 async def confirm_changes(message: types.Message, state: FSMContext):
-    if len(message.text) < 20:
+    if len(message.text) <= 20:
         api.player(message.from_user.id).name = message.text
+        await message.answer('Успешно изменено имя')
         await state.clear()
 
 

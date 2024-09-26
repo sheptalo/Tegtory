@@ -52,9 +52,10 @@ async def factory_working(call: types.CallbackQuery):
         created = workers * 2 + random.randint(0, 20)
         factory.stock += created
         await bot.send_message(call.message.chat.id,
-                               f'Рабочие на фабрике закончили работать, произведенно: {created}')
+                               f'Рабочие на фабрике закончили работать, произведенно: {created} товаров')
 
         factory.tax += workers * 5
+        await back_factory(call)
 
     else:
         await call.message.answer("Склад фабрики каждого пользователя пополнится в течении пары минут.")
@@ -81,27 +82,30 @@ async def factory_working(call: types.CallbackQuery):
 async def start_factory(call: types.CallbackQuery):
     current_time = int(time.time())
     factory = api.factory(call.message.chat.id)
-    last_click = factory.started_work_at
+    state, tax, last_click, workers = factory.get('state,tax,started_work_at,workers')
     _time = 900
 
-    if factory.workers == 0:
-        return await call.message.answer('Фабрику нельзя запустить если рабочих нет')
+    if workers == 0:
+        return await call.answer('Фабрику нельзя запустить если рабочих нет', show_alert=True)
 
     if not last_click or current_time - last_click >= _time:
-        if factory.state == 1:
+        if state == 1:
             factory.state = 0
             return await factory_working(call)
 
-        if factory.tax > 20000:
-            return await call.message.edit_text(f'У вас Неуплата налогов оплатите {factory.tax} чтобы запустить фабрику',
+        if tax > 20000:
+            return await call.message.edit_text(f'У вас Неуплата налогов оплатите {tax} чтобы запустить фабрику',
                                                 reply_markup=tax_markup)
 
-        await call.message.answer('Рабочие приступили к работе')
+        await call.answer('Рабочие приступили к работе', show_alert=True)
 
-        factory.started_work_at = current_time
-        factory.state = 1
+        factory.global_change({
+            'owner_id': factory.player_id,
+            'started_work_at': current_time,
+            'state': 1
+        })
         await back_factory(call)
     else:
-        await call.message.answer(f'Фабрике осталось работать {last_click + _time - current_time} секунд')
+        await call.answer(f'Фабрике осталось работать {last_click + _time - current_time} секунд', show_alert=True)
 
 

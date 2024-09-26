@@ -82,7 +82,6 @@ async def buy_title_call(call: CallbackQuery):
             return call.message.edit_text('У вас уже есть этот титул', reply_markup=title_error_markup)
 
         player.titles += ' Хранитель'
-
     await call.message.edit_text(f'Куплен титул *{player.titles.split()[-1]}* ', reply_markup=title_error_markup)
 
 

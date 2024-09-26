@@ -27,7 +27,6 @@ not_in_clan = ('В данный момент ты не состоишь в об�
 @router.callback_query(F.data == 'open_clan')
 async def clan_def(call: types.CallbackQuery):
     player = api.player(call.from_user.id)
-    print(player.clan_name)
     if player.clan_name == '':
         return await call.message.edit_text(not_in_clan, parse_mode='HTML', reply_markup=back_city)
     _text = f'🏆 *Лидеры Объединения \"{player.clan_name}\"* 🏆\n\n'
@@ -44,8 +43,11 @@ async def clan_def(call: types.CallbackQuery):
 @router.message(Command('leave'))
 async def leave_clan_cm(message: types.Message):
     player = api.player(message.from_user.id)
-    player.clan_name = ''
-    player.clan_leader = 0
+    player.global_change({
+        'telegram_id': message.from_user.id,
+        'clan_name': '',
+        'clan_leader': 0
+    })
     await message.answer('Ты покинул обьединение')
 
 
@@ -72,33 +74,38 @@ async def join(message: types.Message):
 
 @router.message(Command('create_clan'))
 async def create_clan(message: types.Message):
-    factory = api.factory(message.from_user.id)
-    player = api.player(message.from_user.id)
-    if factory.lvl < 10:
-        return await message.answer(clan_lvl)
-    try:
-        clan_name = message.text.split()[1]
-    except:
-        return await message.answer(create_clan_text, parse_mode='HTML')
-
-    try:
-        message.text.split()[2]
-    except:
-        return await message.answer('Чтобы объединение состояло из несколких слов, заменяйте их на _')
-
-    if not player.create_clan(clan_name):
-        return await message.answer('Такое объединение уже существует')
-
-    if len(clan_name) > 100:
-        return await message.answer(create_clan_text, parse_mode='HTML')
-
-    if player.clan.name != '':
-        return await message.answer('Вы уже состоите в объединении')
-
-    if player.money > 7500:
-        player.money -= 7500
-        player.clan_name = clan_name
-        player.clan_leader = 1
-        await message.answer(f'Успешно создано обьединение {clan_name.replace('_', ' ')}')
-    else:
-        await message.answer(not_enough_points)
+    await message.answer('Функция временно недоступна')
+    # factory = api.factory(message.from_user.id)
+    # player = api.player(message.from_user.id)
+    # if factory.lvl < 10:
+    #     return await message.answer(clan_lvl)
+    # try:
+    #     clan_name = message.text.split()[1]
+    # except:
+    #     return await message.answer(create_clan_text, parse_mode='HTML')
+    #
+    # try:
+    #     message.text.split()[2]
+    # except:
+    #     return await message.answer('Чтобы объединение состояло из несколких слов, заменяйте их на _')
+    #
+    # if not player.create_clan(clan_name):
+    #     return await message.answer('Такое объединение уже существует')
+    #
+    # if len(clan_name) > 100:
+    #     return await message.answer(create_clan_text, parse_mode='HTML')
+    #
+    # if player.clan_name != '':
+    #     return await message.answer('Вы уже состоите в объединении')
+    #
+    # if player.money > 7500:
+    #     player.money -= 7500
+    #     player.clan_name = clan_name
+    #     player.clan_leader = 1
+    #     player.global_change({
+    #         'telegram_id': message.from_user.id,
+    #         'money': money,
+    #     })
+    #     await message.answer(f'Успешно создано обьединение {clan_name.replace('_', ' ')}')
+    # else:
+    #     await message.answer(not_enough_points)
