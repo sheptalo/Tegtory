@@ -43,7 +43,7 @@ async def clan_def(call: types.CallbackQuery):
 @router.message(Command('leave'))
 async def leave_clan_cm(message: types.Message):
     player = api.player(message.from_user.id)
-    player.global_change({
+    player.set({
         'telegram_id': message.from_user.id,
         'clan_name': '',
         'clan_leader': 0

@@ -27,7 +27,7 @@ async def start_func(message: types.Message, command: CommandObject):
     if player.ref != '' or not api.player(payload).exist:
         return await message.answer(welcome, reply_markup=menu_reply, parse_mode='HTML')
 
-    player.global_change({
+    player.set({
         'telegram_id': message.from_user.id,
         'money': money + 250,
         'ref': payload,

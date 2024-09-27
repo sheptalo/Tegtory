@@ -8,16 +8,12 @@ async def console():
         from api import api
         if inp == 'stock':
             api.stock_update()
-
         if inp == 'eco':
             api.eco_update()
-
         if inp == 'league':
             api.league_update()
-
         if inp == 'lottery':
             await lottery()
-
         inp = await ainput()
 
 

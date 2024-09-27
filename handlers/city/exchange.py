@@ -89,7 +89,7 @@ async def buy_on_channel(call: CallbackQuery):
         return
     money -= int(data[1])
     stolar += int(data[2])
-    player.global_change({
+    player.set({
         'telegram_id': call.from_user.id,
         'money': money,
         'stolar': stolar,
@@ -108,7 +108,7 @@ async def buy_stolar_coin(call: CallbackQuery):
     if money >= 1000000000 * amount:
         money -= 1000000000 * amount
         stolar += 1 * amount
-        player.global_change({
+        player.set({
             'telegram_id': call.from_user.id,
             'money': money,
             'stolar': stolar

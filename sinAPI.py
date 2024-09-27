@@ -24,34 +24,34 @@ class Base:
         self.post_url = f"{api_url}/api/v1/{self.__class__.__name__}"
 
     def __getitem__(self, name):
-        if name not in ['headers', 'player_id', 'get_url', 'post_url', 'type', 'create', 'delete', 'exists', 'exist']:
-            return eval(get(self.get_url + name, headers=self.headers).text)[0]
-        return self.__dict__[name]
+        return self.__get(name)
 
     def __getattr__(self, name):
-        if name not in ['headers', 'player_id', 'get_url', 'post_url', 'type', 'create', 'delete', 'exists', 'exist']:
-            return eval(get(self.get_url + name, headers=self.headers).text, )[0]
-        return self.__dict__[name]
+        return self.__get(name)
 
     def __setattr__(self, name, value):
-        if name not in ['headers', 'player_id', 'get_url', 'post_url', 'type', 'create', 'delete', 'exists', 'exist']:
-            post(self.post_url, headers=self.headers,
-                 json={"telegram_id" if self.__class__.__name__ == 'Player' else 'owner_id': self.player_id, name: value})
-        else:
-            self.__dict__[name] = value
+        self.__setitem__(name, value)
 
     def __setitem__(self, name, value):
-        if name not in ['headers', 'player_id', 'get_url', 'post_url', 'type', 'create', 'delete', 'exists', 'exist']:
-            post(self.post_url, headers=self.headers,
-                 json={"telegram_id" if self.__class__.__name__ == 'Player' else 'owner_id': self.player_id, name: value})
-        else:
-            self.__dict__[name] = value
+        self.__set(name, value)
 
-    def global_change(self, values: dict):
+    def set(self, values: dict):
         req = post(self.post_url, json=values, headers=self.headers)
 
     def get(self, values: str):
         return eval(get(self.get_url + values, headers=self.headers).text)
+
+    def __set(self, name, value):
+        if name not in ['headers', 'player_id', 'get_url', 'post_url', 'type', 'create', 'delete', 'exists', 'exist']:
+            post(self.post_url, headers=self.headers,
+                 json={"telegram_id" if self.__class__.__name__ == 'Player' else 'owner_id': self.player_id, name: value})
+        else:
+            self.__dict__[name] = value
+
+    def __get(self, name):
+        if name not in ['headers', 'player_id', 'get_url', 'post_url', 'type', 'create', 'delete', 'exists', 'exist']:
+            return eval(get(self.get_url + name, headers=self.headers).text, )[0]
+        return self.__dict__[name]
 
 
 class SinApi:

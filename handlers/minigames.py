@@ -62,7 +62,7 @@ async def farm_main(message: types.Message):
         await message.answer(f'бонус получен в размере {bonus} очков')
         farm_click = current_time
         money += bonus
-        player.global_change({
+        player.set({
             'telegram_id': message.from_user.id,
             'money': money,
             'farm_click': farm_click

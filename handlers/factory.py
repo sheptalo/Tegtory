@@ -99,7 +99,7 @@ async def start_factory(call: types.CallbackQuery):
 
         await call.answer('Рабочие приступили к работе', show_alert=True)
 
-        factory.global_change({
+        factory.set({
             'owner_id': factory.player_id,
             'started_work_at': current_time,
             'state': 1

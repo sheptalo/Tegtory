@@ -22,7 +22,7 @@ async def work(call: types.CallbackQuery):
                           'Чтобы прекратить досрочно пишите отлучиться\n\nсовет:\n'
                           'Если вы начали работать на фабрике в чате, '
                           'то завершайте работать в нем же.', show_alert=True)
-        player.global_change({
+        player.set({
             'telegram_id': call.from_user.id,
             'isWorking': 1,
             'workedAt': current_time
@@ -36,7 +36,7 @@ async def work(call: types.CallbackQuery):
 @router.message(F.text.lower().split()[0] == 'отлучиться')
 async def drop_work(message: types.Message):
     player = api.player(message.from_user.id)
-    player.global_change({
+    player.set({
         'telegram_id': message.from_user.id,
         'isWorking': 0,
         'workedAt': 0
