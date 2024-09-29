@@ -6,6 +6,7 @@ from aiogram.utils.payload import decode_payload
 from api import api
 from bot import bot
 from replys import menu_reply
+from .user import connect_me
 
 
 router = Router()
@@ -21,9 +22,17 @@ async def cancel(message: types.Message, state: FSMContext):
 @router.message(CommandStart(deep_link=True))
 async def start_func(message: types.Message, command: CommandObject):
     args = command.args
-    payload = decode_payload(args)
     player = api.player(message.from_user.id)
+
+    if args.startswith('connect_'):
+        vk_id = args.split('_')[1]
+        if player.vk_id != vk_id:
+            await message.reply('Аккаунт подключается, можно вернутся обратно')
+            return connect_me(message, vk_id)
+
+    payload = decode_payload(args)
     money = player.money
+
     if player.ref != '' or not api.player(payload).exist:
         return await message.answer(welcome, reply_markup=menu_reply, parse_mode='HTML')
 

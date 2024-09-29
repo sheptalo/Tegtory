@@ -84,6 +84,7 @@ async def start_factory(call: types.CallbackQuery):
     factory = api.factory(call.message.chat.id)
     state, tax, last_click, workers = factory.get('state,tax,started_work_at,workers')
     _time = 900
+    print(state)
 
     if workers == 0:
         return await call.answer('Фабрику нельзя запустить если рабочих нет', show_alert=True)

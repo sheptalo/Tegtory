@@ -2,7 +2,5 @@ aiogram
 pyrogram
 mysql-connector-python
 aioconsole
-pytest
-pytest-asyncio
 python-dotenv
 requests

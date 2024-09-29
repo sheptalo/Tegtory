@@ -17,11 +17,14 @@ cur = con.cursor(buffered=True)
 
 
 class Base:
-    def __init__(self, user_id, api_key):
+    params = eval(get(api_url + '/api/v1/params').text)
+
+    def __init__(self, user_id, vk, api_key):
         self.headers = {"Authorization": f"Bearer {api_key}"}
-        self.player_id = user_id
+        self.player_id = str(user_id)
         self.get_url = f"{api_url}/api/v1/{self.__class__.__name__}/{user_id}/"
         self.post_url = f"{api_url}/api/v1/{self.__class__.__name__}"
+        self.vk = vk
 
     def __getitem__(self, name):
         return self.__get(name)
@@ -36,20 +39,24 @@ class Base:
         self.__set(name, value)
 
     def set(self, values: dict):
-        req = post(self.post_url, json=values, headers=self.headers)
+        post(self.post_url, json=values, headers=self.headers)
 
     def get(self, values: str):
         return eval(get(self.get_url + values, headers=self.headers).text)
 
     def __set(self, name, value):
-        if name not in ['headers', 'player_id', 'get_url', 'post_url', 'type', 'create', 'delete', 'exists', 'exist']:
-            post(self.post_url, headers=self.headers,
-                 json={"telegram_id" if self.__class__.__name__ == 'Player' else 'owner_id': self.player_id, name: value})
+        if self.params is None and name in eval(get(api_url + '/api/v1/params').text) or name in self.params:
+            if self.vk:
+                post(self.post_url, headers=self.headers, json={'vk_id': self.player_id, name: value})
+            elif self.__class__.__name__ == 'Player':
+                post(self.post_url, headers=self.headers, json={'telegram_id': self.player_id, name: value})
+            else:
+                post(self.post_url, headers=self.headers, json={'owner_id': str(self.player_id), name: value})
         else:
             self.__dict__[name] = value
 
     def __get(self, name):
-        if name not in ['headers', 'player_id', 'get_url', 'post_url', 'type', 'create', 'delete', 'exists', 'exist']:
+        if self.params is None and name in eval(get(api_url + '/api/v1/params').text) or name in self.params:
             return eval(get(self.get_url + name, headers=self.headers).text, )[0]
         return self.__dict__[name]
 
@@ -59,10 +66,38 @@ class SinApi:
         self.api_key = api_key
         self.headers = {"Authorization": f"Bearer {self.api_key}"}
 
-    def player(self, telegram_id):
-        return self.Player(telegram_id, self.api_key)
+    def player(self, user_id):
+        """
+        player = api.player(id)
+        player = api.player(vk_id)
+        player.global_change({
+        'telegram_id': self.player_id,
+        'vk_id': self.player_id,
+        'значение для изменения', значение,
+        'значение для изменения', значение,
+        ...
+        })
+        """
+        return self.Player(user_id, self.api_key)
 
     def factory(self, owner_id):
+        """
+        factory = api.factory(id пользователя)
+
+        получаем значения из бд
+        factory.name или factory.get('name')
+        получаем список значений factory.get('name,workers') -> [name, workers]
+
+        изменяем данные
+        factory.name = ''
+        или
+        factory.global_change({
+        'owner_id': id пользователя,
+        'значение для изменения', значение,
+        'значение для изменения', значение,
+        ...
+    })
+        """
         return self.Factory(owner_id, self.api_key)
 
     def find_factory(self, name):
@@ -73,12 +108,6 @@ class SinApi:
     def stock(self):
         return eval(get(f'{api_url}/api/v1/stock',
                         headers=self.headers).text)[0]
-
-    def stock_update(self):
-        post(f'{api_url}/api/v1/stock', headers=self.headers)
-
-    def eco_update(self):
-        post(f'{api_url}/api/v1/eco', headers=self.headers)
 
     def league_update(self):
         post(f'{api_url}/api/v1/leagueUpdate', headers=self.headers,
@@ -92,16 +121,17 @@ class SinApi:
 
     class Player(Base):
         def __init__(self, user_id, api_key):
+            vk = str(user_id).startswith('vk_')
             try:
-                int(user_id)
+                if not vk:
+                    int(user_id)
             except:
                 user_id = get(f'{api_url}/api/v1/findUser/{user_id.replace('@', '')}',
                               headers={"Authorization": f"Bearer {api_key}"}).text
-            super().__init__(user_id, api_key)
+            super().__init__(user_id, vk, api_key)
 
         def __str__(self):
-            user_data = eval(get(self.get_url + 'name,money,stolar,rating,league,clan_name,id,titles',
-                                 headers=self.headers).text)
+            user_data = self.get('name,money,stolar,rating,league,clan_name,id,titles')
             _text = f"""
 🌟*{user_data[0]}*🌟
 
@@ -114,7 +144,7 @@ class SinApi:
 🌎 *Oбъединение:* {user_data[5].replace('_', ' ')}
 
 *Идентификатор*: {user_data[6]}
-        """
+                """
             title = user_data[7]
             if title:
                 _text += f'\n\n🏆 *Титулы:* \n'
@@ -126,21 +156,22 @@ class SinApi:
             con.ping(True)
             cur.execute("INSERT INTO"
                         " Users(telegram_id, name, league, username) VALUES (%s, %s, '', %s)",
-                        (self.user_id, username, user))
+                        (self.player_id, username, user))
             con.commit()
 
         @property
         def exist(self) -> bool:
-            return bool(get(f'{api_url}/api/v1/exist/Player/' + str(self.player_id), headers=self.headers).text)
+            try:
+                if self.telegram_id == int(self.player_id) or self.vk_id == int(self.player_id.replace('vk_', '')):
+                    return True
+            except:
+                pass
+            return False
 
     class Factory(Base):
         def __init__(self, user_id, api_key):
-            super().__init__(user_id, api_key)
-            try:
-                self.player_id = \
-                    eval(get(f'{api_url}/api/v1/Player/{user_id}/id', headers=self.headers).text)[0]
-            except KeyError:
-                pass
+            vk = str(user_id).startswith('vk_')
+            super().__init__(user_id, vk, api_key)
 
         def __str__(self):
             factory_data = eval(get(self.get_url + 'name,lvl,state,tax,workers,ecology,stock,verification',
@@ -155,7 +186,7 @@ class SinApi:
 ♻️ *Вклад в экологию:* {factory_data[5]}
 📦 *Товара на складе:* {factory_data[6]}
 {'🔎 _Знак качества_' if factory_data[7] == 1 else ''}
-                """
+                        """
 
         @property
         def type(self):
@@ -173,6 +204,17 @@ class SinApi:
             else:
                 return 'Древесина'
 
+        @property
+        def exist(self) -> bool:
+            try:
+                req = get(self.get_url + 'owner_id', headers=self.headers)
+                print(req.text)
+                if req.status_code != 404:
+                    return True
+            except:
+                pass
+            return False
+
         def create(self, name: str):
             con.ping(True)
 
@@ -186,9 +228,6 @@ class SinApi:
             con.commit()
 
         def exists(self) -> bool:
-            con.ping(True)
-
-            cur.execute("SELECT owner_id FROM Factory WHERE owner_id = %s", (self.player_id,))
-            return not (cur.fetchone() is None)
+            return self.exist
 
 

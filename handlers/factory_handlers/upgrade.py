@@ -46,8 +46,9 @@ async def upgrade_factory(call: types.CallbackQuery):
             return await call.answer('Недостаточно столар коинов', show_alert=True)
         else:
             player.stolar -= (lvl - 499)
+
     factory.set({
-        'owner_id': factory.player.id,
+        'owner_id': factory.player_id,
         'started_work_at': 0,
         'lvl': lvl + 1,
     })
