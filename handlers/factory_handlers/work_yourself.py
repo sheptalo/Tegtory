@@ -1,3 +1,5 @@
+import asyncio
+
 from aiogram import types, Router, F
 from api import api
 
@@ -16,7 +18,6 @@ async def work(call: types.CallbackQuery):
     _time = (factory.lvl + 3) * 5
     if not last_click or current_time - last_click >= _time:
         if working:
-            player.isWorking = 0
             return await work_finish(call)
         await call.answer('Вы приступили к работе. '
                           'Чтобы прекратить досрочно пишите отлучиться\n\nсовет:\n'
@@ -27,6 +28,7 @@ async def work(call: types.CallbackQuery):
             'isWorking': 1,
             'workedAt': current_time
         })
+        task = asyncio.create_task(work_timer(call, _time))
 
     else:
         await call.answer(f'вы работаете осталось {round(last_click + _time - current_time, 1)} секунд',
@@ -48,5 +50,13 @@ async def work_finish(call):
     lvl = factory.lvl
     created = (lvl + 1) * (5 + random.randint(0, 5))
     factory.stock += created
-    await call.answer(f'Работа окончена! Произведено товаров: {created}', show_alert=True)
     factory.tax += created // 2
+    api.player(call.from_user.id).isWorking = 0
+
+    await call.message.answer(f'Работа окончена! Произведено товаров: {created}')
+
+
+async def work_timer(call, tme):
+    await asyncio.sleep(tme)
+    if api.player(call.from_user.id).isWorking:
+        await work_finish(call)
