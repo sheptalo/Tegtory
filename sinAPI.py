@@ -1,4 +1,4 @@
-from requests import get, post
+from requests import get, post, put
 from dotenv import load_dotenv
 from os import environ
 from mysql.connector import connect
@@ -39,7 +39,7 @@ class Base:
         self.__set(name, value)
 
     def set(self, values: dict):
-        post(self.post_url, json=values, headers=self.headers)
+        put(self.post_url, json=values, headers=self.headers)
 
     def get(self, values: str):
         return eval(get(self.get_url + values, headers=self.headers).text)
@@ -47,11 +47,11 @@ class Base:
     def __set(self, name, value):
         if self.params is None and name in eval(get(api_url + '/api/v1/params').text) or name in self.params:
             if self.vk:
-                post(self.post_url, headers=self.headers, json={'vk_id': self.player_id, name: value})
+                put(self.post_url, headers=self.headers, json={'vk_id': self.player_id, name: value})
             elif self.__class__.__name__ == 'Player':
-                post(self.post_url, headers=self.headers, json={'telegram_id': self.player_id, name: value})
+                put(self.post_url, headers=self.headers, json={'telegram_id': self.player_id, name: value})
             else:
-                post(self.post_url, headers=self.headers, json={'owner_id': str(self.player_id), name: value})
+                put(self.post_url, headers=self.headers, json={'owner_id': str(self.player_id), name: value})
         else:
             self.__dict__[name] = value
 
@@ -166,6 +166,10 @@ class SinApi:
                     return True
             except:
                 pass
+            return False
+
+        @property
+        def is_banned(self) -> bool:
             return False
 
     class Factory(Base):

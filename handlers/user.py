@@ -6,13 +6,27 @@ from aiogram.exceptions import TelegramBadRequest
 from aiogram.filters import Command, StateFilter
 from aiogram.fsm.context import FSMContext
 
-from Filters import SubscribeFilter, SpamFilter, SpamFilterCallBack, ProfileFilter, SubscribeFilterCallBack
+from Filters import SubscribeFilter, SpamFilter, SpamFilterCallBack, ProfileFilter, SubscribeFilterCallBack, BanFilter, \
+    CallBanFilter
 from States import ChangeNick
 from api import api
 from replys import subscribed_channel, menu_reply
 
 router = Router()
 exactly = 'Telegram server says - Bad Request: message is not modified: specified new message content and reply markup are exactly the same as a current content and reply markup of the message'
+
+
+@router.message(BanFilter())
+async def banned_message(message: types.Message):
+    await message.answer('К сожалению вы заблокированы в Tegtory.\n'
+                         'Если вы считаете что это произошло по ошибке напишите нам *tegtory@sinortax.ru*')
+
+
+@router.callback_query(CallBanFilter())
+async def banned_call(call: types.CallbackQuery):
+    await call.answer('К сожалению вы заблокированы в Tegtory.\n'
+                      'Если вы считаете что это произошло по ошибке напишите нам *tegtory@sinortax.ru*',
+                      show_alert=True)
 
 
 @router.message(SubscribeFilter())

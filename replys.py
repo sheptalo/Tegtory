@@ -150,7 +150,7 @@ title_error = [
 ]
 title_error_markup = InlineKeyboardMarkup(inline_keyboard=title_error)
 
-prices = [LabeledPrice(label='100000 очков', amount=8500)]
+prices = [LabeledPrice(label='1000 очков XTR', amount=10)]
 
 market_kb = [
     [
