@@ -1,6 +1,5 @@
 aiogram
 pyrogram
-mysql-connector-python
 aioconsole
 python-dotenv
 requests

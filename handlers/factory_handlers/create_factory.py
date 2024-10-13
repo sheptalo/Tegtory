@@ -32,7 +32,7 @@ async def process_factory_name(message: Message, state: FSMContext):
         return await message.answer("У вас уже есть фабрика.")
     if len(factory_name) > 20:
         return await message.answer(create_factory_caution)
-    if type(api.find_factory(factory_name)) != "<class 'int'>":
+    if type(api.find_factory(factory_name)) == api.Factory:
         return await message.answer('Фабрика с таким названием существует')
     factory.create(factory_name)
     await message.answer(f'Успешно создана фабрика {factory_name}')

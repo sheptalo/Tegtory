@@ -1,29 +1,19 @@
-from requests import get, post, put
+from requests import get, post, put, delete as delet
 from dotenv import load_dotenv
 from os import environ
-from mysql.connector import connect
 
 load_dotenv()
-api_url = environ.get('API_URL')
-con = connect(
-        host=environ['DB_HOST'],
-        port=3306,
-        user=environ['USER_NAME'],
-        password=environ['PASSWORD'],
-        database=environ['DB_NAME'],
-        autocommit=True
-    )
-cur = con.cursor(buffered=True)
+api_url = environ.get('API_URL') + '/api/v1/'
 
 
 class Base:
-    params = eval(get(api_url + '/api/v1/params').text)
+    params = eval(get(api_url + 'params').text)
 
     def __init__(self, user_id, vk, api_key):
         self.headers = {"Authorization": f"Bearer {api_key}"}
         self.player_id = str(user_id)
-        self.get_url = f"{api_url}/api/v1/{self.__class__.__name__}/{user_id}/"
-        self.post_url = f"{api_url}/api/v1/{self.__class__.__name__}"
+        self.get_url = f"{api_url}{self.__class__.__name__}/{user_id}/"
+        self.post_url = f"{api_url}{self.__class__.__name__}"
         self.vk = vk
 
     def __getitem__(self, name):
@@ -45,20 +35,21 @@ class Base:
         return eval(get(self.get_url + values, headers=self.headers).text)
 
     def __set(self, name, value):
-        if self.params is None and name in eval(get(api_url + '/api/v1/params').text) or name in self.params:
+        if self.params is None and name in eval(get(api_url + 'params').text) or name in self.params:
             if self.vk:
                 put(self.post_url, headers=self.headers, json={'vk_id': self.player_id, name: value})
             elif self.__class__.__name__ == 'Player':
                 put(self.post_url, headers=self.headers, json={'telegram_id': self.player_id, name: value})
             else:
                 put(self.post_url, headers=self.headers, json={'owner_id': str(self.player_id), name: value})
-        else:
+        elif name in self.__dict__:
             self.__dict__[name] = value
 
     def __get(self, name):
-        if self.params is None and name in eval(get(api_url + '/api/v1/params').text) or name in self.params:
-            return eval(get(self.get_url + name, headers=self.headers).text, )[0]
-        return self.__dict__[name]
+        if self.params is None and name in eval(get(api_url + 'params').text) or name in self.params:
+            return eval(get(self.get_url + name, headers=self.headers).text)[0]
+        elif name in self.__dict__:
+            return self.__dict__[name]
 
 
 class SinApi:
@@ -101,23 +92,23 @@ class SinApi:
         return self.Factory(owner_id, self.api_key)
 
     def find_factory(self, name):
-        req = get(f'{api_url}/api/v1/findFactory/{name}',
+        req = get(f'{api_url}findFactory/{name}',
                   headers=self.headers).text
-        return self.factory(req) if req != 0 else 0
+        return self.factory(req) if req != '0' else req
 
     def stock(self):
-        return eval(get(f'{api_url}/api/v1/stock',
+        return eval(get(f'{api_url}stock',
                         headers=self.headers).text)[0]
 
     def league_update(self):
-        post(f'{api_url}/api/v1/leagueUpdate', headers=self.headers,
+        post(f'{api_url}leagueUpdate', headers=self.headers,
              allow_redirects=True)
 
     def lottery_start(self):
-        return eval(get(f'{api_url}/api/v1/startLottery', headers=self.headers).text)
+        return eval(get(f'{api_url}startLottery', headers=self.headers).text)
 
     def reset_tickets(self):
-        post(f'{api_url}/api/v1/resetTickets', headers=self.headers)
+        post(f'{api_url}resetTickets', headers=self.headers)
 
     class Player(Base):
         def __init__(self, user_id, api_key):
@@ -126,7 +117,7 @@ class SinApi:
                 if not vk:
                     int(user_id)
             except:
-                user_id = get(f'{api_url}/api/v1/findUser/{user_id.replace('@', '')}',
+                user_id = get(f'{api_url}findUser/{user_id.replace('@', '')}',
                               headers={"Authorization": f"Bearer {api_key}"}).text
             super().__init__(user_id, vk, api_key)
 
@@ -153,11 +144,8 @@ class SinApi:
             return _text
 
         async def create(self, username: str, user: str):
-            con.ping(True)
-            cur.execute("INSERT INTO"
-                        " Users(telegram_id, name, league, username) VALUES (%s, %s, '', %s)",
-                        (self.player_id, username, user))
-            con.commit()
+            post(self.post_url, headers=self.headers,
+                 json={"telegram_id": self.player_id, 'username': username, 'user': user})
 
         @property
         def exist(self) -> bool:
@@ -212,7 +200,6 @@ class SinApi:
         def exist(self) -> bool:
             try:
                 req = get(self.get_url + 'owner_id', headers=self.headers)
-                print(req.text)
                 if req.status_code != 404:
                     return True
             except:
@@ -220,18 +207,10 @@ class SinApi:
             return False
 
         def create(self, name: str):
-            con.ping(True)
-
-            cur.execute("INSERT INTO Factory (owner_id, name) VALUES (%s, %s)", (self.player_id, name))
-            con.commit()
+            post(self.post_url, headers=self.headers, json={'owner_id': self.player_id, 'name': name})
 
         def delete(self):
-            con.ping(True)
-
-            cur.execute("DELETE FROM Factory WHERE owner_id = %s", (self.player_id,))
-            con.commit()
+            delet(self.post_url, headers=self.headers, params={'owner_id': self.owner_id})
 
         def exists(self) -> bool:
             return self.exist
-
-

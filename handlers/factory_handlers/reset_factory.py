@@ -19,8 +19,7 @@ async def reset_factory(message: Message, state: FSMContext):
         member = await bot.get_chat_member(message.chat.id, message.from_user.id)
         if member == types.ChatMemberMember:
             return await message.answer('сбрасывать фабрику в группе могут только ее админы')
-    await message.answer(f'Чтобы удалить фабрику введите: '
-                         f'`{api.player(message.from_user.id).iternal_id if message.chat.id > 0 else message.chat.id}` или /cancel')
+    await message.answer(f'Чтобы удалить фабрику введите:  `{message.chat.id}` или /cancel')
     await state.set_state(DeleteFactory.user_id)
 
 
@@ -30,10 +29,10 @@ async def delete_factory(message: Message, state: FSMContext):
         factory = api.factory(message.from_user.id)
     else:
         factory = api.factory(message.chat.id)
-    
+    player = api.player(message.from_user.id)
     if not factory.exists():
         return await message.answer("У вас и так нет фабрики")
-    if str(factory.owner) == str(message.text):
+    if str(factory.owner_id) == str(message.text) or factory.owner_id == player.id:
         factory.delete()
         await message.answer('Фабрика удалена', reply_markup=menu_reply)
         await state.clear()
