@@ -42,8 +42,7 @@ class Base:
                 put(self.post_url, headers=self.headers, json={'telegram_id': self.player_id, name: value})
             else:
                 put(self.post_url, headers=self.headers, json={'owner_id': str(self.player_id), name: value})
-        elif name in self.__dict__:
-            self.__dict__[name] = value
+        self.__dict__[name] = value
 
     def __get(self, name):
         if self.params is None and name in eval(get(api_url + 'params').text) or name in self.params:
