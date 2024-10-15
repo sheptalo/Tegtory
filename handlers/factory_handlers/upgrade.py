@@ -1,53 +1,55 @@
 from aiogram import Router, types, F
-from aiogram.types import InputMediaPhoto, URLInputFile, FSInputFile
+from aiogram.exceptions import TelegramBadRequest
+from aiogram.types import InputMediaPhoto, URLInputFile
 
-from db import Factory, Player
+from api import api
 
 from replys import upgrade_markup
 from config import not_enough_points, factory_image
-from .work_yourself import work
 
 router = Router()
 
 
 @router.callback_query(F.data == 'upgrade_factory')
 async def upgrade_factory_price(call: types.CallbackQuery):
-    player = Player(call.from_user.id)
-    if player.is_working:
-        return await work(call)
-    factory = Factory(call.message.chat.id)
-    lvl = factory.level
+    factory = api.factory(call.message.chat.id)
+    lvl = factory.lvl
     text = (f'Текущий уровень {lvl}\n'
             f'Стоимость улучшения '
             f'{f'{(lvl + 3) * 400} очков' if lvl < 500 else f'{lvl - 499} столар'}\n'
             f'улучшить?')
     # await call.message.edit_caption(caption=text, reply_markup=upgrade_markup)
-    await call.message.edit_media(media=InputMediaPhoto(media=URLInputFile(factory_image(factory.type)),
-                                                        caption=text),
-                                  reply_markup=upgrade_markup)
+    try:
+        await call.message.edit_media(media=InputMediaPhoto(media=URLInputFile(factory_image(factory.type)),
+                                                            caption=text), reply_markup=upgrade_markup)
+    except TelegramBadRequest:
+        pass
 
 
 @router.callback_query(F.data == 'upgrade_factory_conf')
 async def upgrade_factory(call: types.CallbackQuery):
-    player = Player(call.from_user.id)
+    player = api.player(call.from_user.id)
 
-    if player.is_working:
-        return await call.message.answer(f'Во время работы нельзя прокачивать фабрику')
+    if player.isWorking:
+        return await call.answer(f'Во время работы нельзя прокачивать фабрику', show_alert=True)
 
-    factory = Factory(call.message.chat.id)
-    lvl = factory.level
-
+    factory = api.factory(call.message.chat.id)
+    lvl = factory.lvl
+    money, stolar = player.get('money,stolar')
     if lvl < 500:
-        if player.money >= (lvl + 3) * 400:
+        if money >= (lvl + 3) * 400:
             player.money -= (lvl + 3) * 400
         else:
-            return await call.message.answer(not_enough_points)
+            return await call.answer(not_enough_points, show_alert=True)
     else:
-        if player.stolar < lvl - 499:
-            return await call.message.answer('Недостаточно столар коинов')
+        if stolar < lvl - 499:
+            return await call.answer('Недостаточно столар коинов', show_alert=True)
         else:
-            player.stolar -= lvl - 499
-    lvl += 1
-    factory.level = lvl
-    factory.start_work_at = 0
+            player.stolar -= (lvl - 499)
+
+    factory.set({
+        'owner_id': factory.player_id,
+        'started_work_at': 0,
+        'lvl': lvl + 1,
+    })
     await upgrade_factory_price(call)

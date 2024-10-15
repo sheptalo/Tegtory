@@ -3,7 +3,7 @@ from typing import Callable, Dict, Any, Awaitable
 from aiogram import BaseMiddleware
 from aiogram.types import Message
 
-from db import Player
+from api import api
 
 
 class UserMiddleWare(BaseMiddleware):
@@ -16,7 +16,7 @@ class UserMiddleWare(BaseMiddleware):
         event: Message,
         data: Dict[str, Any]
     ) -> Any:
-        player = Player(data['event_from_user'].id)
+        player = api.player(data['event_from_user'].id)
         if not player.exist:
             await player.create(data['event_from_user'].first_name, data['event_from_user'].username)
         return await handler(event, data)

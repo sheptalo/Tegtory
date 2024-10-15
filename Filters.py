@@ -4,6 +4,7 @@ from aiogram.filters import BaseFilter
 from aiogram import types
 
 from bot import bot
+from api import api
 
 last_button_click = 0
 last_user = 0
@@ -20,6 +21,16 @@ async def is_subscribed(user_id):
             return True
     except:
         return False
+
+
+class BanFilter(BaseFilter):
+    async def __call__(self, message: types.Message) -> bool:
+        return bool(api.player(message.from_user.id).is_banned)
+
+
+class CallBanFilter(BaseFilter):
+    async def __call__(self, call: types.CallbackQuery) -> bool:
+        return bool(api.player(call.from_user.id).is_banned)
 
 
 class MenuFilter(BaseFilter):

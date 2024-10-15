@@ -1,7 +1,5 @@
 aiogram
-pyrogram~=2.0.106
-mysql-connector-python
+pyrogram
 aioconsole
-pytest
-pytest-asyncio
 python-dotenv
+requests

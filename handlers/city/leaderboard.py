@@ -3,8 +3,8 @@ from aiogram.exceptions import TelegramBadRequest
 
 from Filters import LeaderboardFilter
 from MIddleWares.UserMiddleWare import UserMiddleWare
-from db.Player import Player
-from db.leaderboard import Leaderboard
+from api import api
+from db import Leaderboard
 from replys import leaderboard_inline, old_seasons_markup
 
 router = Router()
@@ -42,7 +42,7 @@ alpha_season = ("""
 async def leaderboard(call: types.CallbackQuery):
     try:
         await call.message.edit_text(f'{Leaderboard().Money()}'
-                                     f'\n\nваше место в топе {Leaderboard().Money().me(Player(call.from_user.id).iternal_id)}',
+                                     f'\n\nваше место в топе {Leaderboard().Money().me(api.player(call.from_user.id).id)}',
                                      reply_markup=leaderboard_inline)
     except TelegramBadRequest:
         pass
@@ -52,7 +52,7 @@ async def leaderboard(call: types.CallbackQuery):
 async def leaderboard_def(message: types.Message):
     try:
         await message.answer(f'{Leaderboard().Money()}'
-                             f'\n\nваше место в топе {Leaderboard().Money().me(Player(message.from_user.id).iternal_id)}',
+                             f'\n\nваше место в топе {Leaderboard().Money().me(api.player(message.from_user.id).id)}',
                              reply_markup=leaderboard_inline)
     except TelegramBadRequest:
         pass
@@ -62,7 +62,7 @@ async def leaderboard_def(message: types.Message):
 async def call_rating_leaderboard(call: types.CallbackQuery):
     try:
         await call.message.edit_text(f'{Leaderboard().Rating()}'
-                                     f'\n\nВаше место в топе {Leaderboard().Rating().me(Player(call.from_user.id).iternal_id)}',
+                                     f'\n\nВаше место в топе {Leaderboard().Rating().me(api.player(call.from_user.id).id)}',
                                      reply_markup=leaderboard_inline)
     except TelegramBadRequest:
         pass
@@ -72,7 +72,7 @@ async def call_rating_leaderboard(call: types.CallbackQuery):
 async def call_stolar_leaderboard(call: types.CallbackQuery):
     try:
         await call.message.edit_text(str(Leaderboard().Stolar()) +
-                                     f'\n\nВаше место в топе {Leaderboard().Stolar().me(Player(call.from_user.id).iternal_id)}',
+                                     f'\n\nВаше место в топе {Leaderboard().Stolar().me(api.player(call.from_user.id).id)}',
                                      reply_markup=leaderboard_inline)
     except TelegramBadRequest:
         pass
@@ -82,7 +82,7 @@ async def call_stolar_leaderboard(call: types.CallbackQuery):
 async def call_clan_leaderboard(call: types.CallbackQuery):
     try:
         await call.message.edit_text(str(Leaderboard().Level()) +
-                                     f'\n\nВаше место в топе {Leaderboard().Level().me(Player(call.from_user.id).iternal_id)}',
+                                     f'\n\nВаше место в топе {Leaderboard().Level().me(api.player(call.from_user.id).id)}',
                                      reply_markup=leaderboard_inline)
     except TelegramBadRequest:
         pass
@@ -92,7 +92,7 @@ async def call_clan_leaderboard(call: types.CallbackQuery):
 async def call_clan_leaderboard(call: types.CallbackQuery):
     try:
         await call.message.edit_text(str(Leaderboard().Eco()) +
-                                     f'\n\nВаше место в топе {Leaderboard().Eco().me(Player(call.from_user.id).iternal_id)}',
+                                     f'\n\nВаше место в топе {Leaderboard().Eco().me(api.player(call.from_user.id).id)}',
                                      reply_markup=leaderboard_inline)
     except TelegramBadRequest:
         pass

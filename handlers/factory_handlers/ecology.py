@@ -1,7 +1,6 @@
 from aiogram import Router, F, types
 
-from db.Player import Player
-from db.Factory import Factory
+from api import api
 
 from config import not_enough_points
 from replys import ecology_markup
@@ -14,7 +13,7 @@ async def ecology_factory(call: types.CallbackQuery):
     await call.message.edit_caption(caption=f"""
 Экология важный аспект любого завода.
 
-Ваш завод экологичен на: {Factory(call.from_user.id).eco} единиц
+Ваш завод экологичен на: {api.factory(call.from_user.id).ecology} единиц
 
 Оборудование для повышения экологичности можно купить несколько раз.
 
@@ -26,9 +25,9 @@ async def ecology_factory(call: types.CallbackQuery):
 @router.callback_query(F.data.split(':')[0] == 'ecology')
 async def ecology_buy(call: types.CallbackQuery):
     amount = int(call.data.split(':')[1])
-    player = Player(call.from_user.id)
+    player = api.player(call.from_user.id)
     if amount * 1000 + 50 > player.money:
         return await call.message.edit_text(not_enough_points, reply_markup=ecology_markup)
     player.money -= (amount * 1000 + 50)
-    Factory(call.message.chat.id).eco += amount
+    api.factory(call.message.chat.id).ecology += amount
     await ecology_factory(call)

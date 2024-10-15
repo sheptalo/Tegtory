@@ -1,7 +1,7 @@
 import random
 
-from bot import cur, con, bot
-from db import Player
+from bot import bot
+from api import api
 
 
 async def lottery():
@@ -21,21 +21,18 @@ async def lottery():
     for i in range(100000):
         win_tickets_stolar += f' {random.randint(1000000, 1500000)}'
 
-    text = 'Проходит розыгрыш билетов'
     _user = await give_money_l(win_tickets_bronze, win_tickets_serebro, win_tickets_gold, win_tickets_stolar)
-    await bot.send_message('@tegtory', text)
+    await bot.send_message('@tegtory', 'Проходит розыгрыш билетов')
+
     for user in _user:
-        Player(str(user[1])).money += user[0]
-        Player(user[1]).stolar += user[3]
+        api.player(str(user[1])).money += user[0]
+        api.player(user[1]).stolar += user[3]
         await bot.send_message(user[1], f'Ваш билет {user[2]} выйграл')
 
 
 async def give_money_l(bronze, serebro, gold, stolar):
-    cur.execute('SELECT telegram_id, tickets FROM Users')
-    users = cur.fetchall()
-    cur.execute('UPDATE Users SET tickets = %s', ('',))
-    con.commit()
-
+    users = api.lottery_start()
+    api.reset_tickets()
     won_user = []
 
     for user_id, ticket_ids in users:

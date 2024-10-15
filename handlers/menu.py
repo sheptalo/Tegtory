@@ -1,14 +1,14 @@
 from aiogram import Router, types, F
 from aiogram.filters import StateFilter
 from aiogram.fsm.context import FSMContext
-from aiogram.types import FSInputFile
+from aiogram.types import URLInputFile
 
 from Filters import MenuFilter
 from MIddleWares.ChatActionMiddleWare import Typing
 from States import FindFactory
 from bot import bot
 from config import not_enough_points, factory_image
-from db import Factory, Player
+from api import api
 from replys import menu_reply, mini_game_markup, city_markup
 
 router = Router()
@@ -64,16 +64,11 @@ async def find_factory(message: types.Message, state: FSMContext):
 
 @router.message(StateFilter(FindFactory.name))
 async def answer_found_factory(message: types.Message, state: FSMContext):
-    factory = Factory.find(message.text)
+    factory = api.find_factory(message.text)
     if not factory.exists():
         return await message.answer('Фабрика не найдена')
     _type = factory_image(factory.type)
-    await message.answer_photo(FSInputFile(_type),
-                               f'*Фабрика {factory.name}:* \n\n'
-                               f'🔧 *{factory.level} уровень*\n'
-                               f'⚙️ *Тип {factory.type}* \n'
-                               f'🚧 *Статус {factory.state}*  \n'
-                               f'👷‍ *{factory.workers} работников* ')
+    await message.answer_photo(URLInputFile(_type), str(factory))
     await state.clear()
 
 
@@ -82,18 +77,18 @@ async def give_money(message: types.Message):
     try:
         _id = str(message.text.split()[1])
         _money = abs(int(message.text.split()[2]))
-        player = Player(message.from_user.id)
+        player = api.player(message.from_user.id)
     except:
         return await message.answer('Принцип передачи денег: передать @username 1203')
     if _money > player.money:
         return await message.answer(not_enough_points)
     try:
-        player2 = Player(_id)
+        player2 = api.player(_id)
         player2.money += _money
         player.money -= _money
     except:
         return await message.answer('видимо вы неверно указали username')
 
-    await bot.send_message(player2.user_id, f'Вам передали {int(_money):,}')
+    await bot.send_message(player2.telegram_id, f'Вам передали {int(_money):,}')
     await message.answer(f'Успешно')
-    await bot.send_message(1405684214, f'кому {_id} {_money} от {message.from_user.id}')
+    await bot.send_message(1405684214, f'кому {_id} {_money} от {message.from_user.username}')

@@ -3,9 +3,10 @@ from aiogram.filters.command import Command, CommandObject, CommandStart
 from aiogram.fsm.context import FSMContext
 from aiogram.utils.payload import decode_payload
 
+from api import api
 from bot import bot
-from db import Player
 from replys import menu_reply
+from .user import connect_me
 
 
 router = Router()
@@ -21,18 +22,29 @@ async def cancel(message: types.Message, state: FSMContext):
 @router.message(CommandStart(deep_link=True))
 async def start_func(message: types.Message, command: CommandObject):
     args = command.args
+    player = api.player(message.from_user.id)
+
+    if args.startswith('connect_'):
+        vk_id = args.split('_')[1]
+        if player.vk_id != vk_id:
+            await message.reply('Аккаунт подключается, можно вернутся обратно')
+            return connect_me(message, vk_id)
+
     payload = decode_payload(args)
-    player = Player(message.from_user.id)
-    if player.ref != '' or not Player(payload).exist:
+    money = player.money
+
+    if player.ref != '' or not api.player(payload).exist:
         return await message.answer(welcome, reply_markup=menu_reply, parse_mode='HTML')
 
-    player.money += 250
-    player.ref = payload
-
-    await message.answer(welcome + f'\n\nВас пригласил @{Player(payload).username}. Вы дополнительно получаете 250',
+    player.set({
+        'telegram_id': message.from_user.id,
+        'money': money + 250,
+        'ref': payload,
+    })
+    await message.answer(welcome + f'\n\nВас пригласил @{api.player(payload).username}. Вы дополнительно получаете 250',
                          reply_markup=menu_reply, parse_mode='HTML')
     await bot.send_message(payload, 'По вашей ссылке перешёл новый игрок +250')
-    Player(payload).money += 250
+    api.player(payload).money += 250
 
 
 @router.message(CommandStart())

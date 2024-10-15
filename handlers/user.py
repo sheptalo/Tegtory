@@ -1,15 +1,32 @@
+import os
+
+import requests
 from aiogram import Router, types, F
 from aiogram.exceptions import TelegramBadRequest
 from aiogram.filters import Command, StateFilter
 from aiogram.fsm.context import FSMContext
 
-from Filters import SubscribeFilter, SpamFilter, SpamFilterCallBack, ProfileFilter, SubscribeFilterCallBack
+from Filters import SubscribeFilter, SpamFilter, SpamFilterCallBack, ProfileFilter, SubscribeFilterCallBack, BanFilter, \
+    CallBanFilter
 from States import ChangeNick
-from db import Player
+from api import api
 from replys import subscribed_channel, menu_reply
 
 router = Router()
 exactly = 'Telegram server says - Bad Request: message is not modified: specified new message content and reply markup are exactly the same as a current content and reply markup of the message'
+
+
+@router.message(BanFilter())
+async def banned_message(message: types.Message):
+    await message.answer('К сожалению вы заблокированы в Tegtory.\n'
+                         'Если вы считаете что это произошло по ошибке напишите нам *tegtory@sinortax.ru*')
+
+
+@router.callback_query(CallBanFilter())
+async def banned_call(call: types.CallbackQuery):
+    await call.answer('К сожалению вы заблокированы в Tegtory.\n'
+                      'Если вы считаете что это произошло по ошибке напишите нам *tegtory@sinortax.ru*',
+                      show_alert=True)
 
 
 @router.message(SubscribeFilter())
@@ -34,20 +51,19 @@ async def subscribe_call(call: types.CallbackQuery):
 
 @router.message(SpamFilter(), F.text)
 async def stop_spam(message: types.Message):
-
     await message.answer('Не спамьте!')
     await message.delete()
 
 
 @router.callback_query(F.data == 'profile')
 async def profile(call: types.CallbackQuery):
-    player = Player(call.from_user.id)
+    player = api.player(call.from_user.id)
     await call.message.answer(str(player))
 
 
 @router.message(ProfileFilter())
 async def balance(message: types.Message):
-    player = Player(message.from_user.id)
+    player = api.player(message.from_user.id)
     await message.answer(str(player))
 
 
@@ -59,8 +75,9 @@ async def change_nick(message: types.Message, state: FSMContext):
 
 @router.message(StateFilter(ChangeNick.new_nickname))
 async def confirm_changes(message: types.Message, state: FSMContext):
-    if len(message.text) < 20:
-        Player(message.from_user.id).nickname = message.text
+    if len(message.text) <= 20:
+        api.player(message.from_user.id).name = message.text
+        await message.answer('Успешно изменено имя')
         await state.clear()
 
 
@@ -76,3 +93,16 @@ async def subscribe_check(call: types.CallbackQuery):
         await call.message.answer('Меню', reply_markup=menu_reply)
     except BaseException as e:
         print(e)
+
+
+@router.message(Command('connect'))
+async def connect_command(message: types.Message):
+    vk_id = message.text.split()
+    if len(vk_id) == 2:
+        connect_me(message, vk_id[1])
+        await message.answer('Успешно подключен аккаунт')
+
+
+def connect_me(message, vk_id):
+    requests.get(os.environ.get('API_URL') + f'/api/v1/connect/{message.from_user.id}/{vk_id}',
+                 headers={'Authorization': f'Bearer {os.environ["DB_API_KEY"]}'})

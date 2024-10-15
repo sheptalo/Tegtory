@@ -4,9 +4,9 @@ from .upgrade import router as upgrade
 from .work_yourself import router as yourself
 from .workers import router as workers
 from .ecology import router as ecology
-from .create_factory_py import router as create
-from .rename_factory_py import router as rename
-from .reset_factory_py import router as reset
+from .create_factory import router as create
+from .rename_factory import router as rename
+from .reset_factory import router as reset
 
 router = Router()
 
