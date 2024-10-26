@@ -1,6 +1,3 @@
-import os
-
-import requests
 from aiogram import Router, types, F
 from aiogram.exceptions import TelegramBadRequest
 from aiogram.filters import Command, StateFilter
@@ -93,16 +90,3 @@ async def subscribe_check(call: types.CallbackQuery):
         await call.message.answer('Меню', reply_markup=menu_reply)
     except BaseException as e:
         print(e)
-
-
-@router.message(Command('connect'))
-async def connect_command(message: types.Message):
-    vk_id = message.text.split()
-    if len(vk_id) == 2:
-        connect_me(message, vk_id[1])
-        await message.answer('Успешно подключен аккаунт')
-
-
-def connect_me(message, vk_id):
-    requests.get(os.environ.get('API_URL') + f'/api/v1/connect/{message.from_user.id}/{vk_id}',
-                 headers={'Authorization': f'Bearer {os.environ["DB_API_KEY"]}'})

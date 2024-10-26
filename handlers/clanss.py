@@ -1,7 +1,7 @@
 from aiogram import Router, types, F
 from aiogram.filters import Command
 
-from MIddleWares.UserMiddleWare import UserMiddleWare
+from middlewares.UserMiddleWare import UserMiddleWare
 from api import api
 
 from config import not_enough_points

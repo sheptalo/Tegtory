@@ -4,7 +4,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import URLInputFile
 
 from Filters import MenuFilter
-from MIddleWares.ChatActionMiddleWare import Typing
+from middlewares.ChatActionMiddleWare import Typing
 from States import FindFactory
 from bot import bot
 from config import not_enough_points, factory_image

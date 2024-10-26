@@ -2,7 +2,7 @@ from aiogram import F, Router, types
 from aiogram.exceptions import TelegramBadRequest
 
 from Filters import LeaderboardFilter
-from MIddleWares.UserMiddleWare import UserMiddleWare
+from middlewares.UserMiddleWare import UserMiddleWare
 from api import api
 from db import Leaderboard
 from replys import leaderboard_inline, old_seasons_markup

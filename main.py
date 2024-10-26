@@ -1,7 +1,7 @@
 import asyncio
 import logging
 
-from MIddleWares.UserMiddleWare import UserMiddleWare
+from middlewares.UserMiddleWare import UserMiddleWare
 
 from bot import bot, dp
 from db import console
