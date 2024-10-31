@@ -1,6 +1,6 @@
 from aiogram import Router, types, F
 from aiogram.exceptions import TelegramBadRequest
-from aiogram.types import InputMediaPhoto, URLInputFile
+from aiogram.types import InputMediaPhoto
 
 from api import api
 
@@ -18,9 +18,8 @@ async def upgrade_factory_price(call: types.CallbackQuery):
             f'Стоимость улучшения '
             f'{f'{(lvl + 3) * 400} очков' if lvl < 500 else f'{lvl - 499} столар'}\n'
             f'улучшить?')
-    # await call.message.edit_caption(caption=text, reply_markup=upgrade_markup)
     try:
-        await call.message.edit_media(media=InputMediaPhoto(media=URLInputFile(factory_image(factory.type)),
+        await call.message.edit_media(media=InputMediaPhoto(media=factory_image(factory.type),
                                                             caption=text), reply_markup=upgrade_markup)
     except TelegramBadRequest:
         pass
