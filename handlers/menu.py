@@ -1,7 +1,8 @@
+import warnings
+
 from aiogram import Router, types, F
 from aiogram.filters import StateFilter
 from aiogram.fsm.context import FSMContext
-from aiogram.types import URLInputFile
 
 from Filters import MenuFilter
 from middlewares.ChatActionMiddleWare import Typing
@@ -65,10 +66,10 @@ async def find_factory(message: types.Message, state: FSMContext):
 @router.message(StateFilter(FindFactory.name))
 async def answer_found_factory(message: types.Message, state: FSMContext):
     factory = api.find_factory(message.text)
-    if not factory.exists():
+    if not factory.exist:
         return await message.answer('Фабрика не найдена')
     _type = factory_image(factory.type)
-    await message.answer_photo(URLInputFile(_type), str(factory))
+    await message.answer_photo(_type, str(factory))
     await state.clear()
 
 

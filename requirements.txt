@@ -3,3 +3,4 @@ pyrogram
 aioconsole
 python-dotenv
 requests
+sinAPI

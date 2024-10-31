@@ -1,5 +1,5 @@
 from aioconsole import ainput
-from globalFunc.lottery import lottery
+from functions.lottery import lottery
 
 
 async def console():

@@ -6,7 +6,7 @@ from aiogram.filters import StateFilter
 
 import time
 
-from aiogram.types import InputMediaPhoto, URLInputFile
+from aiogram.types import InputMediaPhoto
 
 from bot import bot
 from config import factory_image
@@ -24,9 +24,8 @@ router.include_router(rt)
 @router.callback_query(F.data == 'back_factory')
 async def back_factory(call: types.CallbackQuery):
     try:
-        # await call.message.edit_caption(caption=str(api.factory(call.message.chat.id)), reply_markup=factory_reply)
         await call.message.edit_media(media=InputMediaPhoto(
-                                        media=URLInputFile(factory_image(api.factory(call.message.chat.id).type)),
+                                        media=factory_image(api.factory(call.message.chat.id).type),
                                         caption=str(api.factory(call.message.chat.id))),
                                       caption=str(api.factory(call.message.chat.id)),
                                       reply_markup=factory_reply)
@@ -36,11 +35,12 @@ async def back_factory(call: types.CallbackQuery):
 
 @router.message(F.text.lower().split()[0] == 'фабрика', StateFilter(None))
 async def factory_main(message: types.Message):
+
     factory = api.factory(message.chat.id)
     if not factory.exists():
         return await message.reply('у тебя еще нет фабрики', reply_markup=create_factory_markup)
     _type = factory_image(factory.type)
-    await message.answer_photo(URLInputFile(url=_type),
+    await message.answer_photo(_type,
                                caption=str(factory),
                                reply_markup=factory_reply)
 
