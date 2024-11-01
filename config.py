@@ -2,7 +2,7 @@
 subscribe_channel = 'Чтобы пользоваться ботом и строить фабрику необходимо быть подписанным на канал @tegtory'
 
 not_enough_points = 'Не хватает очков'
-factory_not_found: str = 'Фабрика не найдена Попробуйте еще раз'
+factory_not_found = 'Фабрика не найдена Попробуйте еще раз'
 
 
 def factory_image(_type):

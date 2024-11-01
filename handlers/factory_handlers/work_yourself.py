@@ -28,7 +28,7 @@ async def work(call: types.CallbackQuery):
             'isWorking': 1,
             'workedAt': current_time
         })
-        task = asyncio.create_task(work_timer(call, _time))
+        _ = asyncio.create_task(work_timer(call, _time))
 
     else:
         await call.answer(f'вы работаете осталось {round(last_click + _time - current_time, 1)} секунд',

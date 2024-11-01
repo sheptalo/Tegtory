@@ -10,61 +10,61 @@ api_url = environ.get('API_URL')
 class Leaderboard:
     class Money:
         def __init__(self):
-            self.url = f'{api_url}/api/v1/leaderboard/money'
+            self.url = f'{api_url}leaderboard/money'
 
         def __str__(self):
-            return eval(get(self.url, headers=api.headers).text)
+            return get(self.url, headers=api.headers).json()
 
         def me(self, iternal_id):
-            return eval(get(f'{self.url}/{iternal_id}', headers=api.headers).text)
+            return get(f'{self.url}/{iternal_id}', headers=api.headers).json()
 
     class Stolar:
         def __init__(self):
-            self.url = f'{api_url}/api/v1/leaderboard/stolar'
+            self.url = f'{api_url}leaderboard/stolar'
 
         def __str__(self):
-            return eval(get(self.url, headers=api.headers).text)
+            return get(self.url, headers=api.headers).json()
 
         def me(self, iternal_id):
-            return eval(get(f'{self.url}/{iternal_id}', headers=api.headers).text)
+            return get(f'{self.url}/{iternal_id}', headers=api.headers).json()
 
     class Rating:
         def __init__(self):
-            self.url = f'{api_url}/api/v1/leaderboard/rating'
+            self.url = f'{api_url}leaderboard/rating'
 
         def __str__(self):
-            return eval(get(self.url, headers=api.headers).text)
+            return get(self.url, headers=api.headers).json()
 
         def me(self, iternal_id):
-            return eval(get(f'{self.url}/{iternal_id}', headers=api.headers).text)
+            return get(f'{self.url}/{iternal_id}', headers=api.headers).json()
 
     class Level:
         def __init__(self):
-            self.url = f'{api_url}/api/v1/leaderboard/level'
+            self.url = f'{api_url}leaderboard/level'
 
         def __str__(self):
-            return eval(get(self.url, headers=api.headers).text)
+            return get(self.url, headers=api.headers).json()
 
         def me(self, iternal_id):
-            return eval(get(f'{self.url}/{iternal_id}', headers=api.headers).text)
+            return get(f'{self.url}/{iternal_id}', headers=api.headers).json()
 
     class Eco:
         def __init__(self):
-            self.url = f'{api_url}/api/v1/leaderboard/ecology'
+            self.url = f'{api_url}leaderboard/ecology'
 
         def __str__(self):
-            return eval(get(self.url, headers=api.headers).text)
+            return get(self.url, headers=api.headers).json()
 
         def me(self, iternal_id):
-            return eval(get(f'{self.url}/{iternal_id}', headers=api.headers).text)
+            return get(f'{self.url}/{iternal_id}', headers=api.headers).json()
 
     class Clan:
         def __init__(self, name):
             self.clan_name = name
 
         def __str__(self):
-            return eval(get(f'{api_url}/api/v1/leaderboard/clans/{self.clan_name}', headers=api.headers).text)
+            return get(f'{api_url}leaderboard/clans/{self.clan_name}', headers=api.headers).json()
 
     class Clans:
         def __str__(self):
-            return eval(get(f'{api_url}/api/v1/leaderboard/clans', headers=api.headers).text)
+            return get(f'{api_url}leaderboard/clans', headers=api.headers).json()
