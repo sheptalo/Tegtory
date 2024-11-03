@@ -6,4 +6,5 @@ COPY . .
 COPY .env /app/.env
 RUN pip install --no-cache-dir -r requirements.txt
 
-ENTRYPOINT ["sh", "-c", "source /app/.env && exec python main.py"]
+
+CMD ["/bin/bash", "-c", "python main.py"]
