@@ -15,10 +15,7 @@ async def is_subscribed(user_id):
     try:
 
         chat_member = await bot.get_chat_member(chat_id, user_id)
-        if chat_member.status == 'left':
-            return False
-        else:
-            return True
+        return chat_member.status != 'left'
     except:
         return False
 

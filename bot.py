@@ -8,6 +8,6 @@ load_dotenv('.env')
 
 
 dp = Dispatcher(storage=MemoryStorage())
-bot = Bot(os.environ['BETA_API_TOKEN'], default=DefaultBotProperties(parse_mode='Markdown'))
+bot = Bot(os.environ['API_TOKEN'], default=DefaultBotProperties(parse_mode='Markdown'))
 
 

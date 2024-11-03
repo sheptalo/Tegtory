@@ -115,7 +115,7 @@ lottery_markup = InlineKeyboardMarkup(inline_keyboard=lottery_kb)
 old_seasons_kb = [
     [InlineKeyboardButton(text='Сезон pre-alpha', callback_data='pre_apha_season')],
     [InlineKeyboardButton(text='Сезон alpha', callback_data='alpha_season')],
-    [InlineKeyboardButton(text='Обратно', callback_data='old_leaderboard')]
+    [InlineKeyboardButton(text='Обратно', callback_data='leaderboard')]
 ]
 old_seasons_markup = InlineKeyboardMarkup(inline_keyboard=old_seasons_kb)
 
