@@ -16,7 +16,7 @@ async def work(call: types.CallbackQuery):
     player = api.player(call.from_user.id)
     working, last_click = player.get('isWorking,workedAt')
     _time = (factory.lvl + 3) * 5
-    if not last_click or current_time - last_click >= _time:
+    if not working or current_time - last_click >= _time:
         if working:
             return await work_finish(call)
         await call.answer('Вы приступили к работе. '
@@ -47,12 +47,16 @@ async def drop_work(message: types.Message):
 
 async def work_finish(call):
     factory = api.factory(call.message.chat.id)
+    player = api.player(call.from_user.id)
     lvl = factory.lvl
     created = (lvl + 1) * (5 + random.randint(0, 5))
     factory.stock += created
     factory.tax += created // 2
-    api.player(call.from_user.id).isWorking = 0
-
+    player.set({
+        'telegram_id': player.player_id,
+        'isWorking': 0,
+        'workedAt': 0
+    })
     await call.message.answer(f'Работа окончена! Произведено товаров: {created}')
 
 
