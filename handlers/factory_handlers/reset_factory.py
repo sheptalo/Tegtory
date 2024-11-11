@@ -4,8 +4,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 
 from States import DeleteFactory
-from api import api
-from bot import bot
+from bot import bot, api
 from replys import menu_reply, create_factory_markup
 
 router = Router()

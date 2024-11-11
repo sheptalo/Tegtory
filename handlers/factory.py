@@ -8,10 +8,8 @@ import time
 
 from aiogram.types import InputMediaPhoto
 
-from bot import bot
+from bot import bot, api
 from config import factory_image
-
-from api import api
 
 from pyrogram_main import get_chat_members
 from replys import factory_reply, tax_markup, create_factory_markup
@@ -97,12 +95,11 @@ async def start_factory(call: types.CallbackQuery):
         await call.answer('Рабочие приступили к работе', show_alert=True)
 
         factory.set({
-            'owner_id': factory.player_id,
             'started_work_at': current_time,
             'state': 1
         })
         await back_factory(call)
-        task = asyncio.create_task(work_timer(call))
+        _ = asyncio.create_task(work_timer(call))
     else:
         await call.answer(f'Фабрике осталось работать {last_click + _time - current_time} секунд', show_alert=True)
 

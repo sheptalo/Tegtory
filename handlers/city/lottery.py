@@ -3,7 +3,7 @@ import random
 from aiogram import Router, F
 from aiogram.types import CallbackQuery
 
-from api import api
+from bot import api
 from replys import lottery_markup, lottery_back_markup
 
 router = Router()

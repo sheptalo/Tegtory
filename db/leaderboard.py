@@ -1,7 +1,7 @@
 from requests import get
 from dotenv import load_dotenv
 from os import environ
-from api import api
+from bot import api
 
 load_dotenv()
 api_url = environ.get('API_URL')

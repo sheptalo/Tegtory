@@ -1,7 +1,7 @@
 import asyncio
 
 from aiogram import types, Router, F
-from api import api
+from bot import api
 
 import time
 import random
@@ -24,7 +24,6 @@ async def work(call: types.CallbackQuery):
                           'Если вы начали работать на фабрике в чате, '
                           'то завершайте работать в нем же.', show_alert=True)
         player.set({
-            'telegram_id': call.from_user.id,
             'isWorking': 1,
             'workedAt': current_time
         })
@@ -39,7 +38,6 @@ async def work(call: types.CallbackQuery):
 async def drop_work(message: types.Message):
     player = api.player(message.from_user.id)
     player.set({
-        'telegram_id': message.from_user.id,
         'isWorking': 0,
         'workedAt': 0
     })
@@ -53,7 +51,6 @@ async def work_finish(call):
     factory.stock += created
     factory.tax += created // 2
     player.set({
-        'telegram_id': player.player_id,
         'isWorking': 0,
         'workedAt': 0
     })

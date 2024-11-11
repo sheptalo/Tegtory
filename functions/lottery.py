@@ -1,7 +1,6 @@
 import random
 
-from bot import bot
-from api import api
+from bot import bot, api
 
 
 async def lottery():

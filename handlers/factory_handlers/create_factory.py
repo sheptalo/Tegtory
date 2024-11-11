@@ -3,8 +3,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, CallbackQuery
 
 from States import CreateFactory
-from api import api
-from bot import bot
+from bot import bot, api
 
 router = Router()
 create_factory_caution = 'максимальная длина названия 20 символов'

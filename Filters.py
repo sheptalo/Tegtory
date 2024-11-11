@@ -3,8 +3,7 @@ import time
 from aiogram.filters import BaseFilter
 from aiogram import types
 
-from bot import bot
-from api import api
+from bot import bot, api
 
 last_button_click = 0
 last_user = 0

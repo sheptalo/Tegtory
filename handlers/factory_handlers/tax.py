@@ -1,6 +1,6 @@
 from aiogram import types, F, Router
 
-from api import api
+from bot import api
 
 from replys import tax_markup, back_factory
 

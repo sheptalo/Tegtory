@@ -1,11 +1,10 @@
-# region titles
 from aiogram import F, Router
 from aiogram.types import CallbackQuery
 
 from config import not_enough_points
 from db import Leaderboard
 from replys import titles_shop_markup, title_error_markup
-from api import api
+from bot import api
 
 router = Router()
 title_shop = """

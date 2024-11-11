@@ -3,8 +3,7 @@ from aiogram.filters.command import Command, CommandObject, CommandStart
 from aiogram.fsm.context import FSMContext
 from aiogram.utils.payload import decode_payload
 
-from api import api
-from bot import bot
+from bot import bot, api
 from replys import menu_reply
 
 

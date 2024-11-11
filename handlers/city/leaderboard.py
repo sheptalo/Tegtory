@@ -3,7 +3,7 @@ from aiogram.exceptions import TelegramBadRequest
 
 from Filters import LeaderboardFilter
 from middlewares.UserMiddleWare import UserMiddleWare
-from api import api
+from bot import api
 from db import Leaderboard
 from replys import leaderboard_inline, old_seasons_markup
 

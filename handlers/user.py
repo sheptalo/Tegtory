@@ -6,7 +6,7 @@ from aiogram.fsm.context import FSMContext
 from Filters import SubscribeFilter, SpamFilter, SpamFilterCallBack, ProfileFilter, SubscribeFilterCallBack, BanFilter, \
     CallBanFilter
 from States import ChangeNick
-from api import api
+from bot import api
 from replys import subscribed_channel, menu_reply
 
 router = Router()

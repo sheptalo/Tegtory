@@ -1,6 +1,6 @@
 from aiogram import F, types, Router
 
-from api import api
+from bot import api
 
 from config import not_enough_points
 from replys import hire_markup

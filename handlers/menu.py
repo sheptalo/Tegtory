@@ -5,9 +5,8 @@ from aiogram.fsm.context import FSMContext
 from Filters import MenuFilter
 from middlewares.ChatActionMiddleWare import Typing
 from States import FindFactory
-from bot import bot
+from bot import bot, api
 from config import not_enough_points, factory_image
-from api import api
 from replys import menu_reply, mini_game_markup, city_markup
 
 router = Router()

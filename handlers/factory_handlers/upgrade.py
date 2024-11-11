@@ -2,7 +2,7 @@ from aiogram import Router, types, F
 from aiogram.exceptions import TelegramBadRequest
 from aiogram.types import InputMediaPhoto
 
-from api import api
+from bot import api
 
 from replys import upgrade_markup
 from config import not_enough_points, factory_image
@@ -47,7 +47,6 @@ async def upgrade_factory(call: types.CallbackQuery):
             player.stolar -= (lvl - 499)
 
     factory.set({
-        'owner_id': factory.player_id,
         'started_work_at': 0,
         'lvl': lvl + 1,
     })

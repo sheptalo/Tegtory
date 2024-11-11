@@ -5,7 +5,7 @@ import time
 from aiogram import Router, F, types
 
 from Filters import FarmFilter
-from api import api
+from bot import api
 
 router = Router()
 coff = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 1.1, 1.4, 1.7]

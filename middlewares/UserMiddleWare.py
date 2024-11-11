@@ -3,7 +3,7 @@ from typing import Callable, Dict, Any, Awaitable
 from aiogram import BaseMiddleware
 from aiogram.types import Message
 
-from api import api
+from bot import api
 
 
 class UserMiddleWare(BaseMiddleware):

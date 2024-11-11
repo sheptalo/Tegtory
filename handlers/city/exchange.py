@@ -4,8 +4,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, Message, InlineKeyboardMarkup, InlineKeyboardButton
 
 from States import SellStolar
-from api import api
-from bot import bot
+from bot import bot, api
 from config import not_enough_points
 from replys import rinok_markup, back_exchange
 

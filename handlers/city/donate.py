@@ -1,9 +1,7 @@
 from aiogram import F, Router
 from aiogram.filters import Command
 from aiogram.types import CallbackQuery, Message
-
-from api import api
-from bot import bot
+from bot import bot, api
 from replys import prices
 
 router = Router()
