@@ -23,10 +23,8 @@ async def work(call: types.CallbackQuery):
                           'Чтобы прекратить досрочно пишите отлучиться\n\nсовет:\n'
                           'Если вы начали работать на фабрике в чате, '
                           'то завершайте работать в нем же.', show_alert=True)
-        player.set({
-            'isWorking': 1,
-            'workedAt': current_time
-        })
+        player.isWorking = 1
+        player.workedAt = current_time
         _ = asyncio.create_task(work_timer(call, _time))
 
     else:
