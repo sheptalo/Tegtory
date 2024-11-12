@@ -34,7 +34,7 @@ Oбъединение: {user_data[5].replace('_', ' ')}
             for name in title.split():
                 _text += f"{name.replace('_', ' ')}\n"
 
-        req = requests.post(os.environ.get('api_url') + 'api/v2/image/' + q,
+        req = requests.post(os.environ.get('API_URL') + 'api/v2/image/' + q,
                             json={'text': _text})
         if os.path.isfile('cache/' + q + '.png'):
             await bot.send_photo('-4599348567',
