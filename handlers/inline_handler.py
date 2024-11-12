@@ -36,14 +36,12 @@ Oбъединение: {user_data[5].replace('_', ' ')}
 
         req = requests.post(os.environ.get('API_URL') + 'api/v2/image/' + q,
                             json={'text': _text})
-        if os.path.isfile('cache/' + q + '.png'):
-            await bot.send_photo('-4599348567',
-                                 types.URLInputFile(req.text)
-                                 )
-            a = types.InlineQueryResultPhoto(
+        txt = req.json()
+        if txt:
+            msg = await bot.send_photo('-4599348567', types.URLInputFile(txt))
+            print(txt)
+            a = types.InlineQueryResultCachedPhoto(
                 id='0',
-                photo_url=req.text,
-                thumbnail_url=req.text
+                photo_file_id=msg.photo[-1].file_id,
             )
-            os.remove('cache/' + q + '.png')
     await inline_query.answer([a], is_personal=True)
