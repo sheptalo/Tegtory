@@ -38,7 +38,7 @@ Oбъединение: {user_data[5].replace('_', ' ')}
                             json={'text': _text})
         if os.path.isfile('cache/' + q + '.png'):
             await bot.send_photo('-4599348567',
-                                 types.FSInputFile('cache/' + q + '.png')
+                                 types.URLInputFile(req.text)
                                  )
             a = types.InlineQueryResultPhoto(
                 id='0',
