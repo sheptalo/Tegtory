@@ -4,7 +4,7 @@ from os import environ
 from bot import api
 
 load_dotenv()
-api_url = environ.get('API_URL')
+api_url = environ.get('API_URL') + 'api/v1/'
 
 
 class Leaderboard:
@@ -43,7 +43,7 @@ class Leaderboard:
             self.url = f'{api_url}leaderboard/level'
 
         def __str__(self):
-            return get(self.url, headers=api.headers).json()
+            return get(self.url, headers=api.headers).json().replace('_', '\\_')
 
         def me(self, iternal_id):
             return get(f'{self.url}/{iternal_id}', headers=api.headers).json()
@@ -53,7 +53,7 @@ class Leaderboard:
             self.url = f'{api_url}leaderboard/ecology'
 
         def __str__(self):
-            return get(self.url, headers=api.headers).json()
+            return get(self.url, headers=api.headers).json().replace('_', '\\_')
 
         def me(self, iternal_id):
             return get(f'{self.url}/{iternal_id}', headers=api.headers).json()

@@ -4,4 +4,3 @@ aioconsole
 python-dotenv
 requests
 sinAPI
-pillow
