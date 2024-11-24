@@ -18,5 +18,5 @@ class UserMiddleWare(BaseMiddleware):
     ) -> Any:
         player = api.player(data['event_from_user'].id)
         if not player.exist:
-            await player.create(data['event_from_user'].first_name, data['event_from_user'].username)
+            await player.create(data['event_from_user'].username, data['event_from_user'].first_name)
         return await handler(event, data)
