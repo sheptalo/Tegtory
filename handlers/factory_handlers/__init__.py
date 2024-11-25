@@ -19,4 +19,6 @@ router.include_router(rename)
 router.include_router(reset)
 router.include_router(yourself)
 
-__all__ = [router,]
+__all__ = [
+    router,
+]

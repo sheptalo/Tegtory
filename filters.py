@@ -10,11 +10,10 @@ last_user = 0
 
 
 async def is_subscribed(user_id):
-    chat_id = '@tegtory'
+    chat_id = "@tegtory"
     try:
-
         chat_member = await bot.get_chat_member(chat_id, user_id)
-        return chat_member.status != 'left'
+        return chat_member.status != "left"
     except:
         return False
 
@@ -32,7 +31,7 @@ class CallBanFilter(BaseFilter):
 class MenuFilter(BaseFilter):
     async def __call__(self, message: types.Message) -> bool:
         try:
-            if message.text.lower() == 'меню':
+            if message.text.lower() == "меню":
                 return True
         except:
             return False
@@ -42,7 +41,10 @@ class SpamFilter(BaseFilter):
     async def __call__(self, message: types.Message) -> bool:
         global last_button_click, last_user
         try:
-            if time.time() - last_button_click < 0.5 and last_user == message.from_user.id:
+            if (
+                time.time() - last_button_click < 0.5
+                and last_user == message.from_user.id
+            ):
                 return True
             else:
                 last_user = message.from_user.id
@@ -55,7 +57,10 @@ class SpamFilterCallBack(BaseFilter):
     async def __call__(self, call: types.CallbackQuery) -> bool:
         global last_button_click, last_user
         try:
-            if time.time() - last_button_click < 0.5 and last_user == call.from_user.id:
+            if (
+                time.time() - last_button_click < 0.5
+                and last_user == call.from_user.id
+            ):
                 return True
             else:
                 last_user = call.from_user.id
@@ -86,7 +91,10 @@ class ProfileFilter(BaseFilter):
     async def __call__(self, message: types.Message) -> bool:
         try:
             if message.text is not None:
-                return message.text.lower() == 'профиль' or message.text.upper() == 'Я'
+                return (
+                    message.text.lower() == "профиль"
+                    or message.text.upper() == "Я"
+                )
             else:
                 return False
         except:
@@ -97,7 +105,10 @@ class FarmFilter(BaseFilter):
     async def __call__(self, message: types.Message) -> bool:
         try:
             if message.text is not None:
-                return message.text.lower() == 'ферма' or message.text.lower() == 'фарм'
+                return (
+                    message.text.lower() == "ферма"
+                    or message.text.lower() == "фарм"
+                )
             else:
                 return False
         except:
@@ -108,7 +119,9 @@ class LeaderboardFilter(BaseFilter):
     async def __call__(self, message: types.Message) -> bool:
         try:
             if message.text is not None:
-                return (message.text.lower() == 'таблица лидеров') or (message.text.upper() == 'ТЛ')
+                return (message.text.lower() == "таблица лидеров") or (
+                    message.text.upper() == "ТЛ"
+                )
             else:
                 return False
         except:

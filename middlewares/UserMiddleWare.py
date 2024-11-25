@@ -7,6 +7,8 @@ from bot import api
 
 
 class UserMiddleWare(BaseMiddleware):
+    users = []
+
     def __init__(self) -> None:
         self.counter = 0
 
@@ -14,9 +16,12 @@ class UserMiddleWare(BaseMiddleware):
         self,
         handler: Callable[[Message, Dict[str, Any]], Awaitable[Any]],
         event: Message,
-        data: Dict[str, Any]
+        data: Dict[str, Any],
     ) -> Any:
-        player = api.player(data['event_from_user'].id)
-        if not player.exist:
-            await player.create(data['event_from_user'].username, data['event_from_user'].first_name)
+        eve = data["event_from_user"]
+        if eve.id not in UserMiddleWare.users:
+            player = api.player(eve.id)
+            if not player.exist:
+                await player.create(eve.username, eve.first_name)
+            UserMiddleWare.users.append(eve.id)
         return await handler(event, data)

@@ -4,52 +4,67 @@ from bot import bot, api
 
 
 async def lottery():
-    win_tickets_bronze = ' '
-    win_tickets_serebro = ' '
-    win_tickets_gold = ' '
-    win_tickets_stolar = ' '
-    for i in range(100):
-        win_tickets_bronze += f' {random.randint(1000, 1500)}'
+    bronze = set([str(random.randint(1000, 1500)) for _ in range(100)])
+    serebro = set([str(random.randint(10000, 15000)) for _ in range(1000)])
+    gold = set([str(random.randint(100000, 150000)) for _ in range(10000)])
+    stolar = set([str(random.randint(1000000, 1500000)) for _ in range(1000)])
 
-    for i in range(1000):
-        win_tickets_serebro += f' {random.randint(10000, 15000)}'
+    message = await bot.send_message("@tegtory", "Проходит подсчет билетов!")
+    results, total = await process_lottery(
+        {i: 50000 for i in bronze},
+        {i: 1000000 for i in serebro},
+        {i: 1000000000 for i in gold},
+        stolar,
+    )
 
-    for i in range(10000):
-        win_tickets_gold += f' {random.randint(100000, 150000)}'
+    for result in results:
+        player = api.player(result.get("user_id"))
+        player.set(
+            {
+                "money": player.money + result.get("money"),
+                "stolar": player.stolar + result.get("stolar"),
+            }
+        )
+        await bot.send_message(
+            result.get("user_id"), f"Ваш билет {result.get('ticket')} выйграл"
+        )
+    amount = len(bronze) + len(serebro) + len(gold) + len(stolar)
+    await message.edit_text(f"""
+    Подсчет билетов прошел успешно
+    
+    Немного статистики:
+    Всего билетов разыграно: {amount}
+    Всего куплено: {total}
+    
+    купленых билетов победило: {len(results)}
+    """)
 
-    for i in range(100000):
-        win_tickets_stolar += f' {random.randint(1000000, 1500000)}'
 
-    _user = await give_money_l(win_tickets_bronze, win_tickets_serebro, win_tickets_gold, win_tickets_stolar)
-    await bot.send_message('@tegtory', 'Проходит розыгрыш билетов')
+async def process_lottery(bronze, serebro, gold, stolar):
+    bronze.update(serebro)
+    bronze.update(gold)
 
-    for user in _user:
-        api.player(str(user[1])).money += user[0]
-        api.player(user[1]).stolar += user[3]
-        await bot.send_message(user[1], f'Ваш билет {user[2]} выйграл')
+    win = bronze.copy()
+    users = api.player(1).lottery_start()
 
+    api.player(1).reset_tickets()
+    results = []
+    total = 0
 
-async def give_money_l(bronze, serebro, gold, stolar):
-    users = api.lottery_start()
-    api.reset_tickets()
-    won_user = []
+    for uuid, tickets in users:
+        user_tickets = tickets.split()
+        total += len(user_tickets)
+        for ticket in user_tickets:
+            result = {
+                "money": win.get(ticket, 0),
+                "stolar": 0,
+                "user_id": uuid,
+                "ticket": ticket,
+            }
+            if ticket in stolar:
+                result["stolar"] = 100
 
-    for user_id, ticket_ids in users:
-        user_tickets = ticket_ids.split()
-        for user_ticket in user_tickets:
-            if user_ticket in bronze.split():
-                user = [50000, user_id, user_ticket, 0]
-                won_user.append(user)
-            if user_ticket in serebro.split():
-                if 1000000 <= int(user_ticket) <= 1500000:
-                    stolar = 100
-                user = [1000000, user_id, user_ticket, 0]
-                won_user.append(user)
-            if user_ticket in gold.split():
-                user = [1000000000, user_id, user_ticket, 0]
-                won_user.append(user)
-            if user_ticket in stolar.split():
-                user = [0, user_id, user_ticket, 100]
-                won_user.append(user)
+            if result["money"] > 0 or result["stolar"] > 0:
+                results.append(result)
 
-    return won_user
+    return results, total

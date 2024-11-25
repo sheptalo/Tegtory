@@ -12,7 +12,7 @@ class Typing(BaseMiddleware):
         self,
         handler: Callable[[Message, Dict[str, Any]], Awaitable[Any]],
         event: Message,
-        data: Dict[str, Any]
+        data: Dict[str, Any],
     ) -> Any:
         async with ChatActionSender.typing(bot=bot, chat_id=event.chat.id):
             await sleep(1)

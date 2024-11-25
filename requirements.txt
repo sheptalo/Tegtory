@@ -4,3 +4,4 @@ aioconsole
 python-dotenv
 requests
 sinAPI
+apscheduler

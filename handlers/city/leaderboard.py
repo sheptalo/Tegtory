@@ -1,10 +1,10 @@
 from aiogram import F, Router, types
 from aiogram.exceptions import TelegramBadRequest
 
-from Filters import LeaderboardFilter
+from filters import LeaderboardFilter
 from middlewares.UserMiddleWare import UserMiddleWare
 from bot import api
-from db import Leaderboard
+from utils import Leaderboard
 from replys import leaderboard_inline, old_seasons_markup
 
 router = Router()
@@ -21,7 +21,7 @@ pre_alpha_season_leader = (
     "8. название фабрики: alfheisj. Баланс 600 очков.\n\n "
     "9. название фабрики: шептало. Баланс 200 очков."
 )
-alpha_season = """
+alpha_season_leaders = """
 🏆 Таблица лидеров 🏆
 🥇1. Название фабрики: я ваш бог👹
 Баланс: 990,289,427,000,000 очков. 
@@ -65,7 +65,7 @@ async def leaderboard_def(message: types.Message):
 
 
 @router.callback_query(F.data == "rating_leaderboard")
-async def call_rating_leaderboard(call: types.CallbackQuery):
+async def rating_leaderboard(call: types.CallbackQuery):
     try:
         await call.message.edit_text(
             f"{Leaderboard().Rating()}"
@@ -77,7 +77,7 @@ async def call_rating_leaderboard(call: types.CallbackQuery):
 
 
 @router.callback_query(F.data == "stolar_leaderboard")
-async def call_stolar_leaderboard(call: types.CallbackQuery):
+async def stolar_leaderboard(call: types.CallbackQuery):
     try:
         await call.message.edit_text(
             str(Leaderboard().Stolar())
@@ -89,7 +89,7 @@ async def call_stolar_leaderboard(call: types.CallbackQuery):
 
 
 @router.callback_query(F.data == "factory_leaderboard")
-async def call_level_leaderboard(call: types.CallbackQuery):
+async def factory_leaderboard(call: types.CallbackQuery):
     try:
         await call.message.edit_text(
             str(Leaderboard().Level())
@@ -101,7 +101,7 @@ async def call_level_leaderboard(call: types.CallbackQuery):
 
 
 @router.callback_query(F.data == "eco_leaderboard")
-async def call_clan_leaderboard(call: types.CallbackQuery):
+async def eco_leaderboard(call: types.CallbackQuery):
     try:
         await call.message.edit_text(
             str(Leaderboard().Eco())
@@ -123,7 +123,7 @@ async def call_clan_leaderboard(call: types.CallbackQuery):
 
 
 @router.callback_query(F.data == "pre_apha_season")
-async def pre_alpha_leaderboard(call: types.CallbackQuery):
+async def pre_apha_season(call: types.CallbackQuery):
     try:
         await call.message.edit_text(
             pre_alpha_season_leader, reply_markup=leaderboard_inline
@@ -133,17 +133,17 @@ async def pre_alpha_leaderboard(call: types.CallbackQuery):
 
 
 @router.callback_query(F.data == "alpha_season")
-async def pre_alpha_leaderboard(call: types.CallbackQuery):
+async def alpha_season(call: types.CallbackQuery):
     try:
         await call.message.edit_text(
-            alpha_season, reply_markup=leaderboard_inline
+            alpha_season_leaders, reply_markup=leaderboard_inline
         )
     except TelegramBadRequest:
         pass
 
 
 @router.callback_query(F.data == "old_leaderboard")
-async def call_clan_leaderboard(call: types.CallbackQuery):
+async def old_leaderboard(call: types.CallbackQuery):
     try:
         await call.message.edit_text(
             "Здесь вы можете посмотреть лидеров прошлых сезонов\n"
