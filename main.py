@@ -17,6 +17,7 @@ from handlers import (
     start,
     ref,
     inline_handler,
+    promo,
 )
 
 logging.basicConfig(level=logging.INFO)
@@ -42,6 +43,7 @@ async def main():
         clanss.router,
         factory.router,
         inline_handler.router,
+        promo.router,
     )
     cons = asyncio.create_task(scheduler_start())
     polling = asyncio.create_task(dp.start_polling(bot))

@@ -31,7 +31,7 @@ async def process_factory_name(message: Message, state: FSMContext):
                 "Создать фабрику в группе могут только ее админы"
             )
         factory = api.factory(message.chat.id)
-    if factory.exists():
+    if factory.exist:
         await state.clear()
         return await message.answer("У вас уже есть фабрика.")
     if len(factory_name) > 20:

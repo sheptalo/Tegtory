@@ -13,7 +13,7 @@ create_factory_caution = "максимальная длина названия 2
 
 @router.message(StateFilter(None), Command("rename_factory"))
 async def rename_factory_yes(message: Message, state: FSMContext):
-    if not api.factory(message.from_user.id).exists():
+    if not api.factory(message.from_user.id).exist:
         return await message.reply(
             "у вас нету фабрики", reply_markup=create_factory_markup
         )

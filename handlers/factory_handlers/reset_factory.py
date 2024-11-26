@@ -12,7 +12,7 @@ router = Router()
 
 @router.message(StateFilter(None), Command("reset_factory"))
 async def reset_factory(message: Message, state: FSMContext):
-    if not api.factory(message.from_user.id).exists():
+    if not api.factory(message.from_user.id).exist:
         return await message.answer(
             "У вас нет фабрики", reply_markup=create_factory_markup
         )
@@ -37,7 +37,7 @@ async def delete_factory(message: Message, state: FSMContext):
     else:
         factory = api.factory(message.chat.id)
     player = api.player(message.from_user.id)
-    if not factory.exists():
+    if not factory.exist:
         return await message.answer("У вас и так нет фабрики")
     if (
         str(factory.owner_id) == str(message.text)

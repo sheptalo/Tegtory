@@ -11,7 +11,7 @@ router = Router()
 @router.callback_query(F.data == "tax")
 async def check_tax(call: types.CallbackQuery):
     factory = api.factory(call.message.chat.id)
-    if not factory.exists():
+    if not factory.exist:
         return await call.answer(
             "У вас нет фабрики а значит и налогов", show_alert=True
         )

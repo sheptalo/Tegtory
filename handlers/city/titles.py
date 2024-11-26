@@ -29,7 +29,7 @@ have_title = "У вас уже есть этот титул"
 
 @router.callback_query(F.data == "титулы")
 async def buy_title_main(call: CallbackQuery):
-    if not api.factory(call.from_user.id).exists():
+    if not api.factory(call.from_user.id).exist:
         return await call.message.answer(
             "Без фабрики вас не пустят в магазин титулов."
         )
