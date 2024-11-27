@@ -6,9 +6,8 @@ from bot import api
 router = Router()
 
 
-@router.message(F.text)
+@router.message(F.text.startswith("promo-"))
 async def promo(message: Message):
-    print(message.text.split("-"))
     promocode = message.text.split("promo-", 1)[1]
     get_promo = api.any("promo", f"{promocode}?uid={message.from_user.id}")
     exist = get_promo[""]
