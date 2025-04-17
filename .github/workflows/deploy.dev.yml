@@ -1,11 +1,15 @@
 name: Deploy Bot
-on: [push]
+on:
+  push:
+    branches: [ dev ]
+
 jobs:
   deploy:
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v4
+        with:
+          path: /home/tegtory-dev
       - run: |
-          cd /home/tegtory-dev
           docker compose -f docker/docker-compose.dev.yml down 
           docker compose -f docker/docker-compose.dev.yml up -d --build
