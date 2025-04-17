@@ -8,8 +8,6 @@ jobs:
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v4
-        with:
-          path: /home/tegtory-dev
       - run: |
           docker compose -f docker/docker-compose.dev.yml down 
           docker compose -f docker/docker-compose.dev.yml up -d --build
