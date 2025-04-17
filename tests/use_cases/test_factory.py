@@ -27,6 +27,4 @@ async def test_create_factory(factory_repository, mock_factory):
 
     await UCFactory(factory_repository, MagicMock()).create(mock_factory)
 
-    factory_repository.create.assert_called_with(
-        mock_factory.name, mock_factory.id
-    )
+    factory_repository.create.assert_called_with(mock_factory)
