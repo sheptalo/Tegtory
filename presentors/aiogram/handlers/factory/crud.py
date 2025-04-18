@@ -5,7 +5,9 @@ from aiogram.fsm.context import FSMContext
 from dishka import FromDishka
 from dishka.integrations.aiogram import inject
 
-from domain.entity import Factory, User
+from domain.context.factory import UserFactoryContext
+from domain.context.holder import FactoryHolder, UserHolder
+from domain.entity import Factory
 from domain.use_cases import UCFactory
 from presentors.aiogram.handlers.factory.main import open_factory
 from presentors.aiogram.kb import factory as kb
@@ -13,7 +15,10 @@ from presentors.aiogram.kb.callbacks import FactoryCB
 from presentors.aiogram.messages import factory as msg
 from presentors.aiogram.states import factory as states
 from presentors.aiogram.utils import Images
-from presentors.shared.utils.auth import auth_user, have_factory
+from presentors.shared.utils.auth import (
+    get_factory_operation,
+    get_user_operation,
+)
 from presentors.shared.utils.cache import cache
 
 router = Router()
@@ -44,22 +49,19 @@ async def finish_create_factory_handler(
 
 
 @router.message(Command("rename_factory"))
-@have_factory
+@get_factory_operation
 async def rename_factory(message: types.Message, state: FSMContext):
     await message.answer(msg.set_name)
     await state.set_state(states.Rename.new_name)
 
 
 @router.message(StateFilter(states.Rename.new_name))
-@have_factory
+@get_factory_operation
 async def complete_rename_factory(
-    message: types.Message,
-    state: FSMContext,
-    factory: Factory,
-    uc_factory: UCFactory
+    message: types.Message, state: FSMContext, factory: FactoryHolder
 ):
-    factory.rename(message.text)
-    result = await uc_factory.rename(factory)
+    factory.entity.rename(message.text)
+    result = await factory.use_case.rename(factory.entity)
     await state.clear()
     await message.answer(
         msg.successfully_rename if result else msg.unique_name
@@ -67,16 +69,16 @@ async def complete_rename_factory(
 
 
 @router.callback_query(F.data == FactoryCB.upgrade)
-@have_factory
+@get_factory_operation
 @cache(Images.factory_upgrade, types.FSInputFile(Images.factory_upgrade))
 async def upgrade_factory(
-    call: types.CallbackQuery, factory: Factory, cached, cache_func
+    call: types.CallbackQuery, factory: FactoryHolder, cached, cache_func
 ):
     try:
         sent = await call.message.edit_media(
             media=types.InputMediaPhoto(
                 caption=msg.upgrade_page.format(
-                    factory.level, factory.upgrade_price
+                    factory.entity.level, factory.entity.upgrade_price
                 ),
                 media=cached,
             ),
@@ -88,21 +90,18 @@ async def upgrade_factory(
 
 
 @router.callback_query(F.data == FactoryCB.upgrade_conf)
-@have_factory
-@auth_user
+@get_factory_operation
+@get_user_operation
 async def try_to_upgrade_factory(
-    call: types.CallbackQuery,
-    user: User,
-    factory: Factory,
-    uc_factory: UCFactory,
+    call: types.CallbackQuery, user: UserHolder, factory: FactoryHolder
 ):
-    result = await uc_factory.upgrade(factory, user)
+    ctx = UserFactoryContext(factory=factory.entity, user=user.entity)
+    result = await factory.use_case.upgrade(ctx)
+
     markup = kb.failed_upgrade_markup
-    if not isinstance(result, str):
+
+    if isinstance(result, Factory):
         result = msg.upgrade_page.format(factory.level, factory.upgrade_price)
         markup = kb.upgrade_markup
 
-    await call.message.edit_caption(
-        caption=result,
-        reply_markup=markup,
-    )
+    await call.message.edit_caption(caption=result, reply_markup=markup)

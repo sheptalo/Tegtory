@@ -11,7 +11,7 @@ class CityCB(EnumType):
 
 
 class FactoryCB(EnumType):
-    back = "factory"
+    back = "entity"
     create = "factory__create"
     choose_time = "factory__choose_time"
     work_yourself = "factory__work_yourself"

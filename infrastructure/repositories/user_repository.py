@@ -13,9 +13,8 @@ class UserRepository(IUserRepository):
     def get(self, user_id: int) -> User:
         return self._filter_users(user_id)
 
-    def create(self, uid: int, name: str, username: str) -> User:
-        logger.info(f"Creating user {uid} with name {name}")
-        user = User(id=uid, name=name, username=username)
+    def create(self, user: User) -> User:
+        logger.info(f"Creating user {user.id} with name {user.name}")
         self.users.append(user)
         return user
 

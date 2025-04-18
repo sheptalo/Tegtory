@@ -1,38 +1,45 @@
 from aiogram import F, Router, types
 
-from domain.entity.factory import Factory
-from domain.entity.user import User
-from domain.use_cases import UCFactory
+from domain.context.holder import FactoryHolder, UserHolder
+from domain.entity import Storage
 from presentors.aiogram.kb import factory as kb
 from presentors.aiogram.kb.callbacks import FactoryCB
 from presentors.aiogram.messages import factory as msg
-from presentors.shared.utils.auth import auth_user, have_factory
+from presentors.shared.utils.auth import (
+    get_factory_operation,
+    get_user_operation,
+)
 
 router = Router()
 
 
 @router.callback_query(F.data == FactoryCB.storage)
-@have_factory
-async def open_storage(call: types.CallbackQuery, factory: Factory):
-    stroka = msg.storage_title
-    for product, amount in factory.storage.products.items():
-        stroka += msg.storage_products.format(product.name, amount)
-    stroka += msg.storage_footer.format(factory.storage.max_stock)
+@get_factory_operation
+async def open_storage(call: types.CallbackQuery, factory: FactoryHolder):
+    result = get_storage_page_text(factory.entity.storage)
     await call.message.edit_caption(
-        caption=stroka, reply_markup=kb.storage_markup
+        caption=result, reply_markup=kb.storage_markup
     )
 
 
 @router.callback_query(F.data == FactoryCB.upgrade_storage)
-@have_factory
-@auth_user
+@get_factory_operation
+@get_user_operation
 async def upgrade_storage(
-    call: types.CallbackQuery,
-    factory: Factory,
-    uc_factory: UCFactory,
-    user: User,
+    call: types.CallbackQuery, factory: FactoryHolder, user: UserHolder
 ):
-    result = await uc_factory.upgrade_storage(factory.storage, user)
-    if not result:
+    result = await factory.use_case.upgrade_storage(
+        factory.entity.storage, user.entity
+    )
+    if isinstance(result, Storage):
         return await open_storage(call)
-    await call.answer(result, show_alert=True)
+    if isinstance(result, str):
+        await call.answer(result, show_alert=True)
+
+
+def get_storage_page_text(storage: Storage):
+    result = msg.storage_title
+    for product, amount in storage.products.items():
+        result += msg.storage_products.format(product.name, amount)
+    result += msg.storage_footer.format(storage.max_stock)
+    return result

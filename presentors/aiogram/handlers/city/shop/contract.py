@@ -7,14 +7,14 @@ from domain.use_cases.shop import UCShop
 from presentors.aiogram.kb import shop as kb
 from presentors.aiogram.kb.callbacks import CityCB
 from presentors.aiogram.messages import shop as msg
-from presentors.shared.utils.auth import auth_user, have_factory
+from presentors.shared.utils.auth import get_user_operation, get_factory_operation
 
 router = Router()
 
 
 @router.callback_query(F.data.startswith(f"{CityCB.choose_amount}:"))
-@auth_user
-@have_factory
+@get_user_operation
+@get_factory_operation
 @inject
 async def choose_amount(
     call: types.CallbackQuery,
@@ -30,8 +30,8 @@ async def choose_amount(
 
 
 # @router.callback_query()
-@auth_user
-@have_factory
+@get_user_operation
+@get_factory_operation
 async def sign_contract(
     call: types.CallbackQuery,
     user: User,

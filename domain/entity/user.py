@@ -46,9 +46,15 @@ class User(BaseModel):
     def state(self):
         return self.work_time_remaining > 0.0
 
-    def work_to(self, time_amount: float | int):
+    def start_work(self, time_amount: float | int):
         if not self.state:
             self.end_work_time = time.time() + time_amount
 
     def set_name(self, name):
         self.name = name
+
+    def substract_money(self, amount: int):
+        self.money -= amount
+
+    def can_buy(self, price: int):
+        return self.money >= price

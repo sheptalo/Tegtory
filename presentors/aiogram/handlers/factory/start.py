@@ -1,8 +1,9 @@
 from aiogram import Router, types
 
-from domain.entity import Factory, User
+from domain.context.factory import StartWorkContext
+from domain.context.holder import FactoryHolder, UserHolder
+from domain.entity import Factory
 from domain.events import EventType
-from domain.use_cases import UCFactory, UCUser
 from infrastructure.injectors import on_event
 from presentors.aiogram.filters.factory import (
     ChooseProductFilter,
@@ -13,45 +14,54 @@ from presentors.aiogram.filters.factory import (
 from presentors.aiogram.kb import factory as kb
 from presentors.aiogram.messages import factory as msg
 from presentors.shared.bot import TegtorySingleton
-from presentors.shared.utils.auth import auth_user, have_factory
+from presentors.shared.utils.auth import (
+    get_factory_operation,
+    get_user_operation,
+)
 
 router = Router()
 
 
 @router.callback_query(ChooseProductFilter())
-@have_factory
-@auth_user
+@get_factory_operation
+@get_user_operation
 async def choose_product(
     call: types.CallbackQuery,
-    factory: Factory,
-    uc_factory: UCFactory,
-    user: User,
+    factory: FactoryHolder,
+    user: UserHolder,
 ):
-    if factory.state:
-        return await call.answer(
-            msg.start_factory_work.format(factory.minutes_to_work),
-            show_alert=True,
-        )
-    if user.state:
-        return await call.answer(
-            msg.start_yourself_work.format(user.minutes_to_work),
-            show_alert=True,
-        )
-    products = await uc_factory.get_available_products(factory)
+    result = await check_can_start_factory(factory, user)
+    if result:
+        return await call.answer(result, show_alert=True)
+    products = await factory.use_case.get_available_products(factory.entity)
     markup = kb.get_choose_product_markup(call.data, products)
     await call.message.edit_caption(
         caption=msg.choose_product, reply_markup=markup
     )
 
 
+async def check_can_start_factory(
+    factory: FactoryHolder,
+    user: UserHolder,
+) -> str | None:
+    factory = factory.entity
+    result = None
+    if factory.state:
+        result = msg.start_factory_work.format(factory.minutes_to_work)
+    elif user.entity.state:
+        result = msg.start_yourself_work.format(user.entity.minutes_to_work)
+    return result
+
+
 @router.callback_query(ChooseTimeToWorkFilter())
-@have_factory
+@get_factory_operation
 async def choose_time(
-    call: types.CallbackQuery, uc_factory: UCFactory, factory: Factory
+    call: types.CallbackQuery,
+    factory: FactoryHolder,
 ):
     mode = call.data.split(":")[1]
-    product = await uc_factory.get_available_product_by_name(
-        factory, call.data.split(":")[2]
+    product = await factory.use_case.get_available_product_by_name(
+        factory.entity, call.data.split(":")[2]
     )
     markup = kb.get_time_choose_markup(mode, product)
     await call.message.edit_caption(
@@ -60,34 +70,26 @@ async def choose_time(
 
 
 @router.callback_query(StartYourselfFactoryFilter())
-@have_factory
-@auth_user
+@get_factory_operation
+@get_user_operation
 async def work_yourself(
     call: types.CallbackQuery,
-    user: User,
-    factory: Factory,
-    uc_user: UCUser,
-    uc_factory: UCFactory,
+    factory: FactoryHolder,
+    user: UserHolder,
 ):
-    product, time = await get_product_time(call, factory, uc_factory)
-    user = await uc_user.start_work(user, factory, product, time)
-    await choose_product(
-        call, user=user, uc_factory=uc_factory, factory=factory
-    )
+    ctx = await get_start_work_context(call, factory, user)
+    await user.use_case.start_work(ctx)
+    await choose_product(call, factory=factory, user=user)
 
 
 @router.callback_query(StartFactoryFilter())
-@have_factory
-async def start_factory(
-    call: types.CallbackQuery, factory: Factory, uc_factory: UCFactory
-):
-    product, time = await get_product_time(call, factory, uc_factory)
-    result = await uc_factory.start_factory(factory, product, time)
-    if isinstance(result, Factory):
-        await choose_product(
-            call, uc_factory=uc_factory, factory=factory
-        )
-    await call.answer(str(result), show_alert=True)
+@get_factory_operation
+async def start_factory(call: types.CallbackQuery, factory: FactoryHolder):
+    ctx = await get_start_work_context(call, factory)
+    result = await factory.use_case.start_factory(ctx)
+    if result:
+        await call.answer(str(result), show_alert=True)
+    await choose_product(call, factory=factory)
 
 
 @on_event(EventType.EndFactoryWork)
@@ -96,11 +98,25 @@ async def end_factory_work(factory: Factory, stock: int):
     await bot.send_message(factory.id, msg.success_work_end.format(stock))
 
 
-async def get_product_time(
-    call: types.CallbackQuery, factory: Factory, uc_factory: UCFactory
+async def get_start_work_context(
+    call,
+    factory_ctx: FactoryHolder,
+    user_ctx: UserHolder = None,
 ):
-    product = await uc_factory.get_available_product_by_name(
-        factory,
+    product, time = await get_product_time(call, factory_ctx)
+    user = None
+    if user_ctx:
+        user = user_ctx.entity
+    return StartWorkContext(
+        factory=factory_ctx.entity, product=product, time=time, user=user
+    )
+
+
+async def get_product_time(
+    call: types.CallbackQuery, factory_ctx: FactoryHolder
+):
+    product = await factory_ctx.use_case.get_available_product_by_name(
+        factory_ctx.entity,
         call.data.split(":")[1],
     )
     return product, float(call.data.split(":")[2])

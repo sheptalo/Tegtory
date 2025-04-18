@@ -6,13 +6,13 @@ from domain.use_cases.shop import UCShop
 from presentors.aiogram.kb import shop as kb
 from presentors.aiogram.kb.callbacks import CityCB
 from presentors.aiogram.messages import shop as msg
-from presentors.shared.utils.auth import auth_user
+from presentors.shared.utils.auth import get_user_operation
 
 router = Router()
 
 
 @router.callback_query(F.data == CityCB.shop)
-@auth_user
+@get_user_operation
 @inject
 async def shop_list(
     call: types.CallbackQuery, uc_shop: FromDishka[UCShop]
@@ -23,7 +23,7 @@ async def shop_list(
 
 
 @router.callback_query(F.data.startswith(f"{CityCB.shop}:"))
-@auth_user
+@get_user_operation
 @inject
 async def specific_shop_demand_list(
     call: types.CallbackQuery, uc_shop: FromDishka[UCShop]

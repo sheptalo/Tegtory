@@ -6,8 +6,8 @@ from domain.use_cases.base import BaseUseCase
 
 class UCShop(BaseUseCase):
     def __init__(self, repo: IShopRepository, event_bus: IEventBus) -> None:
-        self.repository = repo
         super().__init__(event_bus)
+        self.repository = repo
 
     async def all(self) -> list[Shop] | None:
         return self.repository.all()

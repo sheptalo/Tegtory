@@ -1,17 +1,19 @@
-from domain.entity import Factory, Product, User
+from domain.entity import User
 from domain.interfaces import IUserRepository
 from domain.use_cases.base import BaseUseCase
 
+from ..context.factory import StartWorkContext
+from ..entity.factory import StartFactoryEvent
 from ..events import EventType, IEventBus, on_event
 
 
 class UCUser(BaseUseCase):
     def __init__(self, repo: IUserRepository, event_bus: IEventBus) -> None:
-        self.repository = repo
         super().__init__(event_bus)
+        self.repository = repo
 
     async def create(self, user: User) -> User:
-        return self.repository.create(user.id, user.name, user.username)
+        return self.repository.create(user)
 
     async def update(self, user: User) -> User:
         return self.repository.update(user)
@@ -22,28 +24,28 @@ class UCUser(BaseUseCase):
     async def create_if_not_exist(
         self, user_id: int, name: str, username: str
     ) -> None:
-        user = self.repository.get(user_id)
+        user = await self.get(user_id)
         if not user:
-            self.repository.create(user_id, name, username)
+            await self.create(User(id=user_id, name=name, username=username))
 
-    async def start_work(
-        self, user: User, factory: Factory, product: Product, time: float
-    ) -> User:
+    async def start_work(self, ctx: StartWorkContext) -> None:
+        user = ctx.user
+
         if user.state:
-            return user
-        user.work_to(time)
+            return
+
+        user.start_work(ctx.time)
+        self.repository.update(user)
         await self.event_bus.emit(
             EventType.StartFactory,
-            factory=factory,
-            time=time,
-            product=product,
+            data=StartFactoryEvent(
+                factory=ctx.factory,
+                time=ctx.time,
+                product=ctx.product,
+            ),
         )
-        self.repository.update(user)
-        return user
 
     @on_event(EventType.SubtractMoney)
-    async def _subtract_user_money_event(
-        self, user: User, amount: int
-    ) -> None:
-        user.money -= amount
+    async def _subtract_user_money(self, user: User, amount: int) -> None:
+        user.substract_money(amount)
         self.repository.update(user)
