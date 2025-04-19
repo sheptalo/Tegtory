@@ -10,23 +10,33 @@ class UCShop(BaseUseCase):
         self.repository = repo
 
     async def all(self) -> list[Shop] | None:
-        return self.repository.all()
+        return await self.repository.all()
 
     async def by_name(self, name) -> Shop | None:
-        return self.repository.by_name(name)
+        return await self.repository.by_name(name)
 
     async def sign_contract(self, contract: ShopContract) -> ShopContract:
-        return self.repository.sign_contract(contract)
+        return await self.repository.sign_contract(contract)
 
-    async def get_product_list(
-        self, shop: Shop, is_demand: bool = False
-    ) -> list[ShopProduct]:
-        return self.repository.get_products(shop, is_demand)
+    async def demand_product_list(self, shop: Shop) -> list[ShopProduct]:
+        return await self.repository.get_products(shop, True)
 
     async def send_resources(self):
         pass
 
-    async def specific_shop_product_by_id(
-        self, product_id: int
-    ) -> ShopProduct:
-        return self.repository.get_product_by_id(product_id)
+    async def shop_product_by_id(self, product_id: int) -> ShopProduct:
+        return await self.repository.get_product_by_id(product_id)
+
+    async def preview_contract(
+        self, factory, shop_product: ShopProduct
+    ) -> ShopContract:
+        price_per_one = ShopContract.calculate_price_per_one(shop_product)
+        contract = ShopContract(
+            factory=factory,
+            shop=shop_product.shop,
+            price_per_one=price_per_one,
+            product=shop_product.product,
+            amount=shop_product.amount,
+            delivery_required=shop_product.shop.delivery_required,
+        )
+        return contract

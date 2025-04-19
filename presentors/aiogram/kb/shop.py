@@ -19,7 +19,7 @@ def get_shop_list_markup(shops: list[Shop]) -> InlineKeyboardMarkup:
     return builder.as_markup()
 
 
-def get_shop_demand_markup(
+def shop_demand_markup(
     products: list[ShopProduct],
 ) -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
@@ -34,7 +34,7 @@ def get_shop_demand_markup(
     return builder.as_markup()
 
 
-def get_choose_amount_demand_markup(
+def choose_amount_demand_markup(
     product: ShopProduct, step: int = 0
 ) -> InlineKeyboardMarkup:
     if not step:
@@ -46,7 +46,7 @@ def get_choose_amount_demand_markup(
     for available_amount in available_amounts:
         builder.button(
             text=str(available_amount),
-            callback_data=f"{CityCB.sign_contract}:{product.id}:{available_amount}",
+            callback_data=f"{CityCB.preview_contract}:{product.shop.title}:{product.product.id}:{available_amount}",
         )
     builder.adjust(4, repeat=True)
     builder.button(

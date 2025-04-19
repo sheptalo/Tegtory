@@ -4,17 +4,17 @@ T = TypeVar("T")
 
 
 class ICrudRepository(Protocol[T]):
-    def all(self) -> list[T]:
+    async def all(self) -> list[T]:
         pass
 
-    def get(self, item_id: int) -> T | None:
+    async def get(self, item_id: int) -> T | None:
         pass
 
-    def create(self, item: T) -> T:
+    async def create(self, item: T) -> T:
         pass
 
-    def update(self, item: T) -> T:
+    async def update(self, item: T) -> T:
         pass
 
-    def delete(self, item_id: int) -> None:
+    async def delete(self, item_id: int) -> None:
         pass

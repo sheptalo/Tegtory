@@ -5,7 +5,7 @@ from presentors.aiogram.kb import city as kb
 from presentors.aiogram.kb.callbacks import CityCB
 from presentors.aiogram.messages import city as msg
 from presentors.aiogram.utils import Images
-from presentors.shared.utils.auth import get_factory_operation
+from presentors.shared.utils.auth import get_factory
 from presentors.shared.utils.cache import cache
 
 router = Router()
@@ -34,6 +34,6 @@ async def city_callback(call: types.CallbackQuery):
 
 
 @router.callback_query(F.data == CityCB.trading_companies)
-@get_factory_operation
+@get_factory
 async def trading_companies_page(call: types.CallbackQuery):
     await call.message.edit_text(text=msg.main)

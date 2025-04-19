@@ -6,14 +6,14 @@ from dishka.integrations.base import wrap_injection
 from domain.events import EventType
 from domain.use_cases import UCFactory
 
-from .di import dishka_container
+from .di import container
 
 
 @wraps(wrap_injection)
 def inject(**params):
     def decorator(func):
         return wrap_injection(
-            func=func, container_getter=lambda __, _: dishka_container, **params
+            func=func, container_getter=lambda __, _: container, **params
         )
 
     return decorator

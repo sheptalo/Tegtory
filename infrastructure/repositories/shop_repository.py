@@ -19,31 +19,31 @@ class ShopRepository(IShopRepository):
             )
         )
 
-    def all(self) -> list[Shop]:
+    async def all(self) -> list[Shop]:
         return self.shops
 
-    def get(self, item_id: int) -> Shop | None:
+    async def get(self, item_id: int) -> Shop | None:
         for i in filter(lambda shop: shop.id == item_id, self.shops):
             return i
         return None
 
-    def create(self, item: Shop) -> Shop:
+    async def create(self, item: Shop) -> Shop:
         self.shops.append(item)
         item.id = len(self.shops)
         return item
 
-    def update(self, item: Shop) -> Shop:
+    async def update(self, item: Shop) -> Shop:
         pass
 
-    def delete(self, item_id: int) -> None:
+    async def delete(self, item_id: int) -> None:
         pass
 
-    def by_name(self, name):
+    async def by_name(self, name):
         for i in filter(lambda shop: shop.title == name, self.shops):
             return i
         return None
 
-    def get_products(
+    async def get_products(
         self, shop: Shop, is_demand: bool = False
     ) -> list[ShopProduct]:
         res = []
@@ -54,12 +54,12 @@ class ShopRepository(IShopRepository):
             res.append(i)
         return res
 
-    def add_product(self, product: ShopProduct) -> ShopProduct:
+    async def add_product(self, product: ShopProduct) -> ShopProduct:
         self.shop_products.append(product)
         product.id = len(self.shop_products)
         return product
 
-    def get_product_by_id(self, product_id: int) -> ShopProduct | None:
+    async def get_product_by_id(self, product_id: int) -> ShopProduct | None:
         for i in filter(
             lambda shop: shop.id == product_id, self.shop_products
         ):

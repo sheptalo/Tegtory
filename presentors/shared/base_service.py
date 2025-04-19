@@ -4,20 +4,16 @@ from aiogram import Dispatcher
 from aiogram.client.default import DefaultBotProperties
 from dishka.integrations.aiogram import setup_dishka
 
-from infrastructure.di import dishka_container
+from infrastructure.di import container
 from presentors.shared.middlewares.chat_action import ChatActionMiddleware
-from presentors.shared.middlewares.register_user import AuthMiddleware
 
 logger = logging.getLogger(__name__)
 
 
 class BaseService:
     bot_singleton = None
-    message_middlewares = [
-        AuthMiddleware(),
-        ChatActionMiddleware(),
-    ]
-    callback_middlewares = [AuthMiddleware()]
+    message_middlewares = [ChatActionMiddleware()]
+    callback_middlewares = []
 
     def __init__(self, bot_token: str = None):
         self.bot = self._get_bot(bot_token)
@@ -27,7 +23,7 @@ class BaseService:
         if not self.bot:
             return
         self.prepare_handlers()
-        setup_dishka(dishka_container, self.dp)
+        setup_dishka(container, self.dp, auto_inject=True)
         await self.dp.start_polling(self.bot, skip_updates=True)
 
     def prepare_handlers(self):
@@ -35,13 +31,11 @@ class BaseService:
 
     @property
     def dp(self):
-        if hasattr(self, "_dp") and self._dp:
+        if self._dp:
             return self._dp
         dp = Dispatcher()
-        for middleware in self.message_middlewares:
-            dp.message.middleware.register(middleware)
-        for middleware in self.callback_middlewares:
-            dp.callback_query.middleware.register(middleware)
+        self._register_middlewares(dp)
+
         self._dp = dp
         return dp
 
@@ -54,3 +48,9 @@ class BaseService:
             token=token,
             default=DefaultBotProperties(parse_mode="Markdown"),
         )
+
+    def _register_middlewares(self, dp: Dispatcher):
+        for middleware in self.message_middlewares:
+            dp.message.middleware.register(middleware)
+        for middleware in self.callback_middlewares:
+            dp.callback_query.middleware.register(middleware)

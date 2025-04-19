@@ -1,4 +1,5 @@
-from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+from aiogram.types import InlineKeyboardButton as Button
+from aiogram.types import InlineKeyboardMarkup as Markup
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 from domain.entity.factory import Product
@@ -12,7 +13,7 @@ def get_choose_product_markup(mode: str, products: list[Product]):
     for product in products:
         builder.button(
             text=product.name,
-            callback_data=f"{FactoryCB.choose_time}:{mode}:{product.name}:",
+            callback_data=f"{FactoryCB.choose_time}:{mode}:{product.name}",
         )
     builder.button(text="Обратно", callback_data=FactoryCB.back)
     builder.adjust(1, repeat=True)
@@ -41,53 +42,39 @@ def get_time_choose_markup(mode: str, product: Product):
     return builder.as_markup()
 
 
-back_button = InlineKeyboardButton(
-    text="Обратно", callback_data=FactoryCB.back
-)
-back_markup = InlineKeyboardMarkup(inline_keyboard=[[back_button]])
+back_button = Button(text="Обратно", callback_data=FactoryCB.back)
+back_markup = Markup(inline_keyboard=[[back_button]])
 
 create_markup = one_inline_button_markup("Создать фабрику", FactoryCB.create)
 
 factory_kb = [
     [
-        InlineKeyboardButton(
-            text="Работать", callback_data=FactoryCB.work_yourself
-        ),
-        InlineKeyboardButton(
-            text="Запустить фабрику", callback_data=FactoryCB.start
-        ),
+        Button(text="Работать", callback_data=FactoryCB.work_yourself),
+        Button(text="Запустить фабрику", callback_data=FactoryCB.start),
     ],
     [
-        InlineKeyboardButton(
-            text="Улучшение", callback_data=FactoryCB.upgrade
-        ),
-        InlineKeyboardButton(
-            text="Работники", callback_data=FactoryCB.workers
-        ),
+        Button(text="Улучшение", callback_data=FactoryCB.upgrade),
+        Button(text="Работники", callback_data=FactoryCB.workers),
     ],
     [
-        InlineKeyboardButton(text="Налоги", callback_data=FactoryCB.tax),
-        InlineKeyboardButton(text="Склад", callback_data=FactoryCB.storage),
+        Button(text="Налоги", callback_data=FactoryCB.tax),
+        Button(text="Склад", callback_data=FactoryCB.storage),
     ],
 ]
-main = InlineKeyboardMarkup(inline_keyboard=factory_kb)
+main = Markup(inline_keyboard=factory_kb)
 
-hire_markup = InlineKeyboardMarkup(
+hire_markup = Markup(
     inline_keyboard=[
-        [InlineKeyboardButton(text="Нанять", callback_data=FactoryCB.hire)],
+        [Button(text="Нанять", callback_data=FactoryCB.hire)],
         [back_button],
     ]
 )
 
 failed_hire_markup = one_inline_button_markup("обратно", FactoryCB.workers)
 
-upgrade_markup = InlineKeyboardMarkup(
+upgrade_markup = Markup(
     inline_keyboard=[
-        [
-            InlineKeyboardButton(
-                text="улучшить", callback_data=FactoryCB.upgrade_conf
-            )
-        ],
+        [Button(text="улучшить", callback_data=FactoryCB.upgrade_conf)],
         [back_button],
     ]
 )
@@ -96,21 +83,17 @@ failed_upgrade_markup = one_inline_button_markup(
     text="Обратно", callback_data=FactoryCB.upgrade
 )
 
-tax_markup = InlineKeyboardMarkup(
+tax_markup = Markup(
     inline_keyboard=[
-        [
-            InlineKeyboardButton(
-                text="Оплатить налоги", callback_data=FactoryCB.pay_tax
-            )
-        ],
+        [Button(text="Оплатить налоги", callback_data=FactoryCB.pay_tax)],
         [back_button],
     ]
 )
 
-storage_markup = InlineKeyboardMarkup(
+storage_markup = Markup(
     inline_keyboard=[
         [
-            InlineKeyboardButton(
+            Button(
                 text="Улучшить склад", callback_data=FactoryCB.upgrade_storage
             )
         ],
