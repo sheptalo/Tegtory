@@ -1,9 +1,12 @@
 from aiogram import F, Router, types
 from dishka import FromDishka
 
+from domain.commands.factory import PayTaxCommand
 from domain.context.factory import UserFactoryContext
 from domain.entity import Factory
+from domain.results import Success
 from domain.use_cases import UCFactory
+from infrastructure.registry import CommandExecutor
 from presentors.aiogram.kb import factory as kb
 from presentors.aiogram.kb.callbacks import FactoryCB
 from presentors.aiogram.messages import factory as msg
@@ -41,11 +44,19 @@ async def tax_page(
 async def pay_tax(
     call: types.CallbackQuery,
     ctx: UserFactoryContext,
-    use_case: FromDishka[UCFactory],
 ):
-    result = await use_case.pay_tax(ctx.user, ctx.factory)
-    if isinstance(result, Factory):
-        result = msg.tax_page.format(result.tax)
+    result = await CommandExecutor().execute(
+        PayTaxCommand(
+            user_id=ctx.user.id,
+            user_money=ctx.user.money,
+            factory_id=ctx.factory.id,
+            factory_tax=ctx.factory.tax,
+        )
+    )
+    if isinstance(result, Success):
+        result = msg.tax_page.format(0)
+    else:
+        result = result.reason
     if str(call.message.caption).strip() == result.strip():
         return
     await call.message.edit_caption(caption=result, reply_markup=kb.tax_markup)

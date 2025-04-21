@@ -4,9 +4,12 @@ from aiogram.filters import Command, StateFilter
 from aiogram.fsm.context import FSMContext
 from dishka import FromDishka
 
+from domain.commands.factory import CreateFactoryCommand
 from domain.context.factory import UserFactoryContext
 from domain.entity import Factory, User
+from domain.results import Success
 from domain.use_cases import UCFactory
+from infrastructure.registry import CommandExecutor
 from presentors.aiogram.handlers.factory.main import open_factory
 from presentors.aiogram.kb import factory as kb
 from presentors.aiogram.kb.callbacks import FactoryCB
@@ -34,12 +37,13 @@ async def create_factory_callback(
 
 @router.message(StateFilter(states.Create.name))
 async def finish_create_factory_handler(
-    message: types.Message, state: FSMContext, use_case: FromDishka[UCFactory]
+    message: types.Message, state: FSMContext
 ):
     await message.delete()
-    factory = Factory(id=message.from_user.id, name=message.text)
-    result = await use_case.create(factory)
-    if result:
+    result = await CommandExecutor().execute(
+        CreateFactoryCommand(id=message.from_user.id, name=message.text),
+    )
+    if isinstance(result, Success):
         await state.clear()
         return await open_factory(message)
     await message.answer(msg.unique_name)

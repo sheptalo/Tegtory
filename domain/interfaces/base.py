@@ -3,7 +3,7 @@ from typing import Protocol, TypeVar
 T = TypeVar("T")
 
 
-class ICrudRepository(Protocol[T]):
+class CrudRepository(Protocol[T]):
     async def all(self) -> list[T]:
         pass
 

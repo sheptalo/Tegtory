@@ -1,5 +1,5 @@
 from domain.entity import Factory, User
-from domain.interfaces import IUserRepository
+from domain.interfaces import UserRepository
 from domain.use_cases.base import BaseUseCase
 
 from ..entity.factory import Product, StartFactoryEvent
@@ -7,7 +7,7 @@ from ..events import EventType, IEventBus, on_event
 
 
 class UCUser(BaseUseCase):
-    def __init__(self, repo: IUserRepository, event_bus: IEventBus) -> None:
+    def __init__(self, repo: UserRepository, event_bus: IEventBus) -> None:
         super().__init__(event_bus)
         self.repository = repo
 

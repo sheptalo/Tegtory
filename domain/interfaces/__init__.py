@@ -1,5 +1,11 @@
-from .factory import IFactoryRepository
-from .shop import IShopRepository
-from .user import IUserRepository
+from .factory import FactoryRepository, FactoryTaxRepository
+from .shop import ShopRepository
+from .user import UserMoneyRepository, UserRepository
 
-__all__ = ["IFactoryRepository", "IUserRepository", "IShopRepository"]
+__all__ = [
+    "FactoryRepository",
+    "UserRepository",
+    "ShopRepository",
+    "FactoryTaxRepository",
+    "UserMoneyRepository",
+]

@@ -68,7 +68,7 @@ class Factory(BaseModel):
     storage: Storage = Storage()
     level: int = 10
     end_work_time: float = 0
-    tax: int = 0
+    tax: int = 1
     workers: int = 10
 
     def __str__(self):

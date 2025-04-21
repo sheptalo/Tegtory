@@ -1,9 +1,9 @@
 from domain.entity import LogisticCompany
 
-from .base import ICrudRepository
+from .base import CrudRepository
 
 
-class ILogisticRepository(ICrudRepository[LogisticCompany]):
+class LogisticRepository(CrudRepository[LogisticCompany]):
     async def find(self, shop: LogisticCompany) -> LogisticCompany | None:
         pass
 

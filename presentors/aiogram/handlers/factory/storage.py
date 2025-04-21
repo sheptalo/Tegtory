@@ -2,7 +2,7 @@ from aiogram import F, Router, types
 from dishka import FromDishka
 
 from domain.context.factory import UserFactoryContext
-from domain.entity import Factory, Storage, User
+from domain.entity import Factory, Storage
 from domain.use_cases import UCFactory
 from presentors.aiogram.kb import factory as kb
 from presentors.aiogram.kb.callbacks import FactoryCB

@@ -11,7 +11,7 @@ from ..entity import Factory, Product, Storage, StorageProduct, User
 from ..entity.factory import StartFactoryEvent
 from ..events import IEventBus, on_event
 from ..events.event_types import EventType
-from ..interfaces import IFactoryRepository
+from ..interfaces import FactoryRepository
 from .base import BaseUseCase
 
 
@@ -58,7 +58,7 @@ class WorkSimulator:
 
 
 class UCFactory(BaseUseCase):
-    def __init__(self, repository: IFactoryRepository, event_bus: IEventBus):
+    def __init__(self, repository: FactoryRepository, event_bus: IEventBus):
         super().__init__(event_bus)
         self.repository = repository
         self.logic = FactoryService()
@@ -72,17 +72,6 @@ class UCFactory(BaseUseCase):
 
     async def get_by_name(self, name: str) -> Factory | None:
         return await self.repository.by_name(name)
-
-    async def create(self, factory: Factory) -> Factory:
-        if await self.get(factory.id) or await self.get_by_name(factory.name):
-            return factory
-
-        factory = await self.repository.create(factory)
-        factory.storage = await self.repository.create_storage(factory)
-
-        for product in settings.DEFAULT_AVAILABLE_PRODUCTS:
-            await self.repository.add_available_product(factory, product)
-        return factory
 
     async def rename(self, factory: Factory) -> Factory | None:
         existing = await self.get_by_name(factory.name)

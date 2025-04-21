@@ -7,13 +7,13 @@ from common.settings import TAX_LIMIT
 from domain.entity import Factory, Product, Storage, StorageProduct, User
 from domain.entity.factory import StartFactoryEvent
 from domain.events import EventType
-from domain.interfaces import IFactoryRepository
+from domain.interfaces import FactoryRepository
 from domain.use_cases.factory import UCFactory
 
 
 @pytest.fixture
 def factory_repo():
-    repo = MagicMock(spec=IFactoryRepository)
+    repo = MagicMock(spec=FactoryRepository)
     repo.get = MagicMock()
     repo.get_storage = MagicMock()
     repo.create = MagicMock()

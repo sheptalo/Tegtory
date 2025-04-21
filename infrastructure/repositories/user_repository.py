@@ -1,27 +1,42 @@
 import logging
 
 from domain.entity import User
-from domain.interfaces import IUserRepository
+from domain.interfaces import UserMoneyRepository, UserRepository
 
 logger = logging.getLogger(__name__)
+_users: list[User] = []
 
 
-class UserRepository(IUserRepository):
-    def __init__(self):
-        self.users = []
+def _filter_users(user_id: int) -> User | None:
+    for i in filter(lambda u: u.id == user_id, _users):
+        return i
+    return None
+
+
+class UserRepositoryImpl(UserRepository):
 
     async def get(self, user_id: int) -> User:
-        return await self._filter_users(user_id)
+        return _filter_users(user_id)
 
     async def create(self, user: User) -> User:
         logger.info(f"Creating user {user.id} with name {user.name}")
-        self.users.append(user)
+        _users.append(user)
         return user
 
     async def update(self, user: User) -> User:
         pass
 
-    async def _filter_users(self, user_id: int) -> User | None:
-        for i in filter(lambda u: u.id == user_id, self.users):
-            return i
-        return None
+
+class UserMoneyRepositoryImpl(UserMoneyRepository):
+    def send(self, from_user_id: int, to_user_id: int, amount: int):
+        pass
+
+    def subtract(self, user_id: int, amount: int):
+        user = _filter_users(user_id)
+        if user:
+            user.money -= amount
+
+    def add(self, user_id: int, amount: int):
+        user = _filter_users(user_id)
+        if user:
+            user.money += amount

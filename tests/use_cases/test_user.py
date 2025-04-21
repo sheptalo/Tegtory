@@ -6,13 +6,13 @@ from domain.context.factory import StartWorkContext
 from domain.entity import Factory, Product, User
 from domain.entity.factory import StartFactoryEvent
 from domain.events import EventType, IEventBus
-from domain.interfaces import IUserRepository
+from domain.interfaces import UserRepository
 from domain.use_cases.user import UCUser
 
 
 @pytest.fixture
 def user_repo():
-    repo = MagicMock(spec=IUserRepository)
+    repo = MagicMock(spec=UserRepository)
     repo.create = MagicMock()
     repo.update = MagicMock()
     repo.get = MagicMock()

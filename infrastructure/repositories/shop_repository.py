@@ -1,9 +1,9 @@
 from common import settings
 from domain.entity import Shop, ShopProduct
-from domain.interfaces.shop import IShopRepository
+from domain.interfaces.shop import ShopRepository
 
 
-class ShopRepository(IShopRepository):
+class ShopRepositoryImpl(ShopRepository):
     def __init__(self):
         self.shops: list[Shop] = []
         self.shop_products: list[ShopProduct] = []

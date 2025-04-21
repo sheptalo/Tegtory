@@ -1,9 +1,9 @@
 from domain.entity import Shop, ShopContract, ShopProduct
 
-from .base import ICrudRepository
+from .base import CrudRepository
 
 
-class IShopRepository(ICrudRepository[Shop]):
+class ShopRepository(CrudRepository[Shop]):
     async def by_name(self, name):
         pass
 

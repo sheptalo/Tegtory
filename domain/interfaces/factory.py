@@ -1,9 +1,11 @@
+from typing import Protocol
+
 from domain.entity import Factory, Product, Storage, StorageProduct
 
-from .base import ICrudRepository
+from .base import CrudRepository
 
 
-class IFactoryRepository(ICrudRepository[Factory]):
+class FactoryRepository(CrudRepository[Factory]):
     async def by_name(self, name: str) -> Factory | None:
         pass
 
@@ -27,4 +29,12 @@ class IFactoryRepository(ICrudRepository[Factory]):
     async def add_product_in_storage(
         self, storage_product: StorageProduct
     ) -> StorageProduct:
+        pass
+
+
+class FactoryTaxRepository(Protocol):
+    def increase_tax(self, factory_id: int, amount: int) -> None:
+        pass
+
+    def remove_tax(self, factory_id: int) -> None:
         pass

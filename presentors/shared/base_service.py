@@ -51,6 +51,6 @@ class BaseService:
 
     def _register_middlewares(self, dp: Dispatcher):
         for middleware in self.message_middlewares:
-            dp.message.middleware.register(middleware)
+            dp.message.middleware.register(middleware, )
         for middleware in self.callback_middlewares:
-            dp.callback_query.middleware.register(middleware)
+            dp.callback_query.middleware.register(middleware, )
