@@ -5,12 +5,7 @@ from common.exceptions import AppException
 
 from ..events.eventbus import IEventBus
 
-
-class BaseUseCase:
-    def __init__(self, eventbus: IEventBus) -> None:
-        self.event_bus = eventbus
-        self._subscribe()
-
+class SafeCall:
     def __getattribute__(self, i):
         obj = object.__getattribute__(self, i)
 
@@ -31,12 +26,19 @@ class BaseUseCase:
 
         return wrapper
 
-    def _subscribe(self) -> None:
+
+class EventBased:
+    def __init__(self, eventbus: IEventBus):
+        self.eventbus = eventbus
+
+    @classmethod
+    def get_subscribers(cls):
+        subs = []
         for attr in filter(
-            lambda x: hasattr(getattr(self, x), "__subscribed_events__"),
-            dir(self),
+                lambda x: hasattr(getattr(cls, x), "__event__"),
+                dir(cls)
         ):
-            func = getattr(self, attr)
-            events = func.__subscribed_events__
-            for event in events:
-                self.event_bus.subscribe(func, event)
+            subs.append(getattr(cls, attr))
+        return subs
+
+

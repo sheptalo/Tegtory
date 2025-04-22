@@ -1,15 +1,13 @@
 from aiogram import F, Router, types
 from aiogram.exceptions import TelegramBadRequest
-from aiogram.filters import Command, StateFilter
+from aiogram.filters import StateFilter
 from aiogram.fsm.context import FSMContext
-from dishka import FromDishka
 
-from domain.commands.factory import CreateFactoryCommand
+from domain.commands.factory import CreateFactoryCommand, UpgradeFactoryCommand
 from domain.context.factory import UserFactoryContext
 from domain.entity import Factory, User
 from domain.results import Success
-from domain.use_cases import UCFactory
-from infrastructure.registry import CommandExecutor
+from infrastructure.command import CommandExecutor
 from presentors.aiogram.handlers.factory.main import open_factory
 from presentors.aiogram.kb import factory as kb
 from presentors.aiogram.kb.callbacks import FactoryCB
@@ -28,17 +26,13 @@ router = Router()
 
 @router.callback_query(F.data == FactoryCB.create)
 @get_user
-async def create_factory_callback(
-    call: types.CallbackQuery, state: FSMContext, user: User
-):
+async def create_factory_callback(call: types.CallbackQuery, state: FSMContext, user: User):
     await call.message.edit_text(msg.set_name, reply_markup=None)
     await state.set_state(states.Create.name)
 
 
 @router.message(StateFilter(states.Create.name))
-async def finish_create_factory_handler(
-    message: types.Message, state: FSMContext
-):
+async def finish_create_factory_handler(message: types.Message, state: FSMContext):
     await message.delete()
     result = await CommandExecutor().execute(
         CreateFactoryCommand(id=message.from_user.id, name=message.text),
@@ -49,43 +43,14 @@ async def finish_create_factory_handler(
     await message.answer(msg.unique_name)
 
 
-@router.message(Command("rename_factory"))
-@get_factory
-async def rename_factory(
-    message: types.Message, state: FSMContext, _: Factory
-):
-    await message.answer(msg.set_name)
-    await state.set_state(states.Rename.new_name)
-
-
-@router.message(StateFilter(states.Rename.new_name))
-@get_factory
-async def complete_rename_factory(
-    message: types.Message,
-    state: FSMContext,
-    factory: Factory,
-    use_case: FromDishka[UCFactory],
-):
-    factory.entity.rename(message.text)
-    result = await use_case.rename(factory.entity)
-    await state.clear()
-    await message.answer(
-        msg.successfully_rename if result else msg.unique_name
-    )
-
-
 @router.callback_query(F.data == FactoryCB.upgrade)
 @get_factory
 @cache(Images.factory_upgrade, types.FSInputFile(Images.factory_upgrade))
-async def upgrade_factory(
-    call: types.CallbackQuery, factory: Factory, cached, cache_func
-):
+async def upgrade_factory(call: types.CallbackQuery, factory: Factory, cached, cache_func):
     try:
         sent = await call.message.edit_media(
             media=types.InputMediaPhoto(
-                caption=msg.upgrade_page.format(
-                    factory.level, factory.upgrade_price
-                ),
+                caption=msg.upgrade_page.format(factory.level, factory.upgrade_price),
                 media=cached,
             ),
             reply_markup=kb.upgrade_markup,
@@ -99,17 +64,16 @@ async def upgrade_factory(
 @get_factory
 @get_user
 @with_context(UserFactoryContext)
-async def try_to_upgrade_factory(
-    call: types.CallbackQuery,
-    ctx: UserFactoryContext,
-    use_case: FromDishka[UCFactory],
-):
-    result = await use_case.upgrade(ctx.user, ctx.factory)
+async def try_to_upgrade_factory(call: types.CallbackQuery, ctx: UserFactoryContext):
+    result = await CommandExecutor().execute(
+        UpgradeFactoryCommand(
+            factory_id=ctx.factory.id,
+            factory_upgrade_price=ctx.factory.upgrade_price,
+            user_id=ctx.user.id,
+            user_money=ctx.user.money,
+        )
+    )
 
-    markup = kb.failed_upgrade_markup
-
-    if isinstance(result, Factory):
-        result = msg.upgrade_page.format(result.level, result.upgrade_price)
-        markup = kb.upgrade_markup
-
-    await call.message.edit_caption(caption=result, reply_markup=markup)
+    if isinstance(result, Success):
+        return await upgrade_factory(call)
+    await call.message.edit_caption(caption=result.reason, reply_markup=kb.failed_upgrade_markup)

@@ -6,21 +6,16 @@ from common.exceptions import (
     NotEnoughPointsException,
     TaxException,
 )
+from .base import EventBased, SafeCall
 
-from ..entity import Factory, Product, Storage, StorageProduct, User
+from ..entity import Factory, Product, StorageProduct, User
 from ..entity.factory import StartFactoryEvent
 from ..events import IEventBus, on_event
 from ..events.event_types import EventType
 from ..interfaces import FactoryRepository
-from .base import BaseUseCase
 
 
 class FactoryService:
-    @staticmethod
-    def upgrade(factory: Factory) -> Factory:
-        factory.upgrade()
-        return factory
-
     @staticmethod
     def hire_worker(factory: Factory) -> Factory:
         if factory.hire_available == 0:
@@ -57,47 +52,15 @@ class WorkSimulator:
         await asyncio.sleep(time)
 
 
-class UCFactory(BaseUseCase):
+class UCFactory(SafeCall, EventBased):
     def __init__(self, repository: FactoryRepository, event_bus: IEventBus):
         super().__init__(event_bus)
         self.repository = repository
         self.logic = FactoryService()
         self.money = MoneyService(event_bus)
 
-    async def get(self, owner_id: int) -> Factory | None:
-        factory = await self.repository.get(owner_id)
-        if factory:
-            factory.storage = await self.repository.get_storage(factory)
-        return factory
-
     async def get_by_name(self, name: str) -> Factory | None:
         return await self.repository.by_name(name)
-
-    async def rename(self, factory: Factory) -> Factory | None:
-        existing = await self.get_by_name(factory.name)
-        if existing and existing.id != factory.id:
-            return None
-        return await self.repository.update(factory)
-
-    async def pay_tax(self, user: User, factory: Factory) -> Factory:
-        if factory.tax == 0:
-            return factory
-
-        await self.money.charge(user, factory.tax)
-        factory.remove_tax()
-        await self.repository.update(factory)
-        return factory
-
-    async def upgrade(self, user: User, factory: Factory) -> Factory:
-        await self.money.charge(user, factory.upgrade_price)
-        self.logic.upgrade(factory)
-        await self.repository.update(factory)
-        return factory
-
-    async def upgrade_storage(self, user: User, storage: Storage) -> None:
-        await self.money.charge(user, storage.upgrade_price)
-        storage.upgrade()
-        await self.repository.update_storage(storage)
 
     async def hire(self, user: User, factory: Factory) -> Factory:
         await self.money.charge(user, factory.hire_price)

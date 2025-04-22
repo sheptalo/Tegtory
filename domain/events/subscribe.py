@@ -1,9 +1,9 @@
 from .event_types import EventType
 
 
-def on_event(*events: tuple[EventType]):
+def on_event(event: EventType):
     def decorator(func):
-        func.__subscribed_events__ = events
+        func.__event__ = event
         return func
 
     return decorator

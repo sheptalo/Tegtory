@@ -2,7 +2,7 @@ import logging
 
 from domain.entity import Factory, Product, Storage, StorageProduct
 from domain.interfaces import FactoryRepository
-from domain.interfaces.factory import FactoryTaxRepository
+from domain.interfaces.factory import FactoryTaxRepository, FactoryWorkersRepository
 
 logger = logging.getLogger(__name__)
 _factories = []
@@ -16,7 +16,6 @@ def _filter_factories(user_id: int) -> Factory | None:
 
 class FactoryRepositoryImpl(FactoryRepository):
     def __init__(self):
-        self.storages = {}
         self.available_products = {}
 
     async def get(self, owner_id: int) -> Factory:
@@ -27,6 +26,11 @@ class FactoryRepositoryImpl(FactoryRepository):
         _factories.append(factory)
         return factory
 
+    async def upgrade(self, factory_id: int) -> Factory | None:
+        factory = _filter_factories(factory_id)
+        factory.upgrade()
+        return factory
+
     async def update(self, user: Factory) -> Factory:
         pass
 
@@ -34,14 +38,6 @@ class FactoryRepositoryImpl(FactoryRepository):
         for i in filter(lambda f: f.name == name, _factories):
             return i
         return None
-
-    async def get_storage(self, factory: Factory) -> Storage:
-        return self.storages.get(factory.id)
-
-    async def create_storage(self, factory: Factory) -> Storage:
-        storage = Storage()
-        self.storages[factory.id] = storage
-        return storage
 
     async def add_available_product(
         self, factory: Factory, product: Product
@@ -66,10 +62,19 @@ class FactoryRepositoryImpl(FactoryRepository):
 
 
 class FactoryTaxRepositoryImpl(FactoryTaxRepository):
-    def increase_tax(self, factory_id: int, amount: int) -> None:
+    async def increase_tax(self, factory_id: int, amount: int) -> None:
         factory = _filter_factories(factory_id)
         factory.tax += amount
 
-    def remove_tax(self, factory_id: int) -> None:
+    async def remove_tax(self, factory_id: int) -> None:
         factory = _filter_factories(factory_id)
         factory.tax = 0
+
+
+class FactoryWorkersRepositoryImpl(FactoryWorkersRepository):
+    async def hire(self, factory_id: int) -> None:
+        factory = _filter_factories(factory_id)
+        factory.hire()
+
+    async def fire(self, factory_id: int) -> None:
+        pass

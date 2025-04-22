@@ -1,12 +1,10 @@
 from aiogram import F, Router, types
-from dishka import FromDishka
 
 from domain.commands.factory import PayTaxCommand
 from domain.context.factory import UserFactoryContext
 from domain.entity import Factory
 from domain.results import Success
-from domain.use_cases import UCFactory
-from infrastructure.registry import CommandExecutor
+from infrastructure.command import CommandExecutor
 from presentors.aiogram.kb import factory as kb
 from presentors.aiogram.kb.callbacks import FactoryCB
 from presentors.aiogram.messages import factory as msg

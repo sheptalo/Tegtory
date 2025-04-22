@@ -28,15 +28,17 @@ class UserRepositoryImpl(UserRepository):
 
 
 class UserMoneyRepositoryImpl(UserMoneyRepository):
-    def send(self, from_user_id: int, to_user_id: int, amount: int):
+    async def send(self, from_user_id: int, to_user_id: int, amount: int):
         pass
 
-    def subtract(self, user_id: int, amount: int):
+    async def subtract(self, user_id: int, amount: int):
         user = _filter_users(user_id)
         if user:
+            logger.error(f"Subtracting user {user_id} with amount {amount}")
             user.money -= amount
+            logger.error(user)
 
-    def add(self, user_id: int, amount: int):
+    async def add(self, user_id: int, amount: int):
         user = _filter_users(user_id)
         if user:
             user.money += amount

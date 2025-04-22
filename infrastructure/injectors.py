@@ -1,20 +1,15 @@
-from functools import wraps
-
 from dishka import FromDishka
 from dishka.integrations.base import wrap_injection
 
-from domain.events import EventType
-from domain.use_cases import UCFactory
-
-from .di import container
+from domain.events import EventType, IEventBus
 
 
-@wraps(wrap_injection)
+
 def inject(**params):
     def decorator(func):
-        return wrap_injection(
-            func=func, container_getter=lambda __, _: container, **params
-        )
+        from .di import container
+
+        return wrap_injection(func=func, container_getter=lambda __, _: container, **params)
 
     return decorator
 
@@ -31,6 +26,6 @@ def on_event(event_name: EventType):
 
 
 @inject(is_async=True)
-async def subscribe_all(use_case: FromDishka[UCFactory]):
+async def subscribe_all(event_bus: FromDishka[IEventBus]):
     for event_name, func in _pending_subscriptions:
-        use_case.event_bus.subscribe(func, event_name)
+        event_bus.subscribe(func, event_name)

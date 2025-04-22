@@ -62,6 +62,20 @@ class StartFactoryEvent(BaseModel):
     workers: int = 1
 
 
+class WorkersFactory(BaseModel):
+    id: int
+    workers: int = 10
+    level: int = 10
+
+    @property
+    def hire_price(self) -> int:
+        return (1 + self.workers) * 300
+
+    @property
+    def hire_available(self) -> int:
+        return self.level - self.workers
+
+
 class Factory(BaseModel):
     id: int
     name: str
@@ -78,16 +92,11 @@ class Factory(BaseModel):
 🚧 *Статус:* {"Работает" if self.state else "Не работает"}
 💸 *Налоги:* {self.tax}
 👷‍ *Работники:* {self.workers}
-📦 *Товара на складе:* {self.storage.stock}
 """
 
     @property
     def minutes_to_work(self) -> float:
         return math.ceil(self.work_time_remained / 60 * 10) / 10
-
-    @property
-    def upgrade_time(self) -> int:
-        return (self.level + 5) * 5 + random.randint(1, 10)
 
     @property
     def hire_price(self) -> int:
@@ -100,14 +109,6 @@ class Factory(BaseModel):
     @property
     def upgrade_price(self) -> int:
         return (self.level + 2) * 370
-
-    @property
-    def max_workers(self) -> int:
-        return self.level
-
-    @property
-    def available_workers(self) -> int:
-        return self.level - self.workers
 
     @property
     def work_time_remained(self) -> float:
@@ -135,9 +136,6 @@ class Factory(BaseModel):
         if self.state:
             raise DuringWorkException
         self.workers += 1
-
-    def remove_tax(self) -> None:
-        self.tax = 0
 
     def set_tax(self, amount: int) -> None:
         self.tax = random.randint(1, 5) * amount // 3

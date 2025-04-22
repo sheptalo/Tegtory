@@ -13,7 +13,7 @@ class User(BaseModel):
     id: int
     name: str
     username: str
-    money: int = 500
+    money: int = 5000000000
     stolar: int = 0
     rating: int = 0
     league: int = "Не в лиге"

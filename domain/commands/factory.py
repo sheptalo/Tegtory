@@ -2,6 +2,11 @@ from pydantic import BaseModel
 
 from common.exceptions import NotEnoughPointsException
 from domain.entity import Storage
+from domain.entity.factory import WorkersFactory
+
+
+class FactoryRequiredCommand(BaseModel):
+    factory_id: int
 
 
 class CreateFactoryCommand(BaseModel):
@@ -21,17 +26,30 @@ class PayRequiredCommand(BaseModel):
         raise NotImplementedError
 
 
-class PayTaxCommand(PayRequiredCommand):
-    factory_id: int
+class PayTaxCommand(PayRequiredCommand, FactoryRequiredCommand):
     factory_tax: int
 
     def get_price(self):
         return self.factory_tax
 
 
-class UpgradeStorageCommand(PayRequiredCommand):
+class UpgradeStorageCommand(PayRequiredCommand, FactoryRequiredCommand):
     storage: Storage
 
     def get_price(self):
         return self.storage.upgrade_price
 
+
+class UpgradeFactoryCommand(PayRequiredCommand, FactoryRequiredCommand):
+    factory_upgrade_price: int
+
+    def get_price(self):
+        return self.factory_upgrade_price
+
+
+class HireWorkerCommand(PayRequiredCommand):
+    factory: WorkersFactory
+
+
+    def get_price(self):
+        return self.factory.hire_price

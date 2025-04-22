@@ -2,9 +2,13 @@ from aiogram import F, Router, types
 from aiogram.types import InputMediaPhoto
 from dishka import FromDishka
 
+from domain.commands.factory import HireWorkerCommand
 from domain.context.factory import UserFactoryContext
 from domain.entity import Factory
+from domain.entity.factory import WorkersFactory
+from domain.results import Success
 from domain.use_cases import UCFactory
+from infrastructure.command import CommandExecutor
 from presentors.aiogram.kb import factory as kb
 from presentors.aiogram.kb.callbacks import FactoryCB
 from presentors.aiogram.messages import factory as msg
@@ -47,14 +51,16 @@ async def workers_page(
 async def hire(
     call: types.CallbackQuery,
     ctx: UserFactoryContext,
-    use_case: FromDishka[UCFactory],
 ):
-    result = await use_case.hire(ctx.user, ctx.factory)
-    markup = kb.failed_hire_markup
-    if isinstance(result, Factory):
-        result = msg.workers_page.format(
-            result.workers, result.hire_available, result.hire_price
+    result = await CommandExecutor().execute(
+        HireWorkerCommand(
+            factory=WorkersFactory.model_validate(ctx.factory.model_dump()),
+            user_money=ctx.user.money,
+            user_id=ctx.user.id,
         )
-        markup = kb.hire_markup
+    )
+    markup = kb.failed_hire_markup
+    if isinstance(result, Success):
+        return await workers_page(call)
 
-    await call.message.edit_caption(caption=str(result), reply_markup=markup)
+    await call.message.edit_caption(caption=result.reason, reply_markup=markup)
