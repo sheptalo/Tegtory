@@ -62,12 +62,6 @@ class UCFactory(SafeCall, EventBased):
     async def get_by_name(self, name: str) -> Factory | None:
         return await self.repository.by_name(name)
 
-    async def hire(self, user: User, factory: Factory) -> Factory:
-        await self.money.charge(user, factory.hire_price)
-        self.logic.hire_worker(factory)
-        await self.repository.update(factory)
-        return factory
-
     async def start_factory(
         self, factory: Factory, time: float, product: Product
     ) -> None:

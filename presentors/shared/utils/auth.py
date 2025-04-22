@@ -4,7 +4,7 @@ from functools import wraps
 from aiogram import types
 from dishka import FromDishka
 
-from domain.entity import Factory, User, Storage
+from domain.entity import Factory, User
 from domain.queries.factory import GetFactoryQuery, GetStorageQuery
 from domain.results import Success
 from domain.use_cases import UCUser
@@ -12,6 +12,7 @@ from infrastructure.injectors import inject
 from infrastructure.query import QueryExecutor
 from presentors.aiogram.kb import factory as kb_factory
 from presentors.aiogram.messages import factory as factory_msg
+from domain.queries.user import UserQuery
 
 logger = logging.getLogger(__name__)
 
@@ -34,6 +35,7 @@ def get_storage_from_factory(func):
         result = await QueryExecutor().ask(GetStorageQuery(factory_id=factory.id))
         if isinstance(result, Success):
             return await func(*args, storage=result.data, **kwargs)
+
     return wrapper
 
 
@@ -63,15 +65,18 @@ async def _get_factory(user_id) -> Factory | None:
     return None
 
 
-@inject(is_async=True)
-async def _get_user(user_id, uc_user: FromDishka[UCUser]) -> User | None:
-    return await uc_user.get(user_id)
+async def _get_user(user_id) -> User | None:
+    res = await QueryExecutor().ask(UserQuery(user_id=user_id))
+    if isinstance(res, Success):
+        return res.data
+    return None
 
 
 @inject(is_async=True)
 async def _create_user(user, uc_user: FromDishka[UCUser]) -> User | None:
     logger.info(f"Registering user {user.id} - {user.username}")
     return await uc_user.create(User(id=user.id, name=user.first_name, username=user.username))
+
 
 async def factory_required_handler(event):
     logger.info(f"Пользователь {event.from_user.id} не имеет фабрики")

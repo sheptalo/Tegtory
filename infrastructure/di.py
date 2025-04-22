@@ -17,6 +17,7 @@ from domain.use_cases.commands.factory import (
     UpgradeFactoryHandler, HireWorkerCommandHandler,
 )
 from domain.use_cases.queries.factory import GetFactoryQueryHandler
+from domain.use_cases.queries.user import GetUserQueryHandler
 
 from .events.eventbus import MemoryEventBus
 from .repositories import (
@@ -51,6 +52,7 @@ provider.provide(UCShop)
 
 
 provider.provide(GetFactoryQueryHandler)
+provider.provide(GetUserQueryHandler)
 
 
 provider.provide(CreateFactoryHandler)

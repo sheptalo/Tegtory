@@ -14,12 +14,6 @@ class UCUser(SafeCall, EventBased):
     async def create(self, user: User) -> User:
         return await self.repository.create(user)
 
-    async def update(self, user: User) -> User:
-        return await self.repository.update(user)
-
-    async def get(self, user_id: int) -> User | None:
-        return await self.repository.get(user_id)
-
     async def create_if_not_exist(
         self, user_id: int, name: str, username: str
     ) -> None:
