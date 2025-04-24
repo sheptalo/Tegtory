@@ -1,21 +1,27 @@
+from typing import Any
+
 from dishka import FromDishka
 
-from domain.events import IEventBus
+from domain.events import EventBus
 from domain.use_cases.base import EventBased
+from infrastructure.di import container
 from infrastructure.injectors import inject
+from infrastructure.utils import get_children
 
 
 @inject(is_async=True)
-async def register_events(event_bus: FromDishka[IEventBus]):
-    subs = get_subscribed_events(EventBased.__subclasses__())
+async def register_events(event_bus: FromDishka[EventBus]):
+    events = get_subscribed_events(EventBased)
 
-    for sub in subs:
-        event_bus.subscribe(sub, sub.__event__)
+    for cls, subscribers in events:
+        instance = await container.get(cls)
+        for sub in subscribers:
+            event_bus.subscribe(getattr(instance, sub.__name__), sub.__event__)
 
 
-def get_subscribed_events(subclasses) -> list[callable]:
+def get_subscribed_events(klass) -> list[list[Any]]:
     events = []
-    for klass in subclasses:
-        events.extend(klass.get_subscribers())
-        events.extend(get_subscribed_events(klass.__subclasses__()))
+    for cls in get_children(klass):
+        events.append([cls, cls.get_subscribers()])
+
     return events

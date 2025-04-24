@@ -1,13 +1,17 @@
 from aiogram import F, Router, types
 
+from domain import entity, results
 from domain.commands.factory import UpgradeStorageCommand
 from domain.context import UserFactoryContext
-from domain import results, entity
 from infrastructure.command import CommandExecutor
 from presentors.aiogram.kb import factory as kb
 from presentors.aiogram.kb.callbacks import FactoryCB
 from presentors.aiogram.messages import factory as msg
-from presentors.shared.utils.auth import get_factory, get_user, get_storage_from_factory
+from presentors.shared.utils.auth import (
+    get_factory,
+    get_storage_from_factory,
+    get_user,
+)
 from presentors.shared.utils.di_context import with_context
 
 router = Router()
@@ -18,7 +22,9 @@ router = Router()
 @get_storage_from_factory
 async def open_storage(call: types.CallbackQuery, storage: entity.Storage):
     result = get_storage_page_text(storage)
-    await call.message.edit_caption(caption=result, reply_markup=kb.storage_markup)
+    await call.message.edit_caption(
+        caption=result, reply_markup=kb.storage_markup
+    )
 
 
 @router.callback_query(F.data == FactoryCB.upgrade_storage)

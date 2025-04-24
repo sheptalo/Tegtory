@@ -5,19 +5,17 @@ from domain.interfaces.shop import ShopRepository
 
 class ShopRepositoryImpl(ShopRepository):
     def __init__(self):
-        self.shops: list[Shop] = []
-        self.shop_products: list[ShopProduct] = []
-        shop = Shop(id=0, title="Мега", description="", distance=5)
-        self.create(shop)
-        self.add_product(
+        shop = Shop(id=1, title="Мега", description="", distance=5)
+        self.shops: list[Shop] = [shop]
+        self.shop_products: list[ShopProduct] = [
             ShopProduct(
-                id=0,
+                id=1,
                 shop=shop,
                 product=settings.DEFAULT_AVAILABLE_PRODUCTS[0],
                 amount=100,
                 is_demand=True,
             )
-        )
+        ]
 
     async def all(self) -> list[Shop]:
         return self.shops

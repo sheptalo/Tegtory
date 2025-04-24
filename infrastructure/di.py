@@ -1,23 +1,19 @@
 from dishka import Provider, Scope, make_async_container
 
-from domain.events import IEventBus
+from domain import use_cases
+from domain.events import EventBus
 from domain.interfaces import (
     FactoryRepository,
     ShopRepository,
     UserMoneyRepository,
     UserRepository,
 )
-from domain.interfaces.factory import FactoryTaxRepository, FactoryWorkersRepository
-from domain.interfaces.storage import StorageRepository
-from domain.use_cases import UCFactory, UCShop, UCUser
-from domain.use_cases.commands.factory import (
-    CreateFactoryHandler,
-    PayFactoryTaxHandler,
-    UpgradeStorageHandler,
-    UpgradeFactoryHandler, HireWorkerCommandHandler,
+from domain.interfaces.factory import (
+    FactoryTaxRepository,
+    FactoryWorkersRepository,
 )
-from domain.use_cases.queries.factory import GetFactoryQueryHandler
-from domain.use_cases.queries.user import GetUserQueryHandler
+from domain.interfaces.storage import StorageRepository
+from domain.use_cases.base import DependencyRequired
 
 from .events.eventbus import MemoryEventBus
 from .repositories import (
@@ -25,9 +21,13 @@ from .repositories import (
     ShopRepositoryImpl,
     UserRepositoryImpl,
 )
-from .repositories.factory import FactoryTaxRepositoryImpl, FactoryWorkersRepositoryImpl
+from .repositories.factory import (
+    FactoryTaxRepositoryImpl,
+    FactoryWorkersRepositoryImpl,
+)
 from .repositories.storage import StorageRepositoryImpl
 from .repositories.user_repository import UserMoneyRepositoryImpl
+from .utils import get_children, load_packages
 
 provider = Provider(scope=Scope.APP)
 provider.provide(UserMoneyRepositoryImpl, provides=UserMoneyRepository)
@@ -38,27 +38,18 @@ provider.provide(ShopRepositoryImpl, provides=ShopRepository)
 
 provider.provide(FactoryRepositoryImpl, provides=FactoryRepository)
 provider.provide(FactoryTaxRepositoryImpl, provides=FactoryTaxRepository)
-provider.provide(FactoryWorkersRepositoryImpl, provides=FactoryWorkersRepository)
+provider.provide(
+    FactoryWorkersRepositoryImpl, provides=FactoryWorkersRepository
+)
 
 provider.provide(StorageRepositoryImpl, provides=StorageRepository)
 
 
-provider.provide(MemoryEventBus, provides=IEventBus)
+provider.provide(MemoryEventBus, provides=EventBus)
 
+load_packages(use_cases)
 
-provider.provide(UCUser)
-provider.provide(UCFactory)
-provider.provide(UCShop)
-
-
-provider.provide(GetFactoryQueryHandler)
-provider.provide(GetUserQueryHandler)
-
-
-provider.provide(CreateFactoryHandler)
-provider.provide(PayFactoryTaxHandler)
-provider.provide(UpgradeStorageHandler)
-provider.provide(UpgradeFactoryHandler)
-provider.provide(HireWorkerCommandHandler)
+for child in get_children(DependencyRequired):
+    provider.provide(child)
 
 container = make_async_container(provider)

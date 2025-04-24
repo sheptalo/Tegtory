@@ -1,7 +1,7 @@
 from typing import Protocol
 
 
-class IEventBus(Protocol):
+class EventBus(Protocol):
     _instance = None
 
     def __new__(cls):

@@ -4,17 +4,19 @@ from domain.entity import Factory
 
 from ...commands.factory import (
     CreateFactoryCommand,
+    HireWorkerCommand,
     PayTaxCommand,
-    UpgradeStorageCommand, UpgradeFactoryCommand, HireWorkerCommand,
+    UpgradeFactoryCommand,
+    UpgradeStorageCommand,
 )
 from ...interfaces import (
     FactoryRepository,
     FactoryTaxRepository,
     UserMoneyRepository,
 )
-from .base import BaseCommandHandler, pay_required
 from ...interfaces.factory import FactoryWorkersRepository
 from ...interfaces.storage import StorageRepository
+from .base import BaseCommandHandler, pay_required
 
 
 class CreateFactoryHandler(BaseCommandHandler):
@@ -54,7 +56,9 @@ class PayFactoryTaxHandler(BaseCommandHandler):
 class UpgradeStorageHandler(BaseCommandHandler):
     object_type = UpgradeStorageCommand
 
-    def __init__(self, storage_repo: StorageRepository, money_repo: UserMoneyRepository):
+    def __init__(
+        self, storage_repo: StorageRepository, money_repo: UserMoneyRepository
+    ):
         self.storage_repo = storage_repo
         self.money_repo = money_repo
 
@@ -66,7 +70,9 @@ class UpgradeStorageHandler(BaseCommandHandler):
 class UpgradeFactoryHandler(BaseCommandHandler):
     object_type = UpgradeFactoryCommand
 
-    def __init__(self, factory_repo: FactoryRepository, money_repo: UserMoneyRepository):
+    def __init__(
+        self, factory_repo: FactoryRepository, money_repo: UserMoneyRepository
+    ):
         self.factory = factory_repo
         self.money_repo = money_repo
 
@@ -78,7 +84,9 @@ class UpgradeFactoryHandler(BaseCommandHandler):
 class HireWorkerCommandHandler(BaseCommandHandler):
     object_type = HireWorkerCommand
 
-    def __init__(self, repo: FactoryWorkersRepository, money_repo: UserMoneyRepository):
+    def __init__(
+        self, repo: FactoryWorkersRepository, money_repo: UserMoneyRepository
+    ):
         self.repo = repo
         self.money_repo = money_repo
 

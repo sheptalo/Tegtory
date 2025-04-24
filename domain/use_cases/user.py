@@ -1,13 +1,13 @@
 from domain.entity import Factory, User
 from domain.interfaces import UserRepository
-from domain.use_cases.base import SafeCall, EventBased
+from domain.use_cases.base import EventBased, SafeCall
 
 from ..entity.factory import Product, StartFactoryEvent
-from ..events import EventType, IEventBus, on_event
+from ..events import EventBus, EventType, on_event
 
 
 class UCUser(SafeCall, EventBased):
-    def __init__(self, repo: UserRepository, event_bus: IEventBus) -> None:
+    def __init__(self, repo: UserRepository, event_bus: EventBus) -> None:
         super().__init__(event_bus)
         self.repository = repo
 

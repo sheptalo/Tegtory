@@ -1,10 +1,8 @@
 from .base import BaseQuery
 
 
-
 class GetFactoryQuery(BaseQuery):
     factory_id: int
-
 
 
 class GetFactoryByName(BaseQuery):

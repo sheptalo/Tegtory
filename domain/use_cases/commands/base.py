@@ -2,10 +2,11 @@ from functools import wraps
 
 from pydantic import BaseModel
 
-from domain.commands.factory import PayRequiredCommand
+from ...commands.factory import PayRequiredCommand
+from ..base import DependencyRequired
 
 
-class BaseCommandHandler:
+class BaseCommandHandler(DependencyRequired):
     object_type: BaseModel
 
 

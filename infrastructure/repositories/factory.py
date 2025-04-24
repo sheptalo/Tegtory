@@ -1,8 +1,11 @@
 import logging
 
-from domain.entity import Factory, Product, Storage, StorageProduct
+from domain.entity import Factory, Product, StorageProduct
 from domain.interfaces import FactoryRepository
-from domain.interfaces.factory import FactoryTaxRepository, FactoryWorkersRepository
+from domain.interfaces.factory import (
+    FactoryTaxRepository,
+    FactoryWorkersRepository,
+)
 
 logger = logging.getLogger(__name__)
 _factories = []

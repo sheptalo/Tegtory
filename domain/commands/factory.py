@@ -50,6 +50,5 @@ class UpgradeFactoryCommand(PayRequiredCommand, FactoryRequiredCommand):
 class HireWorkerCommand(PayRequiredCommand):
     factory: WorkersFactory
 
-
     def get_price(self):
         return self.factory.hire_price

@@ -1,5 +1,4 @@
 from aiogram import Router, types
-from aiogram.filters import Command
 
 from common.settings import ASSETS_DIR
 from domain.entity import User

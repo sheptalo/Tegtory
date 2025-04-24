@@ -26,13 +26,17 @@ router = Router()
 
 @router.callback_query(F.data == FactoryCB.create)
 @get_user
-async def create_factory_callback(call: types.CallbackQuery, state: FSMContext, user: User):
+async def create_factory_callback(
+    call: types.CallbackQuery, state: FSMContext, user: User
+):
     await call.message.edit_text(msg.set_name, reply_markup=None)
     await state.set_state(states.Create.name)
 
 
 @router.message(StateFilter(states.Create.name))
-async def finish_create_factory_handler(message: types.Message, state: FSMContext):
+async def finish_create_factory_handler(
+    message: types.Message, state: FSMContext
+):
     await message.delete()
     result = await CommandExecutor().execute(
         CreateFactoryCommand(id=message.from_user.id, name=message.text),
@@ -46,11 +50,15 @@ async def finish_create_factory_handler(message: types.Message, state: FSMContex
 @router.callback_query(F.data == FactoryCB.upgrade)
 @get_factory
 @cache(Images.factory_upgrade, types.FSInputFile(Images.factory_upgrade))
-async def upgrade_factory(call: types.CallbackQuery, factory: Factory, cached, cache_func):
+async def upgrade_factory(
+    call: types.CallbackQuery, factory: Factory, cached, cache_func
+):
     try:
         sent = await call.message.edit_media(
             media=types.InputMediaPhoto(
-                caption=msg.upgrade_page.format(factory.level, factory.upgrade_price),
+                caption=msg.upgrade_page.format(
+                    factory.level, factory.upgrade_price
+                ),
                 media=cached,
             ),
             reply_markup=kb.upgrade_markup,
@@ -64,7 +72,9 @@ async def upgrade_factory(call: types.CallbackQuery, factory: Factory, cached, c
 @get_factory
 @get_user
 @with_context(UserFactoryContext)
-async def try_to_upgrade_factory(call: types.CallbackQuery, ctx: UserFactoryContext):
+async def try_to_upgrade_factory(
+    call: types.CallbackQuery, ctx: UserFactoryContext
+):
     result = await CommandExecutor().execute(
         UpgradeFactoryCommand(
             factory_id=ctx.factory.id,
@@ -76,4 +86,6 @@ async def try_to_upgrade_factory(call: types.CallbackQuery, ctx: UserFactoryCont
 
     if isinstance(result, Success):
         return await upgrade_factory(call)
-    await call.message.edit_caption(caption=result.reason, reply_markup=kb.failed_upgrade_markup)
+    await call.message.edit_caption(
+        caption=result.reason, reply_markup=kb.failed_upgrade_markup
+    )

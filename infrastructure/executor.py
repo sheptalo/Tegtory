@@ -1,7 +1,7 @@
 import logging
 
 from common.exceptions import AppException
-from domain.results import Success, Failure
+from domain.results import Failure, Success
 
 logger = logging.getLogger(__name__)
 
@@ -34,6 +34,7 @@ class BaseExecutor:
 
 async def preparing_executors():
     from infrastructure.di import container
+
     for executor in BaseExecutor.__subclasses__():
         logger.info(f"Preparing {executor.__name__}")
         instance = executor()

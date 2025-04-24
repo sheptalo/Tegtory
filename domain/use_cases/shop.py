@@ -1,11 +1,11 @@
 from domain.entity import Shop, ShopContract, ShopProduct
-from domain.events import IEventBus
+from domain.events import EventBus
 from domain.interfaces.shop import ShopRepository
-from domain.use_cases.base import SafeCall, EventBased
+from domain.use_cases.base import EventBased, SafeCall
 
 
 class UCShop(SafeCall, EventBased):
-    def __init__(self, repo: ShopRepository, event_bus: IEventBus) -> None:
+    def __init__(self, repo: ShopRepository, event_bus: EventBus) -> None:
         super().__init__(event_bus)
         self.repository = repo
 

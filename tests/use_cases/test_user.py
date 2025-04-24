@@ -5,7 +5,7 @@ import pytest
 from domain.context.factory import StartWorkContext
 from domain.entity import Factory, Product, User
 from domain.entity.factory import StartFactoryEvent
-from domain.events import EventType, IEventBus
+from domain.events import EventBus, EventType
 from domain.interfaces import UserRepository
 from domain.use_cases.user import UCUser
 
@@ -21,7 +21,7 @@ def user_repo():
 
 @pytest.fixture
 def event_bus():
-    bus = MagicMock(spec=IEventBus)
+    bus = MagicMock(spec=EventBus)
     bus.emit = AsyncMock()
     return bus
 

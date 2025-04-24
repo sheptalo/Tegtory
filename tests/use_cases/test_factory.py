@@ -4,7 +4,7 @@ import pytest
 
 from common import settings
 from common.settings import TAX_LIMIT
-from domain.entity import Factory, Product, Storage, StorageProduct, User
+from domain.entity import Factory, Product, Storage, User
 from domain.entity.factory import StartFactoryEvent
 from domain.events import EventType
 from domain.interfaces import FactoryRepository
@@ -108,12 +108,13 @@ async def test_start_factory_event_flow(uc_factory, factory_repo, event_bus):
 
     factory_repo.update.assert_called_once_with(factory)
     event_bus.emit.assert_awaited_once_with(
-        EventType.StartFactory, data=StartFactoryEvent(
-                factory=factory,
-                workers=factory.workers,
-                time=time,
-                product=test_product,
-            ),
+        EventType.StartFactory,
+        data=StartFactoryEvent(
+            factory=factory,
+            workers=factory.workers,
+            time=time,
+            product=test_product,
+        ),
     )
 
 

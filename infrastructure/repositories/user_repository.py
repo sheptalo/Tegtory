@@ -14,7 +14,6 @@ def _filter_users(user_id: int) -> User | None:
 
 
 class UserRepositoryImpl(UserRepository):
-
     async def get(self, user_id: int) -> User:
         return _filter_users(user_id)
 

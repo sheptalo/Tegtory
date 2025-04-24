@@ -3,7 +3,12 @@ from types import MethodType
 
 from common.exceptions import AppException
 
-from ..events.eventbus import IEventBus
+from ..events.eventbus import EventBus
+
+
+class DependencyRequired:
+    pass
+
 
 class SafeCall:
     def __getattribute__(self, i):
@@ -27,18 +32,15 @@ class SafeCall:
         return wrapper
 
 
-class EventBased:
-    def __init__(self, eventbus: IEventBus):
-        self.eventbus = eventbus
+class EventBased(DependencyRequired):
+    def __init__(self, eventbus: EventBus):
+        self.event_bus = eventbus
 
     @classmethod
     def get_subscribers(cls):
         subs = []
         for attr in filter(
-                lambda x: hasattr(getattr(cls, x), "__event__"),
-                dir(cls)
+            lambda x: hasattr(getattr(cls, x), "__event__"), dir(cls)
         ):
             subs.append(getattr(cls, attr))
         return subs
-
-

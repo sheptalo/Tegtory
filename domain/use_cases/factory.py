@@ -6,13 +6,13 @@ from common.exceptions import (
     NotEnoughPointsException,
     TaxException,
 )
-from .base import EventBased, SafeCall
 
 from ..entity import Factory, Product, StorageProduct, User
 from ..entity.factory import StartFactoryEvent
-from ..events import IEventBus, on_event
+from ..events import EventBus, on_event
 from ..events.event_types import EventType
 from ..interfaces import FactoryRepository
+from .base import EventBased, SafeCall
 
 
 class FactoryService:
@@ -35,7 +35,7 @@ class FactoryService:
 
 
 class MoneyService:
-    def __init__(self, event_bus: IEventBus):
+    def __init__(self, event_bus: EventBus):
         self.event_bus = event_bus
 
     async def charge(self, user: User, amount: int):
@@ -53,7 +53,7 @@ class WorkSimulator:
 
 
 class UCFactory(SafeCall, EventBased):
-    def __init__(self, repository: FactoryRepository, event_bus: IEventBus):
+    def __init__(self, repository: FactoryRepository, event_bus: EventBus):
         super().__init__(event_bus)
         self.repository = repository
         self.logic = FactoryService()

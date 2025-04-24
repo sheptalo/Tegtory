@@ -1,12 +1,12 @@
 import asyncio
 import logging
 
-from domain.events import IEventBus
+from domain.events import EventBus
 
 logger = logging.getLogger("eventbus")
 
 
-class MemoryEventBus(IEventBus):
+class MemoryEventBus(EventBus):
     events = {}
 
     @classmethod

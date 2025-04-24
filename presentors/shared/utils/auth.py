@@ -6,20 +6,22 @@ from dishka import FromDishka
 
 from domain.entity import Factory, User
 from domain.queries.factory import GetFactoryQuery, GetStorageQuery
+from domain.queries.user import UserQuery
 from domain.results import Success
 from domain.use_cases import UCUser
 from infrastructure.injectors import inject
 from infrastructure.query import QueryExecutor
 from presentors.aiogram.kb import factory as kb_factory
 from presentors.aiogram.messages import factory as factory_msg
-from domain.queries.user import UserQuery
 
 logger = logging.getLogger(__name__)
 
 
 def get_factory(func):
     @wraps(func)
-    async def wrapper(event: types.Message | types.CallbackQuery, *args, **kwargs):
+    async def wrapper(
+        event: types.Message | types.CallbackQuery, *args, **kwargs
+    ):
         factory = kwargs.pop("factory", await _get_factory(event.from_user.id))
         if not factory:
             return await factory_required_handler(event)
@@ -32,7 +34,9 @@ def get_storage_from_factory(func):
     @wraps(func)
     async def wrapper(*args, **kwargs):
         factory = kwargs.pop("factory")
-        result = await QueryExecutor().ask(GetStorageQuery(factory_id=factory.id))
+        result = await QueryExecutor().ask(
+            GetStorageQuery(factory_id=factory.id)
+        )
         if isinstance(result, Success):
             return await func(*args, storage=result.data, **kwargs)
 
@@ -41,7 +45,9 @@ def get_storage_from_factory(func):
 
 def get_user(func):
     @wraps(func)
-    async def wrapper(event: types.Message | types.CallbackQuery, *args, **kwargs):
+    async def wrapper(
+        event: types.Message | types.CallbackQuery, *args, **kwargs
+    ):
         user = kwargs.pop("user", await _get_user(event.from_user.id))
         if not user:
             user = await _create_user(event.from_user)
@@ -75,7 +81,9 @@ async def _get_user(user_id) -> User | None:
 @inject(is_async=True)
 async def _create_user(user, uc_user: FromDishka[UCUser]) -> User | None:
     logger.info(f"Registering user {user.id} - {user.username}")
-    return await uc_user.create(User(id=user.id, name=user.first_name, username=user.username))
+    return await uc_user.create(
+        User(id=user.id, name=user.first_name, username=user.username)
+    )
 
 
 async def factory_required_handler(event):
