@@ -1,16 +1,17 @@
 import asyncio
 import logging
+from typing import Any, Callable
 
-from domain.events import EventBus
+from domain.events import EventBus, EventType
 
 logger = logging.getLogger("eventbus")
 
 
 class MemoryEventBus(EventBus):
-    events = {}
+    events: dict[Any, list[Callable]] = {}
 
     @classmethod
-    def subscribe(cls, callback, event_name):
+    def subscribe(cls, callback: Callable, event_name: EventType) -> None:
         logger.debug(
             f"Subscribing to event {event_name} by {callback.__name__}"
         )
@@ -19,14 +20,14 @@ class MemoryEventBus(EventBus):
         cls.events[event_name].append(callback)
 
     @classmethod
-    async def emit(cls, event: str, *args, **kwargs):
+    async def emit(cls, event: EventType, *args: tuple, **kwargs: dict) -> Any:
         logger.info(
             f"Emitting event: {event} with data:\n{cls._format_dict(kwargs)}"
         )
         for callback in cls.events.get(event, []):
             logger.debug(f"Emitting callback: {callback}")
 
-            async def wrapper():
+            async def wrapper() -> None:
                 try:
                     await callback(*args, **kwargs)
                 except Exception as e:
@@ -37,5 +38,5 @@ class MemoryEventBus(EventBus):
             _ = asyncio.create_task(wrapper())
 
     @classmethod
-    def _format_dict(cls, data: dict):
+    def _format_dict(cls, data: dict) -> str:
         return "\n".join([f"{k} = {v}" for k, v in data.items()])

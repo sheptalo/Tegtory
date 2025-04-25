@@ -8,7 +8,7 @@ from domain.interfaces.factory import (
 )
 
 logger = logging.getLogger(__name__)
-_factories = []
+_factories: list[Factory] = []
 
 
 def _filter_factories(user_id: int) -> Factory | None:
@@ -18,8 +18,8 @@ def _filter_factories(user_id: int) -> Factory | None:
 
 
 class FactoryRepositoryImpl(FactoryRepository):
-    def __init__(self):
-        self.available_products = {}
+    def __init__(self) -> None:
+        self.available_products: dict[int, list[Product]] = {}
 
     async def get(self, owner_id: int) -> Factory:
         return _filter_factories(owner_id)
@@ -31,11 +31,12 @@ class FactoryRepositoryImpl(FactoryRepository):
 
     async def upgrade(self, factory_id: int) -> Factory | None:
         factory = _filter_factories(factory_id)
-        factory.upgrade()
+        if factory:
+            factory.upgrade()
         return factory
 
-    async def update(self, user: Factory) -> Factory:
-        pass
+    async def update(self, factory: Factory) -> Factory:
+        return factory
 
     async def by_name(self, name: str) -> Factory | None:
         for i in filter(lambda f: f.name == name, _factories):
@@ -67,17 +68,20 @@ class FactoryRepositoryImpl(FactoryRepository):
 class FactoryTaxRepositoryImpl(FactoryTaxRepository):
     async def increase_tax(self, factory_id: int, amount: int) -> None:
         factory = _filter_factories(factory_id)
-        factory.tax += amount
+        if factory:
+            factory.tax += amount
 
     async def remove_tax(self, factory_id: int) -> None:
         factory = _filter_factories(factory_id)
-        factory.tax = 0
+        if factory:
+            factory.tax = 0
 
 
 class FactoryWorkersRepositoryImpl(FactoryWorkersRepository):
     async def hire(self, factory_id: int) -> None:
         factory = _filter_factories(factory_id)
-        factory.hire()
+        if factory:
+            factory.hire()
 
     async def fire(self, factory_id: int) -> None:
         pass

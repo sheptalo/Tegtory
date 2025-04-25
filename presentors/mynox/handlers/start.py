@@ -9,7 +9,7 @@ router = Router()
 
 
 @router.callback_query(F.data == "menu")
-async def call_menu(call: types.CallbackQuery, state: FSMContext):
+async def call_menu(call: types.CallbackQuery, state: FSMContext) -> None:
     await state.clear()
     await call.message.edit_media(
         media=types.InputMediaPhoto(
@@ -22,7 +22,7 @@ async def call_menu(call: types.CallbackQuery, state: FSMContext):
 
 
 @router.message(CommandStart())
-async def start_command(message: types.Message, state: FSMContext):
+async def start_command(message: types.Message, state: FSMContext) -> None:
     mine = None
     if not mine:
         await message.answer(
@@ -42,7 +42,7 @@ async def start_command(message: types.Message, state: FSMContext):
 
 
 @router.message(StateFilter(MineStates.create_mine))
-async def creating_mine(message: types.Message, state: FSMContext):
+async def creating_mine(message: types.Message, state: FSMContext) -> None:
     await message.answer("""
 Успешно, твоя шахта ждет тебя,
 а в качестве подарка я прокопал и зарегистрировал для тебя твой *первый туннель*.

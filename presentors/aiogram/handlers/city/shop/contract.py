@@ -20,7 +20,7 @@ async def choose_amount(
     call: types.CallbackQuery,
     _: UserFactoryContext,
     uc_shop: FromDishka[UCShop],
-):
+) -> None:
     product = await uc_shop.shop_product_by_id(int(call.data.split(":")[1]))
     markup = kb.choose_amount_demand_markup(product)
     await call.message.edit_caption(
@@ -48,13 +48,13 @@ async def choose_amount(
 #     await call.message.edit_caption(str(contract), reply_markup=None)
 
 
-@router.callback_query(F.data.startswith(f"{CityCB.success_contract}:"))
-@get_user
-@get_factory
-@with_context(UserFactoryContext)
-async def sign_contract(
-    call: types.CallbackQuery,
-    ctx: UserFactoryContext,
-    uc_shop: FromDishka[UCShop],
-):
-    pass
+# @router.callback_query(F.data.startswith(f"{CityCB.success_contract}:"))
+# @get_user
+# @get_factory
+# @with_context(UserFactoryContext)
+# async def sign_contract(
+#     call: types.CallbackQuery,
+#     ctx: UserFactoryContext,
+#     uc_shop: FromDishka[UCShop],
+# ):
+#     pass

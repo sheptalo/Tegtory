@@ -1,9 +1,10 @@
 import importlib
 import pkgutil
 from types import ModuleType
+from typing import Callable, Iterable, Type
 
 
-def get_children(cls) -> list[callable]:
+def get_children(cls: Type) -> Iterable[Callable]:
     children = []
     for klass in cls.__subclasses__():
         children.append(klass)
@@ -11,7 +12,7 @@ def get_children(cls) -> list[callable]:
     return children
 
 
-def load_packages(package: ModuleType):
+def load_packages(package: ModuleType) -> None:
     if not hasattr(package, "__path__"):
         return
     for _, module_name, _ in pkgutil.walk_packages(

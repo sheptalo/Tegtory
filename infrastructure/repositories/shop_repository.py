@@ -1,10 +1,11 @@
 from common import settings
-from domain.entity import Shop, ShopProduct
+from domain.entity import Shop, ShopProduct, ShopContract
 from domain.interfaces.shop import ShopRepository
 
 
 class ShopRepositoryImpl(ShopRepository):
-    def __init__(self):
+
+    def __init__(self) -> None:
         shop = Shop(id=1, title="Мега", description="", distance=5)
         self.shops: list[Shop] = [shop]
         self.shop_products: list[ShopProduct] = [
@@ -31,12 +32,12 @@ class ShopRepositoryImpl(ShopRepository):
         return item
 
     async def update(self, item: Shop) -> Shop:
-        pass
+        return item
 
     async def delete(self, item_id: int) -> None:
         pass
 
-    async def by_name(self, name):
+    async def by_name(self, name: str) -> Shop | None:
         for i in filter(lambda shop: shop.title == name, self.shops):
             return i
         return None

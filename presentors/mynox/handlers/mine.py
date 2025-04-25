@@ -17,12 +17,13 @@ async def mine_menu(call: types.CallbackQuery):
 
 @router.callback_query(F.data == "tunnels")
 async def tunnels_menu(call: types.CallbackQuery):
-    await call.message.edit_media(
-        media=InputMediaPhoto(
-            media="",
-            caption=f"Вы пришли в свои туннели, в какой отправитесь {' '.join(str(i) for i in [])}",
-        ),
-    )
+    pass
+    # await call.message.edit_media(
+    #     media=InputMediaPhoto(
+    #         media="",
+    #         caption=f"Вы пришли в свои туннели, в какой отправитесь {' '.join(str(i) for i in [])}",
+    #     ),
+    # )
 
 
 @router.callback_query(F.data == "tax")

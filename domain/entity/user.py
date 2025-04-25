@@ -16,12 +16,12 @@ class User(BaseModel):
     money: int = 5000000000
     stolar: int = 0
     rating: int = 0
-    league: int = "Не в лиге"
+    league: str = "Не в лиге"
     titles: list[str] = list([])
     is_admin: bool = False
     end_work_time: float = 0
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"""\
 🌟 *Паспорт {self.name}*
 
@@ -36,25 +36,25 @@ class User(BaseModel):
 
     @property
     def minutes_to_work(self) -> float:
-        return math.ceil(self.work_time_remaining / 60 * 10) / 10
+        return float(math.ceil(self.work_time_remaining / 60 * 10) / 10)
 
     @property
-    def work_time_remaining(self):
+    def work_time_remaining(self) -> float:
         return self.end_work_time - time.time()
 
     @property
-    def state(self):
+    def state(self) -> bool:
         return self.work_time_remaining > 0.0
 
-    def start_work(self, time_amount: float | int):
+    def start_work(self, time_amount: float | int) -> None:
         if not self.state:
             self.end_work_time = time.time() + time_amount
 
-    def set_name(self, name):
+    def set_name(self, name: str) -> None:
         self.name = name
 
-    def substract_money(self, amount: int):
+    def substract_money(self, amount: int) -> None:
         self.money -= amount
 
-    def can_buy(self, price: int):
+    def can_buy(self, price: int) -> bool:
         return self.money >= price

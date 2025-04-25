@@ -9,11 +9,13 @@ class UserRepository(CrudRepository[User]):
 
 
 class UserMoneyRepository(Protocol):
-    def subtract(self, user_id: int, amount: int):
+    async def subtract(self, user_id: int, amount: int) -> None:
         pass
 
-    def add(self, user_id: int, amount: int):
+    async def add(self, user_id: int, amount: int) -> None:
         pass
 
-    def send(self, from_user_id: int, to_user_id: int, amount: int):
+    async def send(
+        self, from_user_id: int, to_user_id: int, amount: int
+    ) -> None:
         pass

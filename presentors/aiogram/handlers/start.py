@@ -9,7 +9,7 @@ router = Router()
 
 
 @router.message(CommandStart())
-async def start(message: Message):
+async def start(message: Message) -> None:
     await message.answer(
         welcome_message.format(message.from_user.first_name),
         reply_markup=menu_reply,
@@ -17,5 +17,5 @@ async def start(message: Message):
 
 
 @router.message(F.text.lower() == "помощь")
-async def help_message(message: Message):
+async def help_message(message: Message) -> None:
     await message.answer(guide_message)

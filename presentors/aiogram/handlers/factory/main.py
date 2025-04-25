@@ -29,7 +29,7 @@ async def open_factory(
 @cache(Images.factory, FSInputFile(Images.factory))
 async def callback_factory(
     call: types.CallbackQuery, factory: Factory, cached, cache_func
-):
+) -> None:
     sent = await call.message.edit_media(
         media=InputMediaPhoto(media=cached, caption=str(factory)),
         reply_markup=kb.main,

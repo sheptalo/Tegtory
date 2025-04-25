@@ -1,3 +1,5 @@
+from typing import Any, Callable
+
 from aiogram import F, Router, types
 from aiogram.exceptions import TelegramBadRequest
 from aiogram.filters import StateFilter
@@ -28,7 +30,7 @@ router = Router()
 @get_user
 async def create_factory_callback(
     call: types.CallbackQuery, state: FSMContext, user: User
-):
+) -> None:
     await call.message.edit_text(msg.set_name, reply_markup=None)
     await state.set_state(states.Create.name)
 
@@ -36,14 +38,15 @@ async def create_factory_callback(
 @router.message(StateFilter(states.Create.name))
 async def finish_create_factory_handler(
     message: types.Message, state: FSMContext
-):
+) -> None:
     await message.delete()
     result = await CommandExecutor().execute(
-        CreateFactoryCommand(id=message.from_user.id, name=message.text),
+        CreateFactoryCommand(id=message.from_user.id, name=str(message.text)),
     )
     if isinstance(result, Success):
         await state.clear()
-        return await open_factory(message)
+        await open_factory(message)
+        return
     await message.answer(msg.unique_name)
 
 
@@ -51,8 +54,11 @@ async def finish_create_factory_handler(
 @get_factory
 @cache(Images.factory_upgrade, types.FSInputFile(Images.factory_upgrade))
 async def upgrade_factory(
-    call: types.CallbackQuery, factory: Factory, cached, cache_func
-):
+    call: types.CallbackQuery,
+    factory: Factory,
+    cached: Any,
+    cache_func: Callable,
+) -> None:
     try:
         sent = await call.message.edit_media(
             media=types.InputMediaPhoto(
@@ -74,7 +80,7 @@ async def upgrade_factory(
 @with_context(UserFactoryContext)
 async def try_to_upgrade_factory(
     call: types.CallbackQuery, ctx: UserFactoryContext
-):
+) -> None:
     result = await CommandExecutor().execute(
         UpgradeFactoryCommand(
             factory_id=ctx.factory.id,
@@ -85,7 +91,8 @@ async def try_to_upgrade_factory(
     )
 
     if isinstance(result, Success):
-        return await upgrade_factory(call)
+        await upgrade_factory(call)
+        return
     await call.message.edit_caption(
         caption=result.reason, reply_markup=kb.failed_upgrade_markup
     )

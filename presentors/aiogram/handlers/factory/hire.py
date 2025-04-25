@@ -29,7 +29,7 @@ async def workers_page(
     factory: Factory,
     cached,
     cache_func,
-):
+) -> None:
     sent = await call.message.edit_media(
         media=InputMediaPhoto(
             caption=msg.workers_page.format(
@@ -49,7 +49,7 @@ async def workers_page(
 async def hire(
     call: types.CallbackQuery,
     ctx: UserFactoryContext,
-):
+) -> None:
     result = await CommandExecutor().execute(
         HireWorkerCommand(
             factory=WorkersFactory.model_validate(ctx.factory.model_dump()),

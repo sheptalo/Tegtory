@@ -1,36 +1,37 @@
 import logging
 
-from aiogram import Dispatcher
+from aiogram import Bot, Dispatcher
 from aiogram.client.default import DefaultBotProperties
 from dishka.integrations.aiogram import setup_dishka
 
 from infrastructure.di import container
+from presentors.shared.bot import BotSingleton
 from presentors.shared.middlewares.chat_action import ChatActionMiddleware
 
 logger = logging.getLogger(__name__)
 
 
 class BaseService:
-    bot_singleton = None
-    message_middlewares = [ChatActionMiddleware()]
-    callback_middlewares = []
+    bot_singleton: type[BotSingleton] = None
+    message_middlewares: list = [ChatActionMiddleware()]
+    callback_middlewares: list = []
 
-    def __init__(self, bot_token: str = None):
+    def __init__(self, bot_token: str = None) -> None:
         self.bot = self._get_bot(bot_token)
         self._dp = None
 
-    async def __call__(self, *args, **kwargs):
+    async def __call__(self, *args, **kwargs) -> None:
         if not self.bot:
             return
         self.prepare_handlers()
         setup_dishka(container, self.dp, auto_inject=True)
         await self.dp.start_polling(self.bot, skip_updates=True)
 
-    def prepare_handlers(self):
+    def prepare_handlers(self) -> None:
         pass
 
     @property
-    def dp(self):
+    def dp(self) -> Dispatcher:
         if self._dp:
             return self._dp
         dp = Dispatcher()
@@ -40,7 +41,7 @@ class BaseService:
         return dp
 
     @classmethod
-    def _get_bot(cls, token: str = None):
+    def _get_bot(cls, token: str | None = None) -> Bot | None:
         if not token:
             logger.error("No bot token provided for %s", cls.__name__)
             return
@@ -49,7 +50,7 @@ class BaseService:
             default=DefaultBotProperties(parse_mode="Markdown"),
         )
 
-    def _register_middlewares(self, dp: Dispatcher):
+    def _register_middlewares(self, dp: Dispatcher) -> None:
         for middleware in self.message_middlewares:
             dp.message.middleware.register(
                 middleware,

@@ -1,6 +1,7 @@
 import math
 import random
 import time
+from typing import Hashable
 
 from pydantic import BaseModel
 
@@ -13,7 +14,7 @@ class Product(BaseModel):
     time_to_create: int = 10
     amount_multiply: float = 1
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         return hash(self.name)
 
 
@@ -22,23 +23,23 @@ class Storage(BaseModel):
     products: dict[Product, int] = dict()
 
     @property
-    def stock(self):
+    def stock(self) -> int:
         return sum(self.products.values())
 
     @property
     def upgrade_price(self) -> int:
         return self.max_stock // 2 + 78
 
-    def upgrade(self):
+    def upgrade(self) -> None:
         self.max_stock += 10
 
     def is_can_insert(self, product_amount: int) -> bool:
-        return self.stock + product_amount <= self.max_stock
+        return (self.stock + product_amount) <= self.max_stock
 
     def get_available_amount(self) -> int:
         return self.max_stock - self.stock
 
-    def adjust_bonus(self, bonus):
+    def adjust_bonus(self, bonus: int) -> int:
         if not self.is_can_insert(bonus):
             bonus = self.get_available_amount()
         return bonus
@@ -81,11 +82,11 @@ class Factory(BaseModel):
     name: str
     storage: Storage = Storage()
     level: int = 10
-    end_work_time: float = 0
+    end_work_time: float = 0.0
     tax: int = 1
     workers: int = 10
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"""\
 🏭 *{self.name}*
 🔧 *Уровень:* {self.level}
@@ -123,7 +124,7 @@ class Factory(BaseModel):
             self.end_work_time = time.time() + time_amount
         return self.end_work_time
 
-    def rename(self, name) -> None:
+    def rename(self, name: str) -> None:
         self.name = name
 
     def upgrade(self) -> None:
@@ -148,4 +149,4 @@ class Factory(BaseModel):
 
     @staticmethod
     def calculate_bonus(data: StartFactoryEvent) -> int:
-        return data.time // data.product.time_to_create * data.workers
+        return int(data.time // data.product.time_to_create) * data.workers

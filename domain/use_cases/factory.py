@@ -24,7 +24,7 @@ class FactoryService:
         return factory
 
     @staticmethod
-    def start(factory: Factory, time: float):
+    def start(factory: Factory, time: float) -> None:
         if factory.state:
             return
         if factory.workers == 0:
@@ -38,7 +38,7 @@ class MoneyService:
     def __init__(self, event_bus: EventBus):
         self.event_bus = event_bus
 
-    async def charge(self, user: User, amount: int):
+    async def charge(self, user: User, amount: int) -> None:
         if not user.can_buy(amount):
             raise NotEnoughPointsException
         await self.event_bus.emit(
@@ -48,7 +48,7 @@ class MoneyService:
 
 class WorkSimulator:
     @staticmethod
-    async def wait(time: float):
+    async def wait(time: float) -> None:
         await asyncio.sleep(time)
 
 

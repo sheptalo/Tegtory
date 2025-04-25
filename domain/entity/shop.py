@@ -16,7 +16,7 @@ class Shop(BaseModel):
     owner: User | None = None
 
     @property
-    def delivery_required(self):
+    def delivery_required(self) -> bool:
         return self.distance > 10
 
 
@@ -37,16 +37,16 @@ class ShopContract(BaseContract):
     price_per_one: int
     delivery_required: bool = False
 
-    def calculate_price_per_one(self, shop_product: ShopProduct):
-        pass
+    def calculate_price_per_one(self, shop_product: ShopProduct) -> float:
+        return 0.0
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"""
 Контракт купли-продажи {self.created_at}
 
 Фабрика {self.factory.name} именуемая в дальнейшем "Продавец", \
 магазин {self.shop.title} именуемый в дальнейшем "Покупатель" \
-в отношении {self.product.title} в дальнейшем "Товар"
+в отношении {self.product.name} в дальнейшем "Товар"
 заключили контракт о нижеследующем:
 
 -----1. Предмет Договора-----

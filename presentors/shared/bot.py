@@ -1,12 +1,14 @@
+from typing import Self
+
 from aiogram import Bot
 
 
 class BotSingleton(Bot):
-    _instance = None
+    _instance: Bot
 
-    def __new__(cls, *args, **kwargs) -> Bot:
+    def __new__(cls, *args, **kwargs) -> Self:
         if not cls._instance:
-            cls._instance = Bot(*args, **kwargs)
+            cls._instance: Self = Bot(*args, **kwargs)
         return cls._instance
 
 

@@ -1,4 +1,5 @@
 from aiogram.types import InlineKeyboardButton as Button
+from aiogram.types import InlineKeyboardMarkup
 from aiogram.types import InlineKeyboardMarkup as Markup
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
@@ -8,7 +9,9 @@ from .callbacks import FactoryCB
 from .utils import one_inline_button_markup
 
 
-def get_choose_product_markup(mode: str, products: list[Product]):
+def get_choose_product_markup(
+    mode: str, products: list[Product]
+) -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
     for product in products:
         builder.button(
@@ -20,7 +23,9 @@ def get_choose_product_markup(mode: str, products: list[Product]):
     return builder.as_markup()
 
 
-def get_time_choose_markup(mode: str, product: Product):
+def get_time_choose_markup(
+    mode: str, product: Product
+) -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
     timestamps = [
         [5, 300],

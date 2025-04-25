@@ -1,3 +1,5 @@
+from typing import Callable
+
 from aiogram import F, Router, types
 
 from presentors.aiogram.filters.city import CityFilter
@@ -16,8 +18,8 @@ router = Router()
 async def city_page(
     message: types.Message,
     cached: types.FSInputFile | str,
-    cache_func: callable,
-):
+    cache_func: Callable,
+) -> None:
     sent = await message.answer_photo(
         photo=cached,
         caption=msg.main,
@@ -27,7 +29,7 @@ async def city_page(
 
 
 @router.callback_query(F.data == CityCB.back)
-async def city_callback(call: types.CallbackQuery):
+async def city_callback(call: types.CallbackQuery) -> None:
     await call.message.edit_caption(
         caption=msg.main, reply_markup=kb.city_markup
     )
@@ -35,5 +37,5 @@ async def city_callback(call: types.CallbackQuery):
 
 @router.callback_query(F.data == CityCB.trading_companies)
 @get_factory
-async def trading_companies_page(call: types.CallbackQuery):
+async def trading_companies_page(call: types.CallbackQuery) -> None:
     await call.message.edit_text(text=msg.main)

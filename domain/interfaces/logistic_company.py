@@ -1,9 +1,9 @@
+from typing import Protocol
+
 from domain.entity import LogisticCompany
 
-from .base import CrudRepository
 
-
-class LogisticRepository(CrudRepository[LogisticCompany]):
+class LogisticRepository(Protocol):
     async def find(self, shop: LogisticCompany) -> LogisticCompany | None:
         pass
 

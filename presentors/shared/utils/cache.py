@@ -1,21 +1,23 @@
 import logging
+from collections.abc import Callable
 from functools import wraps
+from typing import Any
 
 from presentors.shared.utils.injection import smart_call
 
 logger = logging.getLogger("cache")
-_temp = {}
+_temp: dict = {}
 
 
-def cache(item, default):
-    def cache_func(x):
+def cache(item: Any, default: Any) -> Callable:
+    def cache_func(x: Any) -> None:
         if x not in _temp.values():
             logger.debug(f"Caching {str(item)[:50]} with value {str(x)[:25]}")
             _temp.update({item: x})
 
-    def decorator(func):
+    def decorator(func: Callable) -> Callable:
         @wraps(func)
-        async def wrapper(*args, **kwargs):
+        async def wrapper(*args: tuple, **kwargs: dict) -> Any:
             return await smart_call(
                 func,
                 *args,

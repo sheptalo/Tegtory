@@ -1,5 +1,6 @@
 import logging
 from functools import wraps
+from typing import Any, Callable
 
 from aiogram import types
 from dishka import FromDishka
@@ -17,22 +18,23 @@ from presentors.aiogram.messages import factory as factory_msg
 logger = logging.getLogger(__name__)
 
 
-def get_factory(func):
+def get_factory(func) -> Callable:
     @wraps(func)
     async def wrapper(
         event: types.Message | types.CallbackQuery, *args, **kwargs
-    ):
+    ) -> Any:
         factory = kwargs.pop("factory", await _get_factory(event.from_user.id))
         if not factory:
-            return await factory_required_handler(event)
+            await factory_required_handler(event)
+            return
         return await func(event, *args, factory=factory, **kwargs)
 
     return wrapper
 
 
-def get_storage_from_factory(func):
+def get_storage_from_factory(func) -> Callable:
     @wraps(func)
-    async def wrapper(*args, **kwargs):
+    async def wrapper(*args, **kwargs) -> Any:
         factory = kwargs.pop("factory")
         result = await QueryExecutor().ask(
             GetStorageQuery(factory_id=factory.id)
@@ -43,11 +45,11 @@ def get_storage_from_factory(func):
     return wrapper
 
 
-def get_user(func):
+def get_user(func) -> Callable:
     @wraps(func)
     async def wrapper(
         event: types.Message | types.CallbackQuery, *args, **kwargs
-    ):
+    ) -> Any:
         user = kwargs.pop("user", await _get_user(event.from_user.id))
         if not user:
             user = await _create_user(event.from_user)
@@ -56,11 +58,13 @@ def get_user(func):
     return wrapper
 
 
-def get_event_message(event: types.Message | types.CallbackQuery):
+def get_event_message(
+    event: types.Message | types.CallbackQuery,
+) -> types.Message:
     return event.message if type(event) is types.CallbackQuery else event
 
 
-async def _get_factory(user_id) -> Factory | None:
+async def _get_factory(user_id: int) -> Factory | None:
     result = await QueryExecutor().ask(
         GetFactoryQuery(
             factory_id=user_id,
@@ -86,9 +90,9 @@ async def _create_user(user, uc_user: FromDishka[UCUser]) -> User | None:
     )
 
 
-async def factory_required_handler(event):
+async def factory_required_handler(event) -> None:
     logger.info(f"Пользователь {event.from_user.id} не имеет фабрики")
-    return await get_event_message(event).answer(
+    await get_event_message(event).answer(
         factory_msg.need_to_create,
         reply_markup=kb_factory.create_markup,
     )

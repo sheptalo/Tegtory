@@ -5,7 +5,7 @@ from aiogram.filters import BaseFilter
 from presentors.shared.bot import TegtorySingleton
 
 
-async def is_subscribed(user_id):
+async def is_subscribed(user_id: int) -> bool:
     chat_id = "@tegtory"
     try:
         chat_member = await TegtorySingleton().get_chat_member(

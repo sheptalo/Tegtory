@@ -52,9 +52,9 @@ async def pay_tax(
         )
     )
     if isinstance(result, Success):
-        result = msg.tax_page.format(0)
+        text = msg.tax_page.format(0)
     else:
-        result = result.reason
+        text = result.reason
     if str(call.message.caption).strip() == result.strip():
         return
-    await call.message.edit_caption(caption=result, reply_markup=kb.tax_markup)
+    await call.message.edit_caption(caption=text, reply_markup=kb.tax_markup)
