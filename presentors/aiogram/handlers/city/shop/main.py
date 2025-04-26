@@ -20,14 +20,15 @@ async def shop_list(call: types.CallbackQuery, uc_shop: FromDishka[UCShop]):
 async def specific_shop_demand_list(
     call: types.CallbackQuery, uc_shop: FromDishka[UCShop]
 ):
-    shop = await uc_shop.by_name(call.data.split(":")[1])
-    demand_list = await uc_shop.demand_product_list(shop)
-    markup = kb.shop_demand_markup(demand_list)
-    await call.message.edit_caption(
-        caption=msg.specific_shop.format(
-            shop.title,
-            shop.description,
-            "✅" if shop.delivery_required else "❌",
-        ),
-        reply_markup=markup,
-    )
+    pass
+    # shop = await uc_shop.by_name(call.data.split(":")[1])
+    # demand_list = await uc_shop.demand_product_list(shop)
+    # markup = kb.shop_demand_markup(demand_list)
+    # await call.message.edit_caption(
+    #     caption=msg.specific_shop.format(
+    #         shop.title,
+    #         shop.description,
+    #         "✅" if shop.delivery_required else "❌",
+    #     ),
+    #     reply_markup=markup,
+    # )

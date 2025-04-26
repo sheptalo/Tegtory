@@ -42,7 +42,7 @@ class MoneyService:
         if not user.can_buy(amount):
             raise NotEnoughPointsException
         await self.event_bus.emit(
-            EventType.SubtractMoney, user=user, amount=amount
+            EventType.SubtractMoney, **{"user": user, "amount": amount}
         )
 
 
@@ -70,12 +70,14 @@ class UCFactory(SafeCall, EventBased):
 
         await self.event_bus.emit(
             EventType.StartFactory,
-            data=StartFactoryEvent(
-                factory=factory,
-                workers=factory.workers,
-                time=time,
-                product=product,
-            ),
+            **{
+                "data": StartFactoryEvent(
+                    factory=factory,
+                    workers=factory.workers,
+                    time=time,
+                    product=product,
+                ),
+            },
         )
 
     async def get_available_products(self, factory: Factory) -> list[Product]:
@@ -102,7 +104,8 @@ class UCFactory(SafeCall, EventBased):
         )
 
         await self.event_bus.emit(
-            EventType.EndFactoryWork, factory=data.factory, stock=bonus
+            EventType.EndFactoryWork,
+            **{"factory": data.factory, "stock": bonus},
         )
 
     async def insert_product_in_storage(

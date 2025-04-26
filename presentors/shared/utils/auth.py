@@ -8,7 +8,7 @@ from dishka import FromDishka
 from domain.entity import Factory, User
 from domain.queries.factory import GetFactoryQuery, GetStorageQuery
 from domain.queries.user import UserQuery
-from domain.results import Success
+from domain.results import Failure, Success
 from domain.use_cases import UCUser
 from infrastructure.injectors import inject
 from infrastructure.query import QueryExecutor
@@ -59,13 +59,20 @@ def get_user(func) -> Callable:
 
 
 def get_event_message(
-    event: types.Message | types.CallbackQuery,
+    event: types.Message | types.CallbackQuery | None,
 ) -> types.Message:
-    return event.message if type(event) is types.CallbackQuery else event
+    return (
+        event.message
+        if isinstance(event, types.CallbackQuery)
+        and isinstance(event.message, types.Message)
+        else event
+        if isinstance(event, types.Message)
+        else None
+    )
 
 
 async def _get_factory(user_id: int) -> Factory | None:
-    result = await QueryExecutor().ask(
+    result: Success[Factory] | Failure = await QueryExecutor().ask(
         GetFactoryQuery(
             factory_id=user_id,
         )
@@ -76,7 +83,9 @@ async def _get_factory(user_id: int) -> Factory | None:
 
 
 async def _get_user(user_id) -> User | None:
-    res = await QueryExecutor().ask(UserQuery(user_id=user_id))
+    res: Success[User] | Failure = await QueryExecutor().ask(
+        UserQuery(user_id=user_id)
+    )
     if isinstance(res, Success):
         return res.data
     return None
@@ -92,7 +101,9 @@ async def _create_user(user, uc_user: FromDishka[UCUser]) -> User | None:
 
 async def factory_required_handler(event) -> None:
     logger.info(f"Пользователь {event.from_user.id} не имеет фабрики")
-    await get_event_message(event).answer(
-        factory_msg.need_to_create,
-        reply_markup=kb_factory.create_markup,
-    )
+    message = get_event_message(event)
+    if message:
+        await message.answer(
+            factory_msg.need_to_create,
+            reply_markup=kb_factory.create_markup,
+        )

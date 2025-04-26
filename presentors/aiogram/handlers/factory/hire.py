@@ -39,7 +39,8 @@ async def workers_page(
         ),
         reply_markup=kb.hire_markup,
     )
-    cache_func(sent.photo[-1].file_id)
+    if sent.photo:
+        cache_func(sent.photo[-1].file_id)
 
 
 @router.callback_query(F.data == FactoryCB.hire)
@@ -59,6 +60,7 @@ async def hire(
     )
     markup = kb.failed_hire_markup
     if isinstance(result, Success):
-        return await workers_page(call)
+        await workers_page(call)
+        return None
 
     await call.message.edit_caption(caption=result.reason, reply_markup=markup)

@@ -10,7 +10,7 @@ from infrastructure.utils import get_children
 
 
 @inject(is_async=True)
-async def register_events(event_bus: FromDishka[EventBus]):
+async def register_events(event_bus: FromDishka[EventBus]) -> None:
     events = get_subscribed_events(EventBased)
 
     for cls, subscribers in events:
@@ -19,7 +19,7 @@ async def register_events(event_bus: FromDishka[EventBus]):
             event_bus.subscribe(getattr(instance, sub.__name__), sub.__event__)
 
 
-def get_subscribed_events(klass) -> list[list[Any]]:
+def get_subscribed_events(klass: type[EventBased]) -> list[list[Any]]:
     events = []
     for cls in get_children(klass):
         events.append([cls, cls.get_subscribers()])

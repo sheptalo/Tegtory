@@ -1,3 +1,4 @@
+from domain.entity import Factory, Storage
 from domain.interfaces import FactoryRepository
 from domain.interfaces.storage import StorageRepository
 from domain.queries.factory import GetFactoryQuery, GetStorageQuery
@@ -7,18 +8,18 @@ from domain.use_cases.queries.base import BaseQueryHandler
 class GetFactoryQueryHandler(BaseQueryHandler):
     object_type = GetFactoryQuery
 
-    def __init__(self, repo: FactoryRepository):
+    def __init__(self, repo: FactoryRepository) -> None:
         self.repo = repo
 
-    async def __call__(self, query: GetFactoryQuery):
+    async def __call__(self, query: GetFactoryQuery) -> Factory | None:
         return await self.repo.get(query.factory_id)
 
 
 class GetStorageQueryHandler(BaseQueryHandler):
     object_type = GetStorageQuery
 
-    def __init__(self, repo: StorageRepository):
+    def __init__(self, repo: StorageRepository) -> None:
         self.repo = repo
 
-    async def __call__(self, query: GetStorageQuery):
+    async def __call__(self, query: GetStorageQuery) -> Storage | None:
         return await self.repo.get(query.factory_id)

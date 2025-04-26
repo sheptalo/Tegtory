@@ -1,10 +1,10 @@
 import importlib
 import pkgutil
 from types import ModuleType
-from typing import Callable, Iterable, Type
+from typing import Any, Callable, Iterable
 
 
-def get_children(cls: Type) -> Iterable[Callable]:
+def get_children(cls: Any) -> Iterable[Callable]:
     children = []
     for klass in cls.__subclasses__():
         children.append(klass)

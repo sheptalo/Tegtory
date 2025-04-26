@@ -1,10 +1,12 @@
-from typing import Any
+from typing import Generic, TypeVar
 
 from pydantic import BaseModel
 
+T = TypeVar("T")
 
-class Success(BaseModel):
-    data: Any
+
+class Success(BaseModel, Generic[T]):
+    data: T
 
 
 class Failure(BaseModel):

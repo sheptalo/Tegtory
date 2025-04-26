@@ -22,6 +22,8 @@ async def choose_amount(
     uc_shop: FromDishka[UCShop],
 ) -> None:
     product = await uc_shop.shop_product_by_id(int(call.data.split(":")[1]))
+    if not product:
+        raise ValueError
     markup = kb.choose_amount_demand_markup(product)
     await call.message.edit_caption(
         caption=msg.choose_amount, reply_markup=markup

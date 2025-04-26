@@ -25,7 +25,8 @@ async def city_page(
         caption=msg.main,
         reply_markup=kb.city_markup,
     )
-    cache_func(sent.photo[-1].file_id)
+    if sent.photo:
+        cache_func(sent.photo[-1].file_id)
 
 
 @router.callback_query(F.data == CityCB.back)

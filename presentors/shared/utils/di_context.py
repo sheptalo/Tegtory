@@ -1,6 +1,6 @@
 from functools import wraps
 from inspect import signature
-from typing import Callable, Type, Any
+from typing import Any, Callable, Type
 
 
 def with_context(ctx_cls: Type) -> Callable:

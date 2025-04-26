@@ -46,7 +46,7 @@ def choose_amount_demand_markup(
     for available_amount in available_amounts:
         builder.button(
             text=str(available_amount),
-            callback_data=f"{CityCB.preview_contract}:{product.shop.title}:{product.product.id}:{available_amount}",
+            callback_data=f"{CityCB.preview_contract}:{product.shop.title}:{product.product.name}:{available_amount}",
         )
     builder.adjust(4, repeat=True)
     builder.button(

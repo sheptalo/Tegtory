@@ -22,11 +22,13 @@ from .base import BaseCommandHandler, pay_required
 class CreateFactoryHandler(BaseCommandHandler):
     object_type = CreateFactoryCommand
 
-    def __init__(self, repo: FactoryRepository, storage: StorageRepository):
+    def __init__(
+        self, repo: FactoryRepository, storage: StorageRepository
+    ) -> None:
         self.repo = repo
         self.storage = storage
 
-    async def __call__(self, cmd: CreateFactoryCommand):
+    async def __call__(self, cmd: CreateFactoryCommand) -> Factory:
         if await self.repo.by_name(cmd.name):
             raise AppException("Фабрика с таким именем уже существует")
 
@@ -44,11 +46,11 @@ class PayFactoryTaxHandler(BaseCommandHandler):
 
     def __init__(
         self, tax_repo: FactoryTaxRepository, money_repo: UserMoneyRepository
-    ):
+    ) -> None:
         self.tax_repo = tax_repo
         self.money_repo = money_repo
 
-    async def __call__(self, cmd: PayTaxCommand):
+    async def __call__(self, cmd: PayTaxCommand) -> None:
         await self.tax_repo.remove_tax(cmd.factory_id)
 
 
@@ -58,11 +60,11 @@ class UpgradeStorageHandler(BaseCommandHandler):
 
     def __init__(
         self, storage_repo: StorageRepository, money_repo: UserMoneyRepository
-    ):
+    ) -> None:
         self.storage_repo = storage_repo
         self.money_repo = money_repo
 
-    async def __call__(self, cmd: UpgradeStorageCommand):
+    async def __call__(self, cmd: UpgradeStorageCommand) -> None:
         await self.storage_repo.upgrade(cmd.factory_id)
 
 
@@ -72,11 +74,11 @@ class UpgradeFactoryHandler(BaseCommandHandler):
 
     def __init__(
         self, factory_repo: FactoryRepository, money_repo: UserMoneyRepository
-    ):
+    ) -> None:
         self.factory = factory_repo
         self.money_repo = money_repo
 
-    async def __call__(self, cmd: UpgradeFactoryCommand):
+    async def __call__(self, cmd: UpgradeFactoryCommand) -> None:
         await self.factory.upgrade(cmd.factory_id)
 
 
@@ -86,11 +88,11 @@ class HireWorkerCommandHandler(BaseCommandHandler):
 
     def __init__(
         self, repo: FactoryWorkersRepository, money_repo: UserMoneyRepository
-    ):
+    ) -> None:
         self.repo = repo
         self.money_repo = money_repo
 
-    async def __call__(self, cmd: HireWorkerCommand):
+    async def __call__(self, cmd: HireWorkerCommand) -> None:
         if cmd.factory.hire_available <= 0:
             raise AppException("Вы достигли лимита рабочих для данного уровня")
         await self.repo.hire(cmd.factory.id)

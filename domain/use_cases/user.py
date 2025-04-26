@@ -31,9 +31,11 @@ class UCUser(SafeCall, EventBased):
         await self.repository.update(user)
         await self.event_bus.emit(
             EventType.StartFactory,
-            data=StartFactoryEvent(
-                factory=factory, time=time, product=product
-            ),
+            **{
+                "data": StartFactoryEvent(
+                    factory=factory, time=time, product=product
+                )
+            },
         )
 
     @on_event(EventType.SubtractMoney)

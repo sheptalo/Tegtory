@@ -1,14 +1,12 @@
 from functools import wraps
-from typing import Type, Any
-
-from pydantic import BaseModel
+from typing import Any
 
 from ...commands.factory import PayRequiredCommand
 from ..base import DependencyRequired
 
 
 class BaseCommandHandler(DependencyRequired):
-    object_type: BaseModel
+    object_type: Any
 
 
 def pay_required(cls: type) -> type:
@@ -21,5 +19,5 @@ def pay_required(cls: type) -> type:
         await self.money_repo.subtract(cmd.user_id, cmd.get_price())
         return result
 
-    setattr(cls, '__call__', wrapper)
+    setattr(cls, "__call__", wrapper)
     return cls

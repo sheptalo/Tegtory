@@ -21,9 +21,11 @@ def cache(item: Any, default: Any) -> Callable:
             return await smart_call(
                 func,
                 *args,
-                cached=_temp.get(item, default),
-                cache_func=cache_func,
-                **kwargs,
+                **{
+                    "cached": _temp.get(item, default),
+                    "cache_func": cache_func,
+                    **kwargs,
+                },
             )
 
         return wrapper

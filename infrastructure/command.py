@@ -5,9 +5,7 @@ from infrastructure.executor import BaseExecutor
 
 
 class CommandExecutor(BaseExecutor):
-    handler_base_class: BaseCommandHandler = BaseCommandHandler
+    handler_base_class: type[BaseCommandHandler] = BaseCommandHandler
 
-    async def execute(
-        self, command: BaseCommand
-    ) -> Success | Failure:
+    async def execute(self, command: BaseCommand) -> Success | Failure:
         return await self.handlers[type(command)](command)

@@ -1,3 +1,5 @@
+from typing import Any, Callable
+
 from aiogram import F, Router, types
 from aiogram.types import FSInputFile, InputMediaPhoto
 
@@ -16,22 +18,27 @@ router = Router()
 @get_factory
 @cache(Images.factory, FSInputFile(Images.factory))
 async def open_factory(
-    message: types.Message, factory: Factory, cached, cache_func
+    message: types.Message, factory: Factory, cached: Any, cache_func: Callable
 ):
     sent = await message.answer_photo(
         photo=cached, caption=str(factory), reply_markup=kb.main
     )
-    cache_func(sent.photo[-1].file_id)
+    if sent.photo:
+        cache_func(sent.photo[-1].file_id)
 
 
 @router.callback_query(F.data == FactoryCB.back)
 @get_factory
 @cache(Images.factory, FSInputFile(Images.factory))
 async def callback_factory(
-    call: types.CallbackQuery, factory: Factory, cached, cache_func
+    call: types.CallbackQuery,
+    factory: Factory,
+    cached: Any,
+    cache_func: Callable,
 ) -> None:
     sent = await call.message.edit_media(
         media=InputMediaPhoto(media=cached, caption=str(factory)),
         reply_markup=kb.main,
     )
-    cache_func(sent.photo[-1].file_id)
+    if sent.photo:
+        cache_func(sent.photo[-1].file_id)

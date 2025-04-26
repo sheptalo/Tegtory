@@ -1,4 +1,5 @@
 import logging
+from typing import Any
 
 from aiogram import Bot, Dispatcher
 from aiogram.client.default import DefaultBotProperties
@@ -12,13 +13,13 @@ logger = logging.getLogger(__name__)
 
 
 class BaseService:
-    bot_singleton: type[BotSingleton] = None
+    bot_singleton: type[BotSingleton]
     message_middlewares: list = [ChatActionMiddleware()]
     callback_middlewares: list = []
 
-    def __init__(self, bot_token: str = None) -> None:
+    def __init__(self, bot_token: str = "") -> None:
         self.bot = self._get_bot(bot_token)
-        self._dp = None
+        self._dp: Any = None
 
     async def __call__(self, *args, **kwargs) -> None:
         if not self.bot:
@@ -32,7 +33,7 @@ class BaseService:
 
     @property
     def dp(self) -> Dispatcher:
-        if self._dp:
+        if isinstance(self._dp, Dispatcher):
             return self._dp
         dp = Dispatcher()
         self._register_middlewares(dp)
@@ -44,7 +45,7 @@ class BaseService:
     def _get_bot(cls, token: str | None = None) -> Bot | None:
         if not token:
             logger.error("No bot token provided for %s", cls.__name__)
-            return
+            return None
         return cls.bot_singleton(
             token=token,
             default=DefaultBotProperties(parse_mode="Markdown"),

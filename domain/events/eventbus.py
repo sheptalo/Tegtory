@@ -1,4 +1,4 @@
-from typing import Protocol, Self, Callable, Any
+from typing import Any, Callable, Protocol, Self
 
 from domain.events import EventType
 
@@ -16,5 +16,7 @@ class EventBus(Protocol):
         pass
 
     @classmethod
-    async def emit(cls, event: EventType, *args: tuple, **kwargs: dict) -> Any:
+    async def emit(
+        cls, event: EventType, *args: tuple, **kwargs: dict[str, Any]
+    ) -> Any:
         pass

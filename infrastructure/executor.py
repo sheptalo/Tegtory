@@ -1,5 +1,5 @@
 import logging
-from typing import Self, Type, Callable
+from typing import Any, Awaitable, Callable, Self, Type
 
 from common.exceptions import AppException
 from domain.results import Failure, Success
@@ -8,19 +8,21 @@ logger = logging.getLogger(__name__)
 
 
 class BaseExecutor:
-    _instance: Self = None
-    handler_base_class: Type = None
+    _instance: Self
+    handler_base_class: Type
 
     def __new__(cls) -> Self:
         if not cls._instance:
             cls._instance: Self = super().__new__(cls)
         return cls._instance
 
-    def __init__(self):
+    def __init__(self) -> None:
         if not hasattr(self, "handlers"):
-            self.handlers = {}
+            self.handlers: dict[
+                Type, Callable[[Any], Awaitable[Success | Failure]]
+            ] = {}
 
-    def register(self, command: Type, handler: Callable):
+    def register(self, command: Type, handler: Callable) -> None:
         self.handlers[command] = self._get_wrapper(handler)
 
     def _get_wrapper(self, handler: Callable) -> Callable:

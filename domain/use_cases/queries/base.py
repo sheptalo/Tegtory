@@ -3,4 +3,4 @@ from domain.use_cases.base import DependencyRequired
 
 
 class BaseQueryHandler(DependencyRequired):
-    object_type: BaseQuery
+    object_type: type[BaseQuery]

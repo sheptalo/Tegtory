@@ -69,7 +69,8 @@ async def upgrade_factory(
             ),
             reply_markup=kb.upgrade_markup,
         )
-        cache_func(sent.photo[-1].file_id)
+        if sent.photo:
+            cache_func(sent.photo[-1].file_id)
     except TelegramBadRequest:
         pass
 

@@ -14,7 +14,7 @@ def _filter_users(user_id: int) -> User | None:
 
 
 class UserRepositoryImpl(UserRepository):
-    async def get(self, user_id: int) -> User:
+    async def get(self, user_id: int) -> User | None:
         return _filter_users(user_id)
 
     async def create(self, user: User) -> User:
@@ -27,7 +27,9 @@ class UserRepositoryImpl(UserRepository):
 
 
 class UserMoneyRepositoryImpl(UserMoneyRepository):
-    async def send(self, from_user_id: int, to_user_id: int, amount: int) -> None:
+    async def send(
+        self, from_user_id: int, to_user_id: int, amount: int
+    ) -> None:
         pass
 
     async def subtract(self, user_id: int, amount: int) -> None:

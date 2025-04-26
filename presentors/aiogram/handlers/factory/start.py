@@ -63,6 +63,8 @@ async def choose_time(
     product = await use_case.find_product_by_name(
         factory, call.data.split(":")[2]
     )
+    if not product:
+        raise ValueError
     markup = kb.get_time_choose_markup(mode, product)
     await call.message.edit_caption(
         caption=msg.choose_product, reply_markup=markup
@@ -91,7 +93,7 @@ async def start_factory(
     use_case: FromDishka[UCFactory],
 ) -> None:
     product, time = await get_product_time(call, factory)
-    result = await use_case.start_factory(factory, time, product)
+    result: None = await use_case.start_factory(factory, time, product)
     if result:
         await call.answer(str(result), show_alert=True)
     await callback_factory(call)

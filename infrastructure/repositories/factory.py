@@ -21,7 +21,7 @@ class FactoryRepositoryImpl(FactoryRepository):
     def __init__(self) -> None:
         self.available_products: dict[int, list[Product]] = {}
 
-    async def get(self, owner_id: int) -> Factory:
+    async def get(self, owner_id: int) -> Factory | None:
         return _filter_factories(owner_id)
 
     async def create(self, factory: Factory) -> Factory:

@@ -1,3 +1,5 @@
+from typing import Any, Callable
+
 from aiogram import F, Router, types
 
 from domain.commands.factory import PayTaxCommand
@@ -22,9 +24,9 @@ router = Router()
 async def tax_page(
     call: types.CallbackQuery,
     factory: Factory,
-    cached,
-    cache_func,
-):
+    cached: Any,
+    cache_func: Callable,
+) -> None:
     sent = await call.message.edit_media(
         media=types.InputMediaPhoto(
             caption=msg.tax_page.format(factory.tax),
@@ -32,7 +34,8 @@ async def tax_page(
         ),
         reply_markup=kb.tax_markup,
     )
-    cache_func(sent.photo[-1].file_id)
+    if sent.photo:
+        cache_func(sent.photo[-1].file_id)
 
 
 @router.callback_query(F.data == FactoryCB.pay_tax)
@@ -42,7 +45,7 @@ async def tax_page(
 async def pay_tax(
     call: types.CallbackQuery,
     ctx: UserFactoryContext,
-):
+) -> None:
     result = await CommandExecutor().execute(
         PayTaxCommand(
             user_id=ctx.user.id,
