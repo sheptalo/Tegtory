@@ -1,8 +1,8 @@
 import importlib
 import pkgutil
+from collections.abc import Iterable
 from types import ModuleType
 from typing import Any
-from collections.abc import Iterable
 
 
 def get_children(cls: Any) -> Iterable[Any]:

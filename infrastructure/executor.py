@@ -1,6 +1,6 @@
 import logging
 from collections.abc import Awaitable
-from typing import Any, Callable, Self, Type
+from typing import Any, Callable, Self
 
 from common.exceptions import AppException
 from domain.results import Failure, Success
