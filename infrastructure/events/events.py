@@ -9,7 +9,7 @@ from infrastructure.injectors import inject
 from infrastructure.utils import get_children
 
 
-@inject(is_async=True)
+@inject
 async def register_events(event_bus: FromDishka[EventBus]) -> None:
     events = get_subscribed_events(EventBased)
 
@@ -22,6 +22,10 @@ async def register_events(event_bus: FromDishka[EventBus]) -> None:
 def get_subscribed_events(klass: type[EventBased]) -> list[list[Any]]:
     events = []
     for cls in get_children(klass):
-        events.append([cls, cls.get_subscribers()])
-
+        cls_typing: EventBased = cls
+        events.append([cls_typing, cls_typing.get_subscribers()])
+    print(events)
     return events
+
+
+get_subscribed_events(EventBased)

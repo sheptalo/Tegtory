@@ -12,14 +12,19 @@ class MemoryEventBus(EventBus):
 
     @classmethod
     def subscribe(cls, callback: Callable, event_name: EventType) -> None:
-        logger.debug(f"Subscribing to event {event_name} by {callback.__name__}")
+        logger.debug(
+            f"Subscribing to event {event_name} by {callback.__name__}"
+        )
         if not cls.events.get(event_name):
             cls.events[event_name] = []
         cls.events[event_name].append(callback)
 
     @classmethod
     async def emit(cls, event: EventType, data: Any) -> None:
-        logger.info(f"Emitting event: {event} with data:\n{cls._format_dict(data)}")
+        logger.info(
+            f"Emitting event: {event} with data:\n"
+            f"{cls._format_dict(data) if isinstance(data, dict) else data}"
+        )
         for callback in cls.events.get(event, []):
             logger.debug(f"Emitting callback: {callback}")
 

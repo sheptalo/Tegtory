@@ -58,6 +58,6 @@ async def pay_tax(
         text = msg.tax_page.format(0)
     else:
         text = result.reason
-    if str(call.message.caption).strip() == result.strip():
+    if str(call.message.caption).strip() == text.strip():
         return
     await call.message.edit_caption(caption=text, reply_markup=kb.tax_markup)

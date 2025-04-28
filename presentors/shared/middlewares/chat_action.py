@@ -1,6 +1,6 @@
 from asyncio import sleep
-from typing import Any, Callable
 from collections.abc import Awaitable
+from typing import Any, Callable
 
 from aiogram import BaseMiddleware
 from aiogram.types import TelegramObject
@@ -14,7 +14,7 @@ class ChatActionMiddleware(BaseMiddleware):
         event: TelegramObject,
         data: dict[str, Any],
     ) -> Any:
-        if not hasattr(event, 'chat'):
+        if not hasattr(event, "chat"):
             return await handler(event, data)
         async with ChatActionSender.typing(
             bot=data["bot"],

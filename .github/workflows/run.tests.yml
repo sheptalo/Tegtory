@@ -1,4 +1,4 @@
-name: run TESTS
+name: Tegtory Coverage
 on:
   push:
 

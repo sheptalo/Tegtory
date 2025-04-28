@@ -3,7 +3,7 @@ from ..shared.bot import MynoxSingleton
 
 
 class MynoxService(BaseService):
-    bot = MynoxSingleton
+    bot_singleton = MynoxSingleton
 
     def prepare_handlers(self):
         pass

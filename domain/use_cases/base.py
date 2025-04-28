@@ -5,6 +5,7 @@ from typing import Any, Callable
 from common.exceptions import AppException
 
 from ..events.eventbus import EventBus
+from ..results import Failure, Success
 
 
 class DependencyRequired:
@@ -14,21 +15,18 @@ class DependencyRequired:
 class SafeCall:
     def __getattribute__(self, i: str) -> Any:
         obj = object.__getattribute__(self, i)
-
         return (
-            obj
-            if i.startswith("_") or not isinstance(obj, MethodType)
-            else self._get_wrapper(obj)
+            obj if not isinstance(obj, MethodType) else self._get_wrapper(obj)
         )
 
     @staticmethod
     def _get_wrapper(obj: Callable) -> Callable:
         @wraps(obj)
-        async def wrapper(*args: tuple, **kwargs: dict) -> Any | str:
+        async def wrapper(*args: tuple, **kwargs: dict) -> Success | Failure:
             try:
-                return await obj(*args, **kwargs)
+                return Success(data=await obj(*args, **kwargs))
             except AppException as e:
-                return e.message
+                return Failure(reason=e.message)
 
         return wrapper
 

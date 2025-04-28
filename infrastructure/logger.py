@@ -39,7 +39,7 @@ class CustomFormatter(logging.Formatter):
 
 class LoggerClass(logging.Logger):
     def __init__(self, record: logging.Logger) -> None:
-        logging.Logger.__init__(record, logging.DEBUG)
+        logging.Logger.__init__(record, name="", level=logging.DEBUG)
 
 
 def configure_logger() -> None:

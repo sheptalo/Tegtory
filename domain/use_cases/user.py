@@ -16,19 +16,26 @@ class UCUser(SafeCall, EventBased):
     async def create(self, user: User) -> User:
         return await self.repository.create(user)
 
-    async def create_if_not_exist(self, user_id: int, name: str, username: str) -> None:
+    async def create_if_not_exist(
+        self, user_id: int, name: str, username: str
+    ) -> None:
         user = await self.get(user_id)
         if not user:
             await self.create(User(id=user_id, name=name, username=username))
 
-    async def start_work(self, factory: Factory, product: Product, time: float, user: User) -> None:
+    async def start_work(
+        self, factory: Factory, product: Product, time: float, user: User
+    ) -> None:
         if user.state:
             return
 
         user.start_work(time)
         await self.repository.update(user)
         await self.event_bus.emit(
-            EventType.StartFactory, data=StartFactoryEvent(factory=factory, time=time, product=product)
+            EventType.StartFactory,
+            data=StartFactoryEvent(
+                factory=factory, time=time, product=product
+            ),
         )
 
     @on_event(EventType.SubtractMoney)

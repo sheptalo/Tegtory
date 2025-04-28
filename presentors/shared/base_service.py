@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 
 class BaseService:
-    bot_singleton: BotSingleton
+    bot_singleton: type[BotSingleton]
     message_middlewares: list = [ChatActionMiddleware()]
     callback_middlewares: list = []
 

@@ -105,7 +105,7 @@ async def end_factory_work(factory: Factory, stock: int) -> None:
     await bot.send_message(factory.id, msg.success_work_end.format(stock))
 
 
-@inject(is_async=True)
+@inject
 async def get_product_time(
     call: types.CallbackQuery,
     factory: Factory,

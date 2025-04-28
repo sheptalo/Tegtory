@@ -60,13 +60,10 @@ def get_user(func) -> Callable:
 
 def get_event_message(
     event: types.Message | types.CallbackQuery | None,
-) -> types.Message:
+) -> types.Message | types.InaccessibleMessage | None:
     return (
         event.message
-        if isinstance(event, types.CallbackQuery)
-        and event.message
-        else event
-        if isinstance(event, types.Message)
+        if isinstance(event, types.CallbackQuery) and event.message is not None
         else None
     )
 
@@ -91,7 +88,7 @@ async def _get_user(user_id) -> User | None:
     return None
 
 
-@inject(is_async=True)
+@inject
 async def _create_user(user, uc_user: FromDishka[UCUser]) -> User | None:
     logger.info(f"Registering user {user.id} - {user.username}")
     return await uc_user.create(

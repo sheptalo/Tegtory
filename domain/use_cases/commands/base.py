@@ -5,7 +5,7 @@ from ...commands.factory import PayRequiredCommand
 from ..base import DependencyRequired
 
 
-class BaseCommandHandler(DependencyRequired):
+class BaseCommandHandler(DependencyRequired):  # TODO добавить wrapper на call
     object_type: Any
 
 
@@ -19,5 +19,5 @@ def pay_required(cls: type) -> type:
         await self.money_repo.subtract(cmd.user_id, cmd.get_price())
         return result
 
-    cls.__call__ = wrapper
+    setattr(cls, "__call__", wrapper)
     return cls

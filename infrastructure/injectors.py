@@ -7,20 +7,19 @@ from dishka.integrations.base import wrap_injection
 from domain.events import EventBus, EventType
 
 
-def inject(is_async: bool = True) -> Callable:
-    def decorator(func: Callable) -> Any:
-        def container_getter(*_args: tuple, **_kwargs: dict) -> AsyncContainer:
-            return container
+def inject(func: Callable) -> Any:
+    def container_getter(
+        _args: tuple[Any, ...], _kwargs: dict[str, Any]
+    ) -> AsyncContainer:
+        return container
 
-        from .di import container
+    from .di import container
 
-        return wrap_injection(
-            func=func,
-            container_getter=container_getter,
-            is_async=is_async,
-        )
-
-    return decorator
+    return wrap_injection(
+        func=func,
+        container_getter=container_getter,
+        is_async=True,
+    )
 
 
 _pending_subscriptions = []
@@ -34,7 +33,7 @@ def on_event(event_name: EventType) -> Callable:
     return decorator
 
 
-@inject(is_async=True)
+@inject
 async def subscribe_all(event_bus: FromDishka[EventBus]) -> None:
     for event_name, func in _pending_subscriptions:
         event_bus.subscribe(func, event_name)

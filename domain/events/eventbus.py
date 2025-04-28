@@ -4,9 +4,9 @@ from domain.events import EventType
 
 
 class EventBus(Protocol):
-    _instance: Self
+    _instance: Self | None = None
 
-    def __new__(cls) -> Self:
+    def __new__(cls) -> Any:
         if not cls._instance:
             cls._instance: Self = object.__new__(cls)
         return cls._instance
@@ -16,7 +16,5 @@ class EventBus(Protocol):
         pass
 
     @classmethod
-    async def emit(
-        cls, event: EventType, data: Any
-    ) -> None:
+    async def emit(cls, event: EventType, data: Any) -> None:
         pass
