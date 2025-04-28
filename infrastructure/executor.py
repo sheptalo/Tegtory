@@ -1,5 +1,6 @@
 import logging
-from typing import Any, Awaitable, Callable, Self, Type
+from typing import Any, Callable, Self, Type
+from collections.abc import Awaitable
 
 from common.exceptions import AppException
 from domain.results import Failure, Success
@@ -9,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 class BaseExecutor:
     _instance: Self
-    handler_base_class: Type
+    handler_base_class: type
 
     def __new__(cls) -> Self:
         if not cls._instance:
@@ -18,9 +19,7 @@ class BaseExecutor:
 
     def __init__(self) -> None:
         if not hasattr(self, "handlers"):
-            self.handlers: dict[
-                Type, Callable[[Any], Awaitable[Success | Failure]]
-            ] = {}
+            self.handlers: dict[type, Callable[[Any], Awaitable[Success | Failure]]] = {}
 
     def register(self, command: Type, handler: Callable) -> None:
         self.handlers[command] = self._get_wrapper(handler)
@@ -43,6 +42,6 @@ async def preparing_executors() -> None:
         instance = executor()
         children = executor.handler_base_class.__subclasses__()
         for child in children:
-            handler = await container.get(child)
+            handler: Any = await container.get(child)
             instance.register(handler.object_type, handler)
         logger.info(f"{executor.__name__} Prepared")

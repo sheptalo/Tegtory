@@ -19,5 +19,5 @@ def pay_required(cls: type) -> type:
         await self.money_repo.subtract(cmd.user_id, cmd.get_price())
         return result
 
-    setattr(cls, "__call__", wrapper)
+    cls.__call__ = wrapper
     return cls

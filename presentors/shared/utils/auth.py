@@ -64,7 +64,7 @@ def get_event_message(
     return (
         event.message
         if isinstance(event, types.CallbackQuery)
-        and isinstance(event.message, types.Message)
+        and event.message
         else event
         if isinstance(event, types.Message)
         else None

@@ -17,6 +17,6 @@ class EventBus(Protocol):
 
     @classmethod
     async def emit(
-        cls, event: EventType, *args: tuple, **kwargs: dict[str, Any]
-    ) -> Any:
+        cls, event: EventType, data: Any
+    ) -> None:
         pass

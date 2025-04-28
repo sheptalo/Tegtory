@@ -8,7 +8,7 @@ class BotSingleton(Bot):
 
     def __new__(cls, *args, **kwargs) -> Self:
         if not cls._instance:
-            cls._instance: Self = Bot(*args, **kwargs)
+            cls._instance = Bot.__new__(cls)
         return cls._instance
 
 

@@ -12,31 +12,26 @@ class MemoryEventBus(EventBus):
 
     @classmethod
     def subscribe(cls, callback: Callable, event_name: EventType) -> None:
-        logger.debug(
-            f"Subscribing to event {event_name} by {callback.__name__}"
-        )
+        logger.debug(f"Subscribing to event {event_name} by {callback.__name__}")
         if not cls.events.get(event_name):
             cls.events[event_name] = []
         cls.events[event_name].append(callback)
 
     @classmethod
-    async def emit(cls, event: EventType, *args: tuple, **kwargs: dict) -> Any:
-        logger.info(
-            f"Emitting event: {event} with data:\n{cls._format_dict(kwargs)}"
-        )
+    async def emit(cls, event: EventType, data: Any) -> None:
+        logger.info(f"Emitting event: {event} with data:\n{cls._format_dict(data)}")
         for callback in cls.events.get(event, []):
             logger.debug(f"Emitting callback: {callback}")
 
-            async def wrapper() -> None:
-                try:
-                    await callback(*args, **kwargs)
-                except Exception as e:
-                    logger.error(
-                        f"Exception raised: {e} while executing {callback}"
-                    )
-
-            _ = asyncio.create_task(wrapper())
+            _ = asyncio.create_task(cls._event_wrapper(callback, data))
 
     @classmethod
     def _format_dict(cls, data: dict) -> str:
         return "\n".join([f"{k} = {v}" for k, v in data.items()])
+
+    @staticmethod
+    async def _event_wrapper(call: Callable, data: Any) -> None:
+        try:
+            await call(data)
+        except Exception as e:
+            logger.error(f"Exception raised: {e} while executing {call}")
