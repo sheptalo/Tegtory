@@ -4,15 +4,15 @@ from typing import Any
 from common import settings
 from common.exceptions import (
     AppException,
-    NotEnoughPointsException,
     TaxException,
 )
 
-from ..entity import Factory, Product, StorageProduct, User
-from ..entity.factory import StartFactoryEvent
-from ..events import EventBus, on_event
+from ..entities import Factory, Product, StorageProduct
+from ..entities.factory import StartFactoryEvent
+from ..events import on_event
 from ..events.event_types import EventType
-from ..interfaces import FactoryRepository
+from ..interfaces import EventBus, FactoryRepository
+from ..services.money import MoneyService
 from .base import EventBased, SafeCall
 
 
@@ -35,18 +35,6 @@ class FactoryService:
         factory.start_work(time)
 
 
-class MoneyService:
-    def __init__(self, event_bus: EventBus):
-        self.event_bus = event_bus
-
-    async def charge(self, user: User, amount: int) -> None:
-        if not user.can_buy(amount):
-            raise NotEnoughPointsException
-        await self.event_bus.emit(
-            EventType.SubtractMoney, data={"user": user, "amount": amount}
-        )
-
-
 class WorkSimulator:
     @staticmethod
     async def wait(time: float) -> None:
@@ -54,11 +42,16 @@ class WorkSimulator:
 
 
 class UCFactory(SafeCall, EventBased):
-    def __init__(self, repository: FactoryRepository, event_bus: EventBus):
+    def __init__(
+        self,
+        repository: FactoryRepository,
+        event_bus: EventBus,
+        money: MoneyService,
+    ):
         super().__init__(event_bus)
         self.repository = repository
         self.logic = FactoryService()
-        self.money = MoneyService(event_bus)
+        self.money = money
 
     async def get_by_name(self, name: str) -> Factory | None:
         return await self.repository.by_name(name)

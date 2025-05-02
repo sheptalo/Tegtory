@@ -1,10 +1,11 @@
 from collections.abc import Callable
 from typing import Any
 
-from dishka import AsyncContainer, FromDishka
+from dishka import AsyncContainer
 from dishka.integrations.base import wrap_injection
 
-from domain.events import EventBus, EventType
+from domain.events import EventType
+from domain.interfaces import EventBus
 
 
 def inject(func: Callable) -> Any:
@@ -33,7 +34,6 @@ def on_event(event_name: EventType) -> Callable:
     return decorator
 
 
-@inject
-async def subscribe_all(event_bus: FromDishka[EventBus]) -> None:
+def subscribe_all(event_bus: EventBus) -> None:
     for event_name, func in _pending_subscriptions:
         event_bus.subscribe(func, event_name)

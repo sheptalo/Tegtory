@@ -1,6 +1,6 @@
 from typing import Protocol
 
-from domain.entity import Shop, ShopContract, ShopProduct
+from domain.entities import Shop, ShopContract, ShopProduct
 
 
 class ShopRepository(Protocol):

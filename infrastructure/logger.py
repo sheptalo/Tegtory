@@ -1,14 +1,6 @@
 import logging
 from typing import Any
 
-COLORS = {
-    "DEBUG": "\033[94m",
-    "INFO": "\033[92m",
-    "WARNING": "\033[93m",
-    "ERROR": "\033[91m",
-    "CRITICAL": "\033[95m",
-}
-
 
 class CustomFormatter(logging.Formatter):
     info = "\033[92m"

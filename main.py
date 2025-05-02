@@ -1,10 +1,9 @@
 import os
 
-from infrastructure.events import register_events
+from infrastructure.events.events import subscribe_events
 from infrastructure.executor import preparing_executors
-from infrastructure.injectors import subscribe_all
 from infrastructure.logger import configure_logger
-from presentors import MynoxService, TegtoryService
+from presenters import MynoxService, TegtoryService
 
 
 async def main():
@@ -13,9 +12,8 @@ async def main():
     )
     mynox = asyncio.create_task(MynoxService(os.environ.get("MYNOX_TOKEN"))())
     await asyncio.gather(
-        subscribe_all(),
-        register_events(),
         preparing_executors(),
+        subscribe_events(),
         aiogram,
         mynox,
     )

@@ -1,14 +1,12 @@
 from functools import wraps
 from types import MethodType
-from typing import Any, Callable
+from typing import Any, Callable, Protocol
 
 from common.exceptions import AppException
-
-from ..events.eventbus import EventBus
-from ..results import Failure, Success
+from domain.interfaces.eventbus import EventBus
 
 
-class DependencyRequired:
+class DependencyRequired(Protocol):
     pass
 
 
@@ -22,11 +20,11 @@ class SafeCall:
     @staticmethod
     def _get_wrapper(obj: Callable) -> Callable:
         @wraps(obj)
-        async def wrapper(*args: tuple, **kwargs: dict) -> Success | Failure:
+        async def wrapper(*args: tuple, **kwargs: dict) -> Any:
             try:
-                return Success(data=await obj(*args, **kwargs))
+                return await obj(*args, **kwargs)
             except AppException as e:
-                return Failure(reason=e.message)
+                return e.message
 
         return wrapper
 

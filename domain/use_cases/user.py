@@ -1,27 +1,17 @@
 from typing import Any
 
-from domain.entity import Factory, User
-from domain.interfaces import UserRepository
+from domain.entities import Factory, User
+from domain.interfaces import EventBus, UserRepository
 from domain.use_cases.base import EventBased, SafeCall
 
-from ..entity.factory import Product, StartFactoryEvent
-from ..events import EventBus, EventType, on_event
+from ..entities.factory import Product, StartFactoryEvent
+from ..events import EventType, on_event
 
 
 class UCUser(SafeCall, EventBased):
     def __init__(self, repo: UserRepository, event_bus: EventBus) -> None:
         super().__init__(event_bus)
         self.repository = repo
-
-    async def create(self, user: User) -> User:
-        return await self.repository.create(user)
-
-    async def create_if_not_exist(
-        self, user_id: int, name: str, username: str
-    ) -> None:
-        user = await self.get(user_id)
-        if not user:
-            await self.create(User(id=user_id, name=name, username=username))
 
     async def start_work(
         self, factory: Factory, product: Product, time: float, user: User

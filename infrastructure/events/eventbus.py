@@ -2,7 +2,8 @@ import asyncio
 import logging
 from typing import Any, Callable
 
-from domain.events import EventBus, EventType
+from domain.events import EventType
+from domain.interfaces import EventBus
 
 logger = logging.getLogger("eventbus")
 

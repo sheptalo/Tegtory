@@ -1,4 +1,4 @@
-from domain.entity import Storage
+from domain.entities import Storage
 from domain.interfaces.storage import StorageRepository
 
 _storages: dict[int, Storage] = {}

@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
-from domain.entity import Factory, Product, User
+from domain.entities import Factory, Product, User
 
 
 class StartWorkContext(BaseModel):

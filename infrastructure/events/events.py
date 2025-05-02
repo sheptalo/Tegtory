@@ -1,16 +1,14 @@
 from typing import Any
 
-from dishka import FromDishka
-
-from domain.events import EventBus
+from domain.interfaces import EventBus
 from domain.use_cases.base import EventBased
-from infrastructure.di import container
-from infrastructure.injectors import inject
 from infrastructure.utils import get_children
 
 
-@inject
-async def register_events(event_bus: FromDishka[EventBus]) -> None:
+async def subscribe_events() -> None:
+    from ..di import container
+
+    event_bus = await container.get(EventBus)
     events = get_subscribed_events(EventBased)
 
     for cls, subscribers in events:
@@ -26,6 +24,3 @@ def get_subscribed_events(klass: type[EventBased]) -> list[list[Any]]:
         events.append([cls_typing, cls_typing.get_subscribers()])
     print(events)
     return events
-
-
-get_subscribed_events(EventBased)

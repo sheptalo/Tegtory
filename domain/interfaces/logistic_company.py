@@ -1,6 +1,6 @@
 from typing import Protocol
 
-from domain.entity import LogisticCompany
+from domain.entities import LogisticCompany
 
 
 class LogisticRepository(Protocol):

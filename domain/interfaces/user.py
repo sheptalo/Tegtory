@@ -1,14 +1,8 @@
-from typing import Protocol
-
-from domain.entity import User
+from domain.entities import User
 from domain.interfaces.base import CrudRepository
 
 
 class UserRepository(CrudRepository[User]):
-    pass
-
-
-class UserMoneyRepository(Protocol):
     async def subtract(self, user_id: int, amount: int) -> None:
         pass
 

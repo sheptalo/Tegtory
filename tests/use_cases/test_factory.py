@@ -3,9 +3,10 @@ from unittest.mock import AsyncMock, MagicMock
 import pytest
 
 from domain.commands.factory import CreateFactoryCommand
-from domain.entity import Factory, Storage
+from domain.entities import Factory, Storage
 from domain.interfaces import FactoryRepository
 from domain.queries.factory import GetFactoryQuery
+from domain.results import Success
 from domain.use_cases.commands.factory import CreateFactoryHandler
 from domain.use_cases.factory import UCFactory
 from domain.use_cases.queries.factory import GetFactoryQueryHandler
@@ -42,7 +43,7 @@ async def test_get_factory(factory_repo):
     result = await query_handler(GetFactoryQuery(factory_id=1))
 
     factory_repo.get.assert_called_once_with(1)
-    assert result.storage
+    assert isinstance(result, Success)
 
 
 @pytest.mark.asyncio

@@ -3,9 +3,9 @@ from unittest.mock import AsyncMock, MagicMock
 import pytest
 
 from domain.commands.user import RegisterUserCommand
-from domain.entity import User
-from domain.events import EventBus
+from domain.entities import User
 from domain.interfaces import UserRepository
+from domain.results import Success
 from domain.use_cases.commands.user import RegisterUserCommandHandler
 from domain.use_cases.user import UCUser
 
@@ -21,7 +21,7 @@ def user_repo():
 
 @pytest.fixture
 def event_bus():
-    bus = MagicMock(spec=EventBus)
+    bus = MagicMock()
     bus.emit = AsyncMock()
     return bus
 
@@ -41,7 +41,8 @@ async def test_create_user(user_repo):
         RegisterUserCommand(username="test", name="test", user_id=1)
     )
 
-    assert isinstance(result, User)
+    assert isinstance(result, Success)
+    assert isinstance(result.data, User)
 
     user_repo.create.assert_called_once_with(expected_result)
 

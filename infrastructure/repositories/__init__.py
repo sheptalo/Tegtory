@@ -1,5 +1,5 @@
 from .factory import FactoryRepositoryImpl
-from .shop_repository import ShopRepositoryImpl
-from .user_repository import UserRepositoryImpl
+from .shop import ShopRepositoryImpl
+from .user import UserRepositoryImpl
 
 __all__ = ["UserRepositoryImpl", "FactoryRepositoryImpl", "ShopRepositoryImpl"]

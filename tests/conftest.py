@@ -2,7 +2,7 @@ from unittest.mock import AsyncMock, MagicMock, Mock
 
 import pytest
 
-from domain.entity import Factory
+from domain.entities import Factory
 from domain.use_cases import UCFactory
 
 

@@ -1,7 +1,7 @@
-from .base import BaseModel
+from .base import BaseCommand
 
 
-class RegisterUserCommand(BaseModel):
+class RegisterUserCommand(BaseCommand):
     username: str
     name: str
     user_id: int

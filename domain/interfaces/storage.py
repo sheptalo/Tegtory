@@ -1,6 +1,6 @@
 from typing import Protocol
 
-from domain.entity import Storage
+from domain.entities import Storage
 
 
 class StorageRepository(Protocol):
