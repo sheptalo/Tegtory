@@ -1,6 +1,6 @@
 import logging
-from collections.abc import Awaitable
-from typing import Any, Callable, Self, cast
+from collections.abc import Awaitable, Callable
+from typing import Any, Self, cast
 
 from domain.results import Failure, Success
 
@@ -14,7 +14,7 @@ class BaseExecutor:
     def __new__(cls) -> Self:
         if not cls._instance:
             cls._instance: Self = object.__new__(cls)
-        return cast(Self, cls._instance)
+        return cast("Self", cls._instance)
 
     def __init__(self) -> None:
         if not hasattr(self, "handlers"):

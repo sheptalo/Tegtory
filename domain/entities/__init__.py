@@ -16,20 +16,20 @@ from .shop import Shop, ShopContract, ShopProduct
 from .user import Dignity, User
 
 __all__ = [
-    "Factory",
-    "Product",
-    "StorageProduct",
-    "Storage",
-    "AvailableProduct",
     "Association",
     "AssociationParticipant",
-    "LogisticContract",
+    "AvailableProduct",
+    "Dignity",
+    "Factory",
     "LogisticCompany",
     "LogisticCompanyTransport",
-    "Transport",
+    "LogisticContract",
+    "Product",
     "Shop",
     "ShopContract",
     "ShopProduct",
-    "Dignity",
+    "Storage",
+    "StorageProduct",
+    "Transport",
     "User",
 ]

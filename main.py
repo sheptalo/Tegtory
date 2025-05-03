@@ -1,3 +1,4 @@
+import contextlib
 import os
 
 from infrastructure.events.events import subscribe_events
@@ -20,7 +21,5 @@ if __name__ == "__main__":
 
     configure_logger()
     load_dotenv()
-    try:
+    with contextlib.suppress(KeyboardInterrupt):
         asyncio.run(main())
-    except KeyboardInterrupt:
-        pass

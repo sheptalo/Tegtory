@@ -7,7 +7,7 @@ from domain.entities import User
 from domain.interfaces import UserRepository
 from domain.results import Success
 from domain.use_cases.commands.user import RegisterUserCommandHandler
-from domain.use_cases.user import UCUser
+from domain.use_cases.user import UCUser, UserEvent
 
 
 @pytest.fixture
@@ -48,9 +48,10 @@ async def test_create_user(user_repo: MagicMock) -> None:
 
 
 @pytest.mark.asyncio
-async def test_subtract_money(uc_user: UCUser, user_repo: MagicMock) -> None:
+async def test_subtract_money(user_repo: MagicMock) -> None:
+    event = UserEvent(user_repo, MagicMock())
     user = User(id=1, name="User", username="user", money=100)
-    await uc_user._subtract_user_money({"user": user, "amount": 30})
+    await event._subtract_user_money({"user": user, "amount": 30})
 
-    assert user.money == 70
+    assert user.money == 100 - 30
     user_repo.update.assert_called_once_with(user)

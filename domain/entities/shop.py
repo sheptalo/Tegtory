@@ -2,6 +2,7 @@ from datetime import datetime
 
 from pydantic import BaseModel
 
+from common.settings import DELIVERY_MIN_DISTANTION
 from domain.entities.contract import BaseContract
 from domain.entities.factory import Factory, Product
 
@@ -15,7 +16,7 @@ class Shop(BaseModel):
 
     @property
     def delivery_required(self) -> bool:
-        return self.distance > 10
+        return self.distance > DELIVERY_MIN_DISTANTION
 
 
 class ShopProduct(BaseModel):

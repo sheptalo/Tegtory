@@ -8,10 +8,10 @@ from .factory import (
 from .user import RegisterUserCommand
 
 __all__ = [
-    "UpgradeFactoryCommand",
     "CreateFactoryCommand",
-    "UpgradeStorageCommand",
-    "RegisterUserCommand",
     "HireWorkerCommand",
     "PayTaxCommand",
+    "RegisterUserCommand",
+    "UpgradeFactoryCommand",
+    "UpgradeStorageCommand",
 ]

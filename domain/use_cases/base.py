@@ -1,6 +1,7 @@
+from collections.abc import Callable
 from functools import wraps
 from types import MethodType
-from typing import Any, Callable, Protocol
+from typing import Any, Protocol
 
 from common.exceptions import AppException
 from domain.interfaces.eventbus import EventBus

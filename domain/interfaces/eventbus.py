@@ -1,4 +1,5 @@
-from typing import Any, Callable, Protocol, Self
+from collections.abc import Callable
+from typing import Any, Protocol, Self
 
 from domain.events import EventType
 

@@ -17,7 +17,7 @@ class BotSingleton(Bot):
     ) -> Self:
         if not cls._instance:
             cls._instance = super().__new__(cls)
-        return cast(Self, cls._instance)
+        return cast("Self", cls._instance)
 
 
 class TegtorySingleton(BotSingleton):

@@ -3,4 +3,4 @@ from .factory import FactoryRepository
 from .shop import ShopRepository
 from .user import UserRepository
 
-__all__ = ["FactoryRepository", "UserRepository", "ShopRepository", "EventBus"]
+__all__ = ["EventBus", "FactoryRepository", "ShopRepository", "UserRepository"]
