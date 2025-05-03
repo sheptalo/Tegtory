@@ -3,7 +3,7 @@ import logging
 from domain.entities import Factory, Product, StorageProduct
 from domain.interfaces import FactoryRepository
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("infrastructure.factory_repository")
 
 
 class FactoryRepositoryImpl(FactoryRepository):
@@ -66,6 +66,5 @@ class FactoryRepositoryImpl(FactoryRepository):
             factory.tax = amount
 
     async def hire(self, factory_id: int) -> None:
-        factory = self._filter_factories(factory_id)
-        if factory:
-            factory.hire()
+        """ТК система inmemmory то изменять что-то еще раз не нужно"""
+        pass

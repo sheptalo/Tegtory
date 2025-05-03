@@ -10,7 +10,7 @@ def with_context(ctx_cls: Type) -> Callable:
             params = signature(ctx_cls).parameters
 
             values = {}
-            for name, param in params.items():
+            for name, _ in params.items():
                 if name in kwargs.keys():
                     values[name] = kwargs.pop(name)
 

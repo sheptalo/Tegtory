@@ -31,9 +31,7 @@ class ShopRepository(Protocol):
     async def add_product(self, product: ShopProduct) -> ShopProduct:
         pass
 
-    async def get_products(
-        self, shop: Shop, is_demand: bool = False
-    ) -> list[ShopProduct]:
+    async def get_products(self, shop: Shop) -> list[ShopProduct]:
         pass
 
     async def get_product_by_id(self, product_id: int) -> ShopProduct | None:

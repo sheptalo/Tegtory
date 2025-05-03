@@ -15,8 +15,5 @@ class UCShop(SafeCall, EventBased):
     async def by_name(self, name: str) -> Shop | None:
         return await self.repository.by_name(name)
 
-    async def demand_product_list(self, shop: Shop) -> list[ShopProduct]:
-        return await self.repository.get_products(shop, True)
-
     async def shop_product_by_id(self, product_id: int) -> ShopProduct | None:
         return await self.repository.get_product_by_id(product_id)

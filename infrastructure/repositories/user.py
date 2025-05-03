@@ -3,23 +3,23 @@ import logging
 from domain.entities import User
 from domain.interfaces import UserRepository
 
-logger = logging.getLogger(__name__)
-_users: list[User] = []
-
-
-def _filter_users(user_id: int) -> User | None:
-    for i in filter(lambda u: u.id == user_id, _users):
-        return i
-    return None
+logger = logging.getLogger("infrastructure.user_repository")
 
 
 class UserRepositoryImpl(UserRepository):
+    _users: list[User] = []
+
+    def _filter_users(self, user_id: int) -> User | None:
+        for i in filter(lambda u: u.id == user_id, self._users):
+            return i
+        return None
+
     async def get(self, user_id: int) -> User | None:
-        return _filter_users(user_id)
+        return self._filter_users(user_id)
 
     async def create(self, user: User) -> User:
         logger.info(f"Creating user {user.id} with name {user.name}")
-        _users.append(user)
+        self._users.append(user)
         return user
 
     async def update(self, user: User) -> User:
@@ -31,13 +31,12 @@ class UserRepositoryImpl(UserRepository):
         pass
 
     async def subtract(self, user_id: int, amount: int) -> None:
-        user = _filter_users(user_id)
+        user = self._filter_users(user_id)
         if user:
-            logger.error(f"Subtracting user {user_id} with amount {amount}")
+            logger.info(f"Subtracting user {user_id} with amount {amount}")
             user.money -= amount
-            logger.error(user)
 
     async def add(self, user_id: int, amount: int) -> None:
-        user = _filter_users(user_id)
+        user = self._filter_users(user_id)
         if user:
             user.money += amount

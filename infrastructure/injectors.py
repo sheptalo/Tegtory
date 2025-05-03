@@ -17,9 +17,7 @@ def inject(func: Callable) -> Any:
     from .di import container
 
     return wrap_injection(
-        func=func,
-        container_getter=container_getter,
-        is_async=True,
+        func=func, container_getter=container_getter, is_async=True
     )
 
 

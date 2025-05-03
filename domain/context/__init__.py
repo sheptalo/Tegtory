@@ -1,5 +1,3 @@
 from .factory import UserFactoryContext
 
-__all__ = [
-    "UserFactoryContext",
-]
+__all__ = ["UserFactoryContext"]

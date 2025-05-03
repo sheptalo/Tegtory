@@ -1,18 +1,15 @@
-from aiogram import F, Router, types
+from aiogram import Router, types
 from dishka import FromDishka
 
-from domain.context.factory import UserFactoryContext
+from domain.context import UserFactoryContext
 from domain.use_cases.shop import UCShop
 from presenters.aiogram.kb import shop as kb
-from presenters.aiogram.kb.callbacks import CityCB
 from presenters.aiogram.messages import shop as msg
-from presenters.shared.utils.auth import get_factory, get_user
-from presenters.shared.utils.di_context import with_context
+from presenters.shared.utils import get_factory, get_user, with_context
 
 router = Router()
 
 
-@router.callback_query(F.data.startswith(f"{CityCB.choose_amount}:"))
 @get_user
 @get_factory
 @with_context(UserFactoryContext)
@@ -30,33 +27,24 @@ async def choose_amount(
     )
 
 
-# @router.callback_query(F.data.startswith(f"{CityCB.preview_contract}:"))
-# @get_user
-# @get_factory
-# @with_context(UserFactoryContext)
-# async def preview_contract(
-#     call: types.CallbackQuery,
-#     ctx: UserFactoryContext,
-#     uc_shop: FromDishka[UCShop],
-# ):
-#     product = await uc_shop.shop_product_by_id(int(call.data.split(":")[2]))
-#     amount = int(call.data.split(":")[3])
-# shop_product = ShopProduct(
-#     product=product,
-#     amount=amount,
-#     shop=shop
-# )
-#     contract = await uc_shop.preview_contract(ctx.factory)
-#     await call.message.edit_caption(str(contract), reply_markup=None)
+@get_user
+@get_factory
+@with_context(UserFactoryContext)
+async def preview_contract(
+    call: types.CallbackQuery,
+    ctx: UserFactoryContext,
+    uc_shop: FromDishka[UCShop],
+):
+    await uc_shop.shop_product_by_id(int(call.data.split(":")[2]))
+    int(call.data.split(":")[3])
 
 
-# @router.callback_query(F.data.startswith(f"{CityCB.success_contract}:"))
-# @get_user
-# @get_factory
-# @with_context(UserFactoryContext)
-# async def sign_contract(
-#     call: types.CallbackQuery,
-#     ctx: UserFactoryContext,
-#     uc_shop: FromDishka[UCShop],
-# ):
-#     pass
+@get_user
+@get_factory
+@with_context(UserFactoryContext)
+async def sign_contract(
+    call: types.CallbackQuery,
+    ctx: UserFactoryContext,
+    uc_shop: FromDishka[UCShop],
+):
+    pass

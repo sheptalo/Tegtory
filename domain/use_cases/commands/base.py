@@ -25,7 +25,10 @@ class BaseCommandHandler(DependencyRequired, Generic[Command]):
 
 
 def pay_required(cls: type) -> type:
-    old_call = cls.__call__
+    if not hasattr(cls, "execute"):
+        raise AppException("Method execute must be overridden")
+
+    old_call = cls.execute
 
     @wraps(old_call)
     async def wrapper(self: Any, cmd: PayRequiredCommand) -> Any:
@@ -34,5 +37,5 @@ def pay_required(cls: type) -> type:
         await self.money_repo.subtract(cmd.user_id, cmd.get_price())
         return result
 
-    setattr(cls, "__call__", wrapper)
+    cls.execute = wrapper
     return cls

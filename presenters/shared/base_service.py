@@ -16,7 +16,7 @@ class BaseService:
     message_middlewares: list = []
     callback_middlewares: list = []
 
-    def __init__(self, bot_token: str = "") -> None:
+    def __init__(self, bot_token: str | None = "") -> None:
         self.bot = self._get_bot(bot_token)
         self._dp: Any = None
 
@@ -46,16 +46,11 @@ class BaseService:
             logger.error("No bot token provided for %s", cls.__name__)
             return None
         return cls.bot_singleton(
-            token=token,
-            default=DefaultBotProperties(parse_mode="Markdown"),
+            token=token, default=DefaultBotProperties(parse_mode="Markdown")
         )
 
     def _register_middlewares(self, dp: Dispatcher) -> None:
         for middleware in self.message_middlewares:
-            dp.message.middleware.register(
-                middleware,
-            )
+            dp.message.middleware.register(middleware)
         for middleware in self.callback_middlewares:
-            dp.callback_query.middleware.register(
-                middleware,
-            )
+            dp.callback_query.middleware.register(middleware)

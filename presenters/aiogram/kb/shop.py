@@ -1,7 +1,4 @@
-from aiogram.types import (
-    InlineKeyboardMarkup,
-    LabeledPrice,
-)
+from aiogram.types import InlineKeyboardMarkup, LabeledPrice
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 from domain.entities import Shop, ShopProduct
@@ -19,9 +16,7 @@ def get_shop_list_markup(shops: list[Shop]) -> InlineKeyboardMarkup:
     return builder.as_markup()
 
 
-def shop_demand_markup(
-    products: list[ShopProduct],
-) -> InlineKeyboardMarkup:
+def shop_demand_markup(products: list[ShopProduct]) -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
     for product in products:
         builder.button(
@@ -56,28 +51,3 @@ def choose_amount_demand_markup(
 
 
 prices = [LabeledPrice(label="1000 очков XTR", amount=10)]
-
-# lottery_kb = [
-#     [
-#         InlineKeyboardButton(
-#             text="Купить бронзовый билет", callback_data="bronze_ticket"
-#         )
-#     ],
-#     [
-#         InlineKeyboardButton(
-#             text="Купить Серебряный билет", callback_data="serebro_ticket"
-#         )
-#     ],
-#     [
-#         InlineKeyboardButton(
-#             text="Купить золотой билет", callback_data="gold_ticket"
-#         )
-#     ],
-#     [
-#         InlineKeyboardButton(
-#             text="Купить Столар билет", callback_data="stolar_ticket"
-#         )
-#     ],
-#     [InlineKeyboardButton(text="Обратно", callback_data="back_shop")],
-# ]
-# lottery_markup = InlineKeyboardMarkup(inline_keyboard=lottery_kb)

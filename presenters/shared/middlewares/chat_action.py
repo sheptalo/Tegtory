@@ -17,8 +17,7 @@ class ChatActionMiddleware(BaseMiddleware):
         if not hasattr(event, "chat"):
             return await handler(event, data)
         async with ChatActionSender.typing(
-            bot=data["bot"],
-            chat_id=event.chat.id,
+            bot=data["bot"], chat_id=event.chat.id
         ):
             await sleep(0.3)
             return await handler(event, data)

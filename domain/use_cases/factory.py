@@ -2,10 +2,7 @@ import asyncio
 from typing import Any
 
 from common import settings
-from common.exceptions import (
-    AppException,
-    TaxException,
-)
+from common.exceptions import AppException, TaxException
 
 from ..entities import Factory, Product, StorageProduct
 from ..entities.factory import StartFactoryEvent

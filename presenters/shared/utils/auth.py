@@ -17,11 +17,15 @@ from presenters.aiogram.messages import factory as factory_msg
 logger = logging.getLogger(__name__)
 
 
-def get_factory(func) -> Callable:
+def get_factory(func: Callable) -> Callable:
     @wraps(func)
     async def wrapper(
-        event: types.Message | types.CallbackQuery, *args, **kwargs
+        event: types.Message | types.CallbackQuery,
+        *args: tuple,
+        **kwargs: dict,
     ) -> Any:
+        if not event.from_user:
+            return
         factory = kwargs.pop("factory", await _get_factory(event.from_user.id))
         if not factory:
             await factory_required_handler(event)
@@ -31,10 +35,10 @@ def get_factory(func) -> Callable:
     return wrapper
 
 
-def get_storage_from_factory(func) -> Callable:
+def get_storage_from_factory(func: Callable) -> Callable:
     @wraps(func)
-    async def wrapper(*args, **kwargs) -> Any:
-        factory = kwargs.pop("factory")
+    async def wrapper(*args: tuple, **kwargs: Any) -> Any:
+        factory: Factory = kwargs.pop("factory")
         result = await QueryExecutor().ask(
             GetStorageQuery(factory_id=factory.id)
         )
@@ -44,11 +48,16 @@ def get_storage_from_factory(func) -> Callable:
     return wrapper
 
 
-def get_user(func) -> Callable:
+def get_user(func: Callable) -> Callable:
     @wraps(func)
     async def wrapper(
-        event: types.Message | types.CallbackQuery, *args, **kwargs
+        event: types.Message | types.CallbackQuery,
+        *args: tuple,
+        **kwargs: dict,
     ) -> Any:
+        if not event.from_user:
+            logger.error("Событие не от пользователя.игнорируем")
+            return None
         user = kwargs.pop("user", await _get_user(event.from_user.id))
         if not user:
             user = await _create_user(event.from_user)
@@ -71,16 +80,14 @@ def get_event_message(
 
 async def _get_factory(user_id: int) -> Factory | None:
     result: Success[Factory] | Failure = await QueryExecutor().ask(
-        GetFactoryQuery(
-            factory_id=user_id,
-        )
+        GetFactoryQuery(factory_id=user_id)
     )
     if isinstance(result, Success):
         return result.data
     return None
 
 
-async def _get_user(user_id) -> User | None:
+async def _get_user(user_id: int) -> User | None:
     res: Success[User] | Failure = await QueryExecutor().ask(
         UserQuery(user_id=user_id)
     )
@@ -89,11 +96,13 @@ async def _get_user(user_id) -> User | None:
     return None
 
 
-async def _create_user(user) -> User | None:
+async def _create_user(user: types.User) -> User | None:
     logger.info(f"Registering user {user.id} - {user.username}")
     result: Success[User] | Failure = await CommandExecutor().execute(
         RegisterUserCommand(
-            user_id=user.id, name=user.first_name, username=user.username
+            user_id=user.id,
+            name=user.first_name,
+            username=user.username or "none",
         )
     )
     if isinstance(result, Success):
@@ -105,10 +114,12 @@ async def _create_user(user) -> User | None:
 async def factory_required_handler(
     event: types.CallbackQuery | types.Message,
 ) -> None:
+    if not event.from_user:
+        logger.error("У События нет пользователя")
+        return None
     logger.info(f"Пользователь {event.from_user.id} не имеет фабрики")
     message = get_event_message(event)
     if message:
         await message.answer(
-            factory_msg.need_to_create,
-            reply_markup=kb_factory.create_markup,
+            factory_msg.need_to_create, reply_markup=kb_factory.create_markup
         )

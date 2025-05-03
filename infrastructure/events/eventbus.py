@@ -5,7 +5,7 @@ from typing import Any, Callable
 from domain.events import EventType
 from domain.interfaces import EventBus
 
-logger = logging.getLogger("eventbus")
+logger = logging.getLogger("infrastructure.eventbus")
 
 
 class MemoryEventBus(EventBus):
@@ -22,7 +22,7 @@ class MemoryEventBus(EventBus):
 
     @classmethod
     async def emit(cls, event: EventType, data: Any) -> None:
-        logger.info(
+        logger.debug(
             f"Emitting event: {event} with data:\n"
             f"{cls._format_dict(data) if isinstance(data, dict) else data}"
         )

@@ -16,9 +16,6 @@ class UCUser(SafeCall, EventBased):
     async def start_work(
         self, factory: Factory, product: Product, time: float, user: User
     ) -> None:
-        if user.state:
-            return
-
         user.start_work(time)
         await self.repository.update(user)
         await self.event_bus.emit(
@@ -27,6 +24,12 @@ class UCUser(SafeCall, EventBased):
                 factory=factory, time=time, product=product
             ),
         )
+
+
+class UserEvent(EventBased):
+    def __init__(self, repo: UserRepository, event_bus: EventBus) -> None:
+        super().__init__(event_bus)
+        self.repository = repo
 
     @on_event(EventType.SubtractMoney)
     async def _subtract_user_money(self, data: dict[str, Any]) -> None:

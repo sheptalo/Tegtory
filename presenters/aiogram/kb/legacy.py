@@ -6,10 +6,7 @@ from aiogram.types import (
 )
 
 menu_kb = [
-    [
-        KeyboardButton(text="Фабрика"),
-        KeyboardButton(text="Город"),
-    ],
+    [KeyboardButton(text="Фабрика"), KeyboardButton(text="Город")],
     [KeyboardButton(text="Помощь")],
     [KeyboardButton(text="Биржа")],
 ]

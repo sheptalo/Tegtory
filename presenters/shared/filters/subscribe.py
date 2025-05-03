@@ -18,6 +18,8 @@ async def is_subscribed(user_id: int) -> bool:
 
 class SubscribeFilter(BaseFilter):
     async def __call__(self, message: types.Message) -> bool:
+        if not message.from_user:
+            return False
         return await is_subscribed(message.from_user.id)
 
 

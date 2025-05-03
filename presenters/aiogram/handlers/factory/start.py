@@ -3,7 +3,7 @@ from typing import Any
 from aiogram import Router, types
 from dishka import FromDishka
 
-from domain.context.factory import UserFactoryContext
+from domain.context import UserFactoryContext
 from domain.entities import Factory, Product
 from domain.events import EventType
 from domain.use_cases import UCFactory, UCUser
@@ -18,8 +18,7 @@ from presenters.aiogram.handlers.factory.main import callback_factory
 from presenters.aiogram.kb import factory as kb
 from presenters.aiogram.messages import factory as msg
 from presenters.shared.bot import TegtorySingleton
-from presenters.shared.utils.auth import get_factory, get_user
-from presenters.shared.utils.di_context import with_context
+from presenters.shared.utils import get_factory, get_user, with_context
 
 router = Router()
 

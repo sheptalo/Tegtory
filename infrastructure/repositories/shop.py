@@ -31,17 +31,6 @@ class ShopRepositoryImpl(ShopRepository):
             return i
         return None
 
-    async def get_products(
-        self, shop: Shop, is_demand: bool = False
-    ) -> list[ShopProduct]:
-        res = []
-        for i in filter(
-            lambda x: x.is_demand == is_demand and x.shop.id == shop.id,
-            self.shop_products,
-        ):
-            res.append(i)
-        return res
-
     async def add_product(self, product: ShopProduct) -> ShopProduct:
         self.shop_products.append(product)
         product.id = len(self.shop_products)

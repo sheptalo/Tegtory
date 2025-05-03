@@ -3,6 +3,8 @@ import time
 
 from pydantic import BaseModel
 
+from common.exceptions import DuringWorkException
+
 
 class Dignity(BaseModel):
     name: str
@@ -13,26 +15,13 @@ class User(BaseModel):
     id: int
     name: str
     username: str
-    money: int = 5000000000
+    money: int = 500
     stolar: int = 0
     rating: int = 0
     league: str = "Не в лиге"
     titles: list[str] = list([])
     is_admin: bool = False
     end_work_time: float = 0
-
-    def __str__(self) -> str:
-        return f"""\
-🌟 *Паспорт {self.name}*
-
-💲 *Баланс:* {self.money:,}
-⚔️ *SC:* {self.stolar:,}
-
-🏆 *Рейтинг:* {self.rating:,}
-🛡️ *Лига:* {self.league}
-
-№ {self.id * (len(self.username) ** 2) // 2}
-"""
 
     @property
     def minutes_to_work(self) -> float:
@@ -47,8 +36,9 @@ class User(BaseModel):
         return self.work_time_remaining > 0.0
 
     def start_work(self, time_amount: float | int) -> None:
-        if not self.state:
-            self.end_work_time = time.time() + time_amount
+        if self.state:
+            raise DuringWorkException
+        self.end_work_time = time.time() + time_amount
 
     def set_name(self, name: str) -> None:
         self.name = name

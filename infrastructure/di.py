@@ -22,6 +22,7 @@ from .repositories import (
 from .repositories.storage import StorageRepositoryImpl
 from .utils import get_children, load_packages
 
+logger = logging.getLogger(__name__)
 load_packages(use_cases)
 load_packages(services)
 
@@ -40,11 +41,11 @@ for child in get_children(DependencyRequired):
 class EventBusProvider(Provider):
     @provide(scope=Scope.APP)
     async def new_connection(self) -> EventBus:
-        logging.info("Preparing EventBus")
+        logger.info("Preparing EventBus")
         event_bus = MemoryEventBus()
 
         subscribe_all(event_bus)
-        logging.info("Successfully prepared")
+        logger.info("Successfully prepared")
         return event_bus
 
 

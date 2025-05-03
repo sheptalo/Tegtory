@@ -9,18 +9,13 @@ back_city_button = InlineKeyboardButton(
 )
 
 city_kb = [
-    [
-        InlineKeyboardButton(
-            text="Зал славы", callback_data=CityCB.leaderboard
-        ),
-    ],
+    [InlineKeyboardButton(text="Зал славы", callback_data=CityCB.leaderboard)],
     [
         InlineKeyboardButton(
             text="Торговые компании", callback_data=CityCB.trading_companies
         ),
         InlineKeyboardButton(text="Магазины", callback_data=CityCB.shop),
     ],
-    # [InlineKeyboardButton(text="Объединение", callback_data="open_clan")],
 ]
 city_markup = InlineKeyboardMarkup(inline_keyboard=city_kb)
 

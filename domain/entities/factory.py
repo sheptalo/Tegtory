@@ -122,7 +122,7 @@ class Factory(BaseModel):
     def hire(self) -> None:
         if self.state:
             raise DuringWorkException
-        if not self.hire_available <= 0:
+        if self.hire_available <= 0:
             raise AppException("Вы достигли лимита рабочих для данного уровня")
         self.workers += 1
 

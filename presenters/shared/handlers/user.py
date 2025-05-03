@@ -2,8 +2,10 @@ from aiogram import Router, types
 
 from common.settings import ASSETS_DIR
 from domain.entities import User
-from presenters.aiogram.filters.profile import ProfileFilter
-from presenters.shared.utils.auth import get_user
+
+from ..filters.profile import ProfileFilter
+from ..messages.user import format_user
+from ..utils.auth import get_user
 
 router = Router()
 
@@ -13,5 +15,5 @@ router = Router()
 async def user_info(message: types.Message, user: User) -> None:
     await message.answer_photo(
         types.FSInputFile(ASSETS_DIR / "passport.png"),
-        caption=str(user),
+        caption=format_user(user),
     )

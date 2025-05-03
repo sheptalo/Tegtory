@@ -5,23 +5,17 @@ from aiogram.exceptions import TelegramBadRequest
 from aiogram.filters import StateFilter
 from aiogram.fsm.context import FSMContext
 
-from domain.commands.factory import CreateFactoryCommand, UpgradeFactoryCommand
-from domain.context.factory import UserFactoryContext
-from domain.entities import Factory, User
-from domain.results import Success
-from infrastructure.command import CommandExecutor
+from domain import entities, results
+from domain.commands import CreateFactoryCommand, UpgradeFactoryCommand
+from domain.context import UserFactoryContext
+from infrastructure import CommandExecutor
 from presenters.aiogram.handlers.factory.main import open_factory
+from presenters.aiogram.images import Images
+from presenters.aiogram.kb import FactoryCB
 from presenters.aiogram.kb import factory as kb
-from presenters.aiogram.kb.callbacks import FactoryCB
 from presenters.aiogram.messages import factory as msg
 from presenters.aiogram.states import factory as states
-from presenters.aiogram.utils import Images
-from presenters.shared.utils.auth import (
-    get_factory,
-    get_user,
-)
-from presenters.shared.utils.cache import cache
-from presenters.shared.utils.di_context import with_context
+from presenters.shared.utils import cache, get_factory, get_user, with_context
 
 router = Router()
 
@@ -29,7 +23,7 @@ router = Router()
 @router.callback_query(F.data == FactoryCB.create)
 @get_user
 async def create_factory_callback(
-    call: types.CallbackQuery, state: FSMContext, user: User
+    call: types.CallbackQuery, state: FSMContext, user: entities.User
 ) -> None:
     await call.message.edit_text(msg.set_name, reply_markup=None)
     await state.set_state(states.Create.name)
@@ -41,9 +35,9 @@ async def finish_create_factory_handler(
 ) -> None:
     await message.delete()
     result = await CommandExecutor().execute(
-        CreateFactoryCommand(id=message.from_user.id, name=str(message.text)),
+        CreateFactoryCommand(id=message.from_user.id, name=str(message.text))
     )
-    if isinstance(result, Success):
+    if isinstance(result, results.Success):
         await state.clear()
         await open_factory(message)
         return
@@ -55,7 +49,7 @@ async def finish_create_factory_handler(
 @cache(Images.factory_upgrade, types.FSInputFile(Images.factory_upgrade))
 async def upgrade_factory(
     call: types.CallbackQuery,
-    factory: Factory,
+    factory: entities.Factory,
     cached: Any,
     cache_func: Callable,
 ) -> None:
@@ -91,7 +85,7 @@ async def try_to_upgrade_factory(
         )
     )
 
-    if isinstance(result, Success):
+    if isinstance(result, results.Success):
         await upgrade_factory(call)
         return
     await call.message.edit_caption(

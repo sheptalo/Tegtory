@@ -108,6 +108,5 @@ class HireWorkerCommandHandler(BaseCommandHandler[HireWorkerCommand]):
         self.money_repo = money_repo
 
     async def execute(self, cmd: HireWorkerCommand) -> None:
-        if cmd.factory.hire_available <= 0:
-            raise AppException("Вы достигли лимита рабочих для данного уровня")
+        cmd.factory.hire()
         await self.repo.hire(cmd.factory.id)

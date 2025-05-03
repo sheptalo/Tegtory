@@ -3,12 +3,11 @@ from typing import Callable
 from aiogram import F, Router, types
 
 from presenters.aiogram.filters.city import CityFilter
+from presenters.aiogram.images import Images
+from presenters.aiogram.kb import CityCB
 from presenters.aiogram.kb import city as kb
-from presenters.aiogram.kb.callbacks import CityCB
 from presenters.aiogram.messages import city as msg
-from presenters.aiogram.utils import Images
-from presenters.shared.utils.auth import get_factory
-from presenters.shared.utils.cache import cache
+from presenters.shared.utils import cache, get_factory
 
 router = Router()
 
@@ -21,9 +20,7 @@ async def city_page(
     cache_func: Callable,
 ) -> None:
     sent = await message.answer_photo(
-        photo=cached,
-        caption=msg.main,
-        reply_markup=kb.city_markup,
+        photo=cached, caption=msg.main, reply_markup=kb.city_markup
     )
     if sent.photo:
         cache_func(sent.photo[-1].file_id)

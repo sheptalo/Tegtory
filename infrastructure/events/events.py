@@ -22,5 +22,4 @@ def get_subscribed_events(klass: type[EventBased]) -> list[list[Any]]:
     for cls in get_children(klass):
         cls_typing: EventBased = cls
         events.append([cls_typing, cls_typing.get_subscribers()])
-    print(events)
     return events

@@ -3,20 +3,14 @@ import os
 from infrastructure.events.events import subscribe_events
 from infrastructure.executor import preparing_executors
 from infrastructure.logger import configure_logger
-from presenters import MynoxService, TegtoryService
+from presenters import TegtoryService
 
 
-async def main():
+async def main() -> None:
     aiogram = asyncio.create_task(
         TegtoryService(os.environ.get("BOT_TOKEN"))()
     )
-    mynox = asyncio.create_task(MynoxService(os.environ.get("MYNOX_TOKEN"))())
-    await asyncio.gather(
-        preparing_executors(),
-        subscribe_events(),
-        aiogram,
-        mynox,
-    )
+    await asyncio.gather(preparing_executors(), subscribe_events(), aiogram)
 
 
 if __name__ == "__main__":

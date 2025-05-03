@@ -11,7 +11,7 @@ from domain.use_cases.user import UCUser
 
 
 @pytest.fixture
-def user_repo():
+def user_repo() -> MagicMock:
     repo = MagicMock(spec=UserRepository)
     repo.create = AsyncMock()
     repo.update = AsyncMock()
@@ -20,19 +20,19 @@ def user_repo():
 
 
 @pytest.fixture
-def event_bus():
+def event_bus() -> MagicMock:
     bus = MagicMock()
     bus.emit = AsyncMock()
     return bus
 
 
 @pytest.fixture
-def uc_user(user_repo, event_bus):
+def uc_user(user_repo: MagicMock, event_bus: MagicMock) -> UCUser:
     return UCUser(user_repo, event_bus)
 
 
 @pytest.mark.asyncio
-async def test_create_user(user_repo):
+async def test_create_user(user_repo: MagicMock) -> None:
     expected_result = User(username="test", name="test", id=1)
     user_repo.create.return_value = expected_result
 
@@ -48,7 +48,7 @@ async def test_create_user(user_repo):
 
 
 @pytest.mark.asyncio
-async def test_subtract_money(uc_user, user_repo):
+async def test_subtract_money(uc_user: UCUser, user_repo: MagicMock) -> None:
     user = User(id=1, name="User", username="user", money=100)
     await uc_user._subtract_user_money({"user": user, "amount": 30})
 

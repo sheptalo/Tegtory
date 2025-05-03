@@ -25,7 +25,6 @@ exclude = [
     "node_modules",
     "site-packages",
     "venv",
-    "mynox"
 ]
 
 line-length = 79
@@ -34,8 +33,8 @@ indent-width = 4
 target-version = "py313"
 
 [lint]
-select = ["E4", "E7", "E9", "F", "I", "E"]
-ignore = []
+select = ["E4", "E7", "E9", "F", "I", "E", "T", "T201", "W", "B", "ERA", "ASYNC", "FBT", "A", "INP"]
+ignore = ["B010"]
 
 fixable = ["ALL"]
 unfixable = []

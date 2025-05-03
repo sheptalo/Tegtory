@@ -11,8 +11,7 @@ class CustomFormatter(logging.Formatter):
     reset = "\x1b[0m"
 
     message_format = (
-        "%(asctime)s | %(levelname)-7s | %(name)-50s | "
-        f"%(message)-100s {reset} | %(filename)s:%(lineno)d"
+        "%(asctime)s | %(levelname)-6s | %(name)-40s | %(message)s" + reset
     )
 
     FORMATS = {

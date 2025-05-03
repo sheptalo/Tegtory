@@ -1,18 +1,18 @@
 from aiogram import F, Router, types
 
 from domain import entities, results
-from domain.commands.factory import UpgradeStorageCommand
+from domain.commands import UpgradeStorageCommand
 from domain.context import UserFactoryContext
-from infrastructure.command import CommandExecutor
+from infrastructure import CommandExecutor
 from presenters.aiogram.kb import factory as kb
 from presenters.aiogram.kb.callbacks import FactoryCB
 from presenters.aiogram.messages import factory as msg
-from presenters.shared.utils.auth import (
+from presenters.shared.utils import (
     get_factory,
     get_storage_from_factory,
     get_user,
+    with_context,
 )
-from presenters.shared.utils.di_context import with_context
 
 router = Router()
 
