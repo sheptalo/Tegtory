@@ -1,15 +1,12 @@
-
 # Tegtory
 <p>
     <a href="https://github.com/sheptalo/Tegtory/pulse" alt="Activity">
-        <img src="https://img.shields.io/github/commit-activity/m/sheptalo/Tegtory" /></a>
+        <img src="https://img.shields.io/github/commit-activity/m/sheptalo/Tegtory"  alt=""/></a>
     <a href="https://github.com/sheptalo/Tegtory/discussions" alt="Discussions">
-        <img src="https://img.shields.io/github/discussions/sheptalo/Tegtory" /></a>
-  <a href='https://t.me/tegtorybot'>Link</a>
-    
+        <img src="https://img.shields.io/github/discussions/sheptalo/Tegtory"  alt=""/></a>
 </p>
     
-[![Tegtory functions](https://github.com/sheptalo/Tegtory/actions/workflows/python-app.yml/badge.svg)](https://github.com/sheptalo/Tegtory/actions/workflows/python-app.yml)
+[![Tegtory functions](https://github.com/sheptalo/Tegtory/actions/workflows/run.tests.yml/badge.svg)](https://github.com/sheptalo/Tegtory/actions/workflows/run.tests.yml)
 
 ## Описание и функционал
 
@@ -25,6 +22,36 @@
 
 Если ты используешь баги в личных целях будет бан.
 
-# Запуск локального tegtory
+## Architecture
 
-Скоро расскажу как
+```text
+├──common
+├──docker
+├──domain
+│  ├───commands
+│  ├───context
+│  ├───entity
+│  ├───events
+│  ├───interfaces
+│  ├───policies
+│  ├───queries
+│  ├───services
+│  └───use_cases
+│      ├───commands
+│      └───queries
+├──infrastructure
+│  ├───events
+│  └───repositories
+├──presentors
+│  ├───aiogram # main tegtory specific modules
+│  ├───mynox # mynox specific modules
+│  └───shared # shared modules
+├──static
+│  └───tegtory
+└──tests
+    ├───entity
+    ├───presentors
+    └───use_cases
+```
+
+---

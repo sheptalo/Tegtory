@@ -1,0 +1,37 @@
+name: Deploy Bot
+on:
+  push:
+    branches: [ dev ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python 3.12
+      uses: actions/setup-python@v3
+      with:
+        python-version: "3.12"
+
+    - name: check ruff
+      run: |
+        pip install ruff
+        ruff check .
+
+    - name: Test with pytest
+      run: |
+        pip install -r requirements.txt
+        pytest
+  deploy:
+    needs: test
+    runs-on: self-hosted
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          clean: false
+      - run: |
+          docker compose -f docker/docker-compose.dev.yml down 
+          docker compose -f docker/docker-compose.dev.yml up -d --build
