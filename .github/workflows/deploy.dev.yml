@@ -9,16 +9,20 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+
     - name: Set up Python 3.12
       uses: actions/setup-python@v3
       with:
         python-version: "3.12"
-    - name: Install dependencies
+
+    - name: check ruff
       run: |
-        pip install -r requirements.txt
+        pip install ruff
+        ruff check .
 
     - name: Test with pytest
       run: |
+        pip install -r requirements.txt
         pytest
   deploy:
     needs: test

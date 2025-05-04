@@ -1,32 +1,19 @@
-from domain.entity import Shop, ShopContract, ShopProduct
-from domain.events import IEventBus
-from domain.interfaces.shop import IShopRepository
-from domain.use_cases.base import BaseUseCase
+from domain.entities import Shop, ShopProduct
+from domain.interfaces import EventBus
+from domain.interfaces.shop import ShopRepository
+from domain.use_cases.base import EventBased, SafeCall
 
 
-class UCShop(BaseUseCase):
-    def __init__(self, repo: IShopRepository, event_bus: IEventBus) -> None:
-        self.repository = repo
+class UCShop(SafeCall, EventBased):
+    def __init__(self, repo: ShopRepository, event_bus: EventBus) -> None:
         super().__init__(event_bus)
+        self.repository = repo
 
-    async def all(self) -> list[Shop] | None:
-        return self.repository.all()
+    async def all(self) -> list[Shop]:
+        return await self.repository.all()
 
-    async def by_name(self, name) -> Shop | None:
-        return self.repository.by_name(name)
+    async def by_name(self, name: str) -> Shop | None:
+        return await self.repository.by_name(name)
 
-    async def sign_contract(self, contract: ShopContract) -> ShopContract:
-        return self.repository.sign_contract(contract)
-
-    async def get_product_list(
-        self, shop: Shop, is_demand: bool = False
-    ) -> list[ShopProduct]:
-        return self.repository.get_products(shop, is_demand)
-
-    async def send_resources(self):
-        pass
-
-    async def specific_shop_product_by_id(
-        self, product_id: int
-    ) -> ShopProduct:
-        return self.repository.get_product_by_id(product_id)
+    async def shop_product_by_id(self, product_id: int) -> ShopProduct | None:
+        return await self.repository.get_product_by_id(product_id)

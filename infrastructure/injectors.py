@@ -1,36 +1,37 @@
-from functools import wraps
+from collections.abc import Callable
+from typing import Any
 
-from dishka import FromDishka
+from dishka import AsyncContainer
 from dishka.integrations.base import wrap_injection
 
 from domain.events import EventType
-from domain.use_cases import UCFactory
-
-from .di import dishka_container
+from domain.interfaces import EventBus
 
 
-@wraps(wrap_injection)
-def inject(**params):
-    def decorator(func):
-        return wrap_injection(
-            func=func, container_getter=lambda __, _: dishka_container, **params
-        )
+def inject(func: Callable) -> Any:
+    def container_getter(
+        _args: tuple[Any, ...], _kwargs: dict[str, Any]
+    ) -> AsyncContainer:
+        return container
 
-    return decorator
+    from .di import container
+
+    return wrap_injection(
+        func=func, container_getter=container_getter, is_async=True
+    )
 
 
 _pending_subscriptions = []
 
 
-def on_event(event_name: EventType):
-    def decorator(func):
+def on_event(event_name: EventType) -> Callable:
+    def decorator(func: Callable) -> Callable:
         _pending_subscriptions.append((event_name, func))
         return func
 
     return decorator
 
 
-@inject(is_async=True)
-async def subscribe_all(use_case: FromDishka[UCFactory]):
+def subscribe_all(event_bus: EventBus) -> None:
     for event_name, func in _pending_subscriptions:
-        use_case.event_bus.subscribe(func, event_name)
+        event_bus.subscribe(func, event_name)

@@ -1,29 +1,27 @@
+from collections.abc import Callable
 from functools import wraps
 from types import MethodType
+from typing import Any, Protocol
 
 from common.exceptions import AppException
+from domain.interfaces.eventbus import EventBus
 
-from ..events.eventbus import IEventBus
+
+class DependencyRequired(Protocol):
+    pass
 
 
-class BaseUseCase:
-    def __init__(self, eventbus: IEventBus) -> None:
-        self.event_bus = eventbus
-        self._subscribe()
-
-    def __getattribute__(self, i):
+class SafeCall:
+    def __getattribute__(self, i: str) -> Any:
         obj = object.__getattribute__(self, i)
-
         return (
-            obj
-            if i.startswith("_") or not isinstance(obj, MethodType)
-            else self._get_wrapper(obj)
+            obj if not isinstance(obj, MethodType) else self._get_wrapper(obj)
         )
 
     @staticmethod
-    def _get_wrapper(obj):
+    def _get_wrapper(obj: Callable) -> Callable:
         @wraps(obj)
-        async def wrapper(*args, **kwargs):
+        async def wrapper(*args: tuple, **kwargs: dict) -> Any:
             try:
                 return await obj(*args, **kwargs)
             except AppException as e:
@@ -31,12 +29,16 @@ class BaseUseCase:
 
         return wrapper
 
-    def _subscribe(self) -> None:
+
+class EventBased(DependencyRequired):
+    def __init__(self, eventbus: EventBus) -> None:
+        self.event_bus = eventbus
+
+    @classmethod
+    def get_subscribers(cls) -> list[Callable]:
+        subs = []
         for attr in filter(
-            lambda x: hasattr(getattr(self, x), "__subscribed_events__"),
-            dir(self),
+            lambda x: hasattr(getattr(cls, x), "__event__"), dir(cls)
         ):
-            func = getattr(self, attr)
-            events = func.__subscribed_events__
-            for event in events:
-                self.event_bus.subscribe(func, event)
+            subs.append(getattr(cls, attr))
+        return subs

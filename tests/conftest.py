@@ -2,12 +2,12 @@ from unittest.mock import AsyncMock, MagicMock, Mock
 
 import pytest
 
-from domain.entity import Factory
+from domain.entities import Factory
 from domain.use_cases import UCFactory
 
 
 @pytest.fixture
-def mock_user():
+def mock_user() -> MagicMock:
     mock_user = MagicMock()
     mock_user.id = 1
     mock_user.money = 10000
@@ -17,12 +17,12 @@ def mock_user():
 
 
 @pytest.fixture
-def uc_factory(factory_repository):
-    return UCFactory(factory_repository, AsyncMock())
+def uc_factory(factory_repository: Mock) -> UCFactory:
+    return UCFactory(factory_repository, AsyncMock(), AsyncMock())
 
 
 @pytest.fixture
-def factory_repository(mock_factory):
+def factory_repository(mock_factory: Mock) -> Mock:
     mock = Mock()
     mock.get.return_value = None
     mock.by_name.return_value = None
@@ -32,7 +32,7 @@ def factory_repository(mock_factory):
 
 
 @pytest.fixture
-def mock_factory():
+def mock_factory() -> Mock:
     mock = Mock(spec=Factory)
     mock.id = 1
     mock.name = "Test"

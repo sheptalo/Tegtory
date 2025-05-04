@@ -1,7 +1,7 @@
 class AppException(Exception):
     message = ""
 
-    def __init__(self, message=""):
+    def __init__(self, message: str = "") -> None:
         if message:
             self.message = message
 

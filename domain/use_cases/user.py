@@ -1,49 +1,43 @@
-from domain.entity import Factory, Product, User
-from domain.interfaces import IUserRepository
-from domain.use_cases.base import BaseUseCase
+from typing import Any
 
-from ..events import EventType, IEventBus, on_event
+from domain.entities import Factory, User
+from domain.interfaces import EventBus, UserRepository
+from domain.use_cases.base import EventBased, SafeCall
+
+from ..entities.factory import Product, StartFactoryEvent
+from ..events import EventType, on_event
 
 
-class UCUser(BaseUseCase):
-    def __init__(self, repo: IUserRepository, event_bus: IEventBus) -> None:
-        self.repository = repo
+class UCUser(SafeCall, EventBased):
+    def __init__(self, repo: UserRepository, event_bus: EventBus) -> None:
         super().__init__(event_bus)
-
-    async def create(self, user: User) -> User:
-        return self.repository.create(user.id, user.name, user.username)
-
-    async def update(self, user: User) -> User:
-        return self.repository.update(user)
-
-    async def get(self, user_id: int) -> User | None:
-        return self.repository.get(user_id)
-
-    async def create_if_not_exist(
-        self, user_id: int, name: str, username: str
-    ) -> None:
-        user = self.repository.get(user_id)
-        if not user:
-            self.repository.create(user_id, name, username)
+        self.repository = repo
 
     async def start_work(
-        self, user: User, factory: Factory, product: Product, time: float
-    ) -> User:
-        if user.state:
-            return user
-        user.work_to(time)
+        self, factory: Factory, product: Product, time: float, user: User
+    ) -> None:
+        user.start_work(time)
+        await self.repository.update(user)
         await self.event_bus.emit(
             EventType.StartFactory,
-            factory=factory,
-            time=time,
-            product=product,
+            data=StartFactoryEvent(
+                factory=factory, time=time, product=product
+            ),
         )
-        self.repository.update(user)
-        return user
+
+
+class UserEvent(EventBased):
+    def __init__(self, repo: UserRepository, event_bus: EventBus) -> None:
+        super().__init__(event_bus)
+        self.repository = repo
 
     @on_event(EventType.SubtractMoney)
-    async def _subtract_user_money_event(
-        self, user: User, amount: int
-    ) -> None:
-        user.money -= amount
-        self.repository.update(user)
+    async def _subtract_user_money(self, data: dict[str, Any]) -> None:
+        user = data.get("user")
+        amount = data.get("amount")
+
+        if not user or not amount:
+            return
+
+        user.substract_money(amount)
+        await self.repository.update(user)

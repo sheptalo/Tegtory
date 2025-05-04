@@ -1,27 +1,52 @@
-from dishka import Provider, Scope, make_async_container
+import logging
 
-from domain.events import IEventBus
+from dishka import Provider, Scope, make_async_container, provide
+
+from domain import services, use_cases
 from domain.interfaces import (
-    IFactoryRepository,
-    IShopRepository,
-    IUserRepository,
+    EventBus,
+    FactoryRepository,
+    ShopRepository,
+    UserRepository,
 )
-from domain.use_cases import UCFactory, UCShop, UCUser
+from domain.interfaces.storage import StorageRepository
+from domain.use_cases.base import DependencyRequired
 
 from .events.eventbus import MemoryEventBus
-from .repositories import FactoryRepository, ShopRepository, UserRepository
-
-provider = Provider()
-provider.provide(UserRepository, provides=IUserRepository, scope=Scope.APP)
-provider.provide(ShopRepository, provides=IShopRepository, scope=Scope.APP)
-provider.provide(
-    FactoryRepository, provides=IFactoryRepository, scope=Scope.APP
+from .injectors import subscribe_all
+from .repositories import (
+    FactoryRepositoryImpl,
+    ShopRepositoryImpl,
+    UserRepositoryImpl,
 )
+from .repositories.storage import StorageRepositoryImpl
+from .utils import get_children, load_packages
 
-provider.provide(MemoryEventBus, provides=IEventBus, scope=Scope.APP)
+logger = logging.getLogger(__name__)
+load_packages(use_cases)
+load_packages(services)
 
-provider.provide(UCUser, scope=Scope.APP)
-provider.provide(UCFactory, scope=Scope.APP)
-provider.provide(UCShop, scope=Scope.APP)
+provider = Provider(scope=Scope.APP)
+provider.provide(UserRepositoryImpl, provides=UserRepository)
 
-dishka_container = make_async_container(provider)
+provider.provide(ShopRepositoryImpl, provides=ShopRepository)
+
+provider.provide(FactoryRepositoryImpl, provides=FactoryRepository)
+provider.provide(StorageRepositoryImpl, provides=StorageRepository)
+
+for child in get_children(DependencyRequired):
+    provider.provide(child)
+
+
+class EventBusProvider(Provider):
+    @provide(scope=Scope.APP)
+    async def new_connection(self) -> EventBus:
+        logger.info("Preparing EventBus")
+        event_bus = MemoryEventBus()
+
+        subscribe_all(event_bus)
+        logger.info("Successfully prepared")
+        return event_bus
+
+
+container = make_async_container(provider, EventBusProvider())

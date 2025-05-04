@@ -1,5 +1,6 @@
-from .factory import IFactoryRepository
-from .shop import IShopRepository
-from .user import IUserRepository
+from .eventbus import EventBus
+from .factory import FactoryRepository
+from .shop import ShopRepository
+from .user import UserRepository
 
-__all__ = ["IFactoryRepository", "IUserRepository", "IShopRepository"]
+__all__ = ["EventBus", "FactoryRepository", "ShopRepository", "UserRepository"]

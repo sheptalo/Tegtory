@@ -1,14 +1,18 @@
-from domain.entity import LogisticCompany
+from typing import Protocol
 
-from .base import ICrudRepository
+from domain.entities import LogisticCompany
 
 
-class ILogisticRepository(ICrudRepository[LogisticCompany]):
-    def find(self, shop: LogisticCompany) -> LogisticCompany | None:
+class LogisticRepository(Protocol):
+    async def find(self, shop: LogisticCompany) -> LogisticCompany | None:
         pass
 
-    def sign_contract(self, contract: LogisticCompany) -> LogisticCompany:
+    async def sign_contract(
+        self, contract: LogisticCompany
+    ) -> LogisticCompany:
         pass
 
-    def update_contract(self, contract: LogisticCompany) -> LogisticCompany:
+    async def update_contract(
+        self, contract: LogisticCompany
+    ) -> LogisticCompany:
         pass

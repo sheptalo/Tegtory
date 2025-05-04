@@ -1,30 +1,39 @@
-from domain.entity import Factory, Product, Storage, StorageProduct
+from typing import Protocol
 
-from .base import ICrudRepository
+from domain.entities import Factory, Product, StorageProduct
 
 
-class IFactoryRepository(ICrudRepository[Factory]):
-    def by_name(self, name: str) -> Factory | None:
+class FactoryRepository(Protocol):
+    async def get(self, item_id: int) -> Factory | None:
         pass
 
-    def get_storage(self, factory: Factory) -> Storage:
+    async def create(self, item: Factory) -> Factory:
         pass
 
-    def update_storage(self, storage: Storage) -> Storage:
+    async def update(self, item: Factory) -> Factory:
         pass
 
-    def create_storage(self, factory: Factory) -> Storage:
+    async def by_name(self, name: str) -> Factory | None:
         pass
 
-    def add_available_product(
+    async def add_available_product(
         self, factory: Factory, product: Product
     ) -> tuple[Factory, Product]:
         pass
 
-    def get_available_products(self, factory: Factory) -> list[Product]:
+    async def get_available_products(self, factory: Factory) -> list[Product]:
         pass
 
-    def add_product_in_storage(
+    async def add_product_in_storage(
         self, storage_product: StorageProduct
     ) -> StorageProduct:
+        pass
+
+    async def hire(self, factory_id: int) -> None:
+        pass
+
+    async def upgrade(self, factory_id: int) -> None:
+        pass
+
+    async def set_tax(self, factory_id: int, value: int) -> None:
         pass

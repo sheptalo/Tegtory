@@ -1,14 +1,15 @@
-from typing import Protocol
+from domain.entities import User
+from domain.interfaces.base import CrudRepository
 
-from domain.entity import User
 
-
-class IUserRepository(Protocol):
-    def get(self, user_id: int) -> User:
+class UserRepository(CrudRepository[User]):
+    async def subtract(self, user_id: int, amount: int) -> None:
         pass
 
-    def create(self, uid: int, name: str, username: str) -> User:
+    async def add(self, user_id: int, amount: int) -> None:
         pass
 
-    def update(self, user: User) -> User:
+    async def send(
+        self, from_user_id: int, to_user_id: int, amount: int
+    ) -> None:
         pass

@@ -1,16 +1,19 @@
 import asyncio
 import logging
+from collections.abc import Callable
+from typing import Any
 
-from domain.events import IEventBus
+from domain.events import EventType
+from domain.interfaces import EventBus
 
-logger = logging.getLogger("eventbus")
+logger = logging.getLogger("infrastructure.eventbus")
 
 
-class MemoryEventBus(IEventBus):
-    events = {}
+class MemoryEventBus(EventBus):
+    events: dict[Any, list[Callable]] = {}
 
     @classmethod
-    def subscribe(cls, callback, event_name):
+    def subscribe(cls, callback: Callable, event_name: EventType) -> None:
         logger.debug(
             f"Subscribing to event {event_name} by {callback.__name__}"
         )
@@ -19,23 +22,23 @@ class MemoryEventBus(IEventBus):
         cls.events[event_name].append(callback)
 
     @classmethod
-    async def emit(cls, event: str, *args, **kwargs):
-        logger.info(
-            f"Emitting event: {event} with data:\n{cls._format_dict(kwargs)}"
+    async def emit(cls, event: EventType, data: Any) -> None:
+        logger.debug(
+            f"Emitting event: {event} with data:\n"
+            f"{cls._format_dict(data) if isinstance(data, dict) else data}"
         )
         for callback in cls.events.get(event, []):
             logger.debug(f"Emitting callback: {callback}")
 
-            async def wrapper():
-                try:
-                    await callback(*args, **kwargs)
-                except Exception as e:
-                    logger.error(
-                        f"Exception raised: {e} while executing {callback}"
-                    )
-
-            _ = asyncio.create_task(wrapper())
+            _ = asyncio.create_task(cls._event_wrapper(callback, data))
 
     @classmethod
-    def _format_dict(cls, data: dict):
+    def _format_dict(cls, data: dict) -> str:
         return "\n".join([f"{k} = {v}" for k, v in data.items()])
+
+    @staticmethod
+    async def _event_wrapper(call: Callable, data: Any) -> None:
+        try:
+            await call(data)
+        except Exception as e:
+            logger.error(f"Exception raised: {e} while executing {call}")

@@ -1,16 +1,17 @@
+import contextlib
 import os
 
-from infrastructure.injectors import subscribe_all
+from infrastructure.events.events import subscribe_events
+from infrastructure.executor import preparing_executors
 from infrastructure.logger import configure_logger
-from presentors import MynoxService, TegtoryService
+from presenters import TegtoryService
 
 
-async def main():
+async def main() -> None:
     aiogram = asyncio.create_task(
         TegtoryService(os.environ.get("BOT_TOKEN"))()
     )
-    mynox = asyncio.create_task(MynoxService(os.environ.get("MYNOX_TOKEN"))())
-    await asyncio.gather(subscribe_all(), aiogram, mynox)
+    await asyncio.gather(preparing_executors(), subscribe_events(), aiogram)
 
 
 if __name__ == "__main__":
@@ -20,7 +21,5 @@ if __name__ == "__main__":
 
     configure_logger()
     load_dotenv()
-    try:
+    with contextlib.suppress(KeyboardInterrupt):
         asyncio.run(main())
-    except KeyboardInterrupt:
-        pass
