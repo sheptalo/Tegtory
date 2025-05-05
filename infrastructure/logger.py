@@ -3,11 +3,11 @@ from typing import Any
 
 
 class CustomFormatter(logging.Formatter):
-    info = "\033[92m"
-    debug = "\033[94m"
+    info = "\033[1;0;35m"
+    debug = "\033[36m"
     warning = "\033[93m"
-    error = "\x1b[31;20m"
-    crit = "\x1b[31;1m"
+    error = "\x1b[41;20m"
+    crit = "\x1b[3;41;1m"
     reset = "\x1b[0m"
 
     message_format = (

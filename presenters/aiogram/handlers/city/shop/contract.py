@@ -34,7 +34,7 @@ async def preview_contract(
     call: types.CallbackQuery,
     ctx: UserFactoryContext,
     uc_shop: FromDishka[UCShop],
-):
+) -> None:
     await uc_shop.shop_product_by_id(int(call.data.split(":")[2]))
     int(call.data.split(":")[3])
 
@@ -46,5 +46,5 @@ async def sign_contract(
     call: types.CallbackQuery,
     ctx: UserFactoryContext,
     uc_shop: FromDishka[UCShop],
-):
+) -> None:
     pass

@@ -1,15 +1,15 @@
-from pydantic import BaseModel
-
 from domain.entities import Factory, Product, User
+import dataclasses
 
-
-class StartWorkContext(BaseModel):
+@dataclasses.dataclass(kw_only=True, frozen=True)
+class StartWorkContext:
     factory: Factory
     product: Product
     time: float
     user: User | None = None
 
 
-class UserFactoryContext(BaseModel):
+@dataclasses.dataclass(kw_only=True, frozen=True)
+class UserFactoryContext:
     user: User
     factory: Factory

@@ -20,7 +20,7 @@ city_kb = [
 city_markup = InlineKeyboardMarkup(inline_keyboard=city_kb)
 
 
-def trading_company(companies: list[LogisticCompany]):
+def trading_company(companies: list[LogisticCompany]) -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
     for i in companies:
         builder.button(

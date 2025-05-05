@@ -18,7 +18,7 @@ router = Router()
 @cache(Images.factory, types.FSInputFile(Images.factory))
 async def open_factory(
     message: types.Message, factory: Factory, cached: Any, cache_func: Callable
-):
+) -> None:
     sent = await message.answer_photo(
         photo=cached, caption=str(factory), reply_markup=kb.main
     )

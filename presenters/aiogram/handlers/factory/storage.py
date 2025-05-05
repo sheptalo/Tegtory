@@ -1,3 +1,5 @@
+from typing import Any
+
 from aiogram import F, Router, types
 
 from domain import entities, results
@@ -20,7 +22,9 @@ router = Router()
 @router.callback_query(F.data == FactoryCB.storage)
 @get_factory
 @get_storage_from_factory
-async def open_storage(call: types.CallbackQuery, storage: entities.Storage):
+async def open_storage(
+    call: types.CallbackQuery, storage: entities.Storage
+) -> None:
     result = get_storage_page_text(storage)
     await call.message.edit_caption(
         caption=result, reply_markup=kb.storage_markup
@@ -31,7 +35,9 @@ async def open_storage(call: types.CallbackQuery, storage: entities.Storage):
 @get_factory
 @get_user
 @with_context(UserFactoryContext)
-async def upgrade_storage(call: types.CallbackQuery, ctx: UserFactoryContext):
+async def upgrade_storage(
+    call: types.CallbackQuery, ctx: UserFactoryContext
+) -> Any:
     result = await CommandExecutor().execute(
         UpgradeStorageCommand(
             factory_id=ctx.factory.id,
@@ -42,10 +48,10 @@ async def upgrade_storage(call: types.CallbackQuery, ctx: UserFactoryContext):
     )
     if isinstance(result, results.Failure):
         return await call.answer(result.reason, show_alert=True)
-    return await open_storage(call)
+    await open_storage(call)
 
 
-def get_storage_page_text(storage: entities.Storage):
+def get_storage_page_text(storage: entities.Storage) -> str:
     result = msg.storage_title
     for product, amount in storage.products.items():
         result += msg.storage_products.format(product.name, amount)

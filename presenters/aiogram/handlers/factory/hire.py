@@ -1,3 +1,6 @@
+from collections.abc import Callable
+from typing import Any
+
 from aiogram import F, Router, types
 
 from domain import entities, results
@@ -17,7 +20,10 @@ router = Router()
 @get_factory
 @cache(Images.factory_hire, types.FSInputFile(Images.factory_hire))
 async def workers_page(
-    call: types.CallbackQuery, factory: entities.Factory, cached, cache_func
+    call: types.CallbackQuery,
+    factory: entities.Factory,
+    cached: Any,
+    cache_func: Callable,
 ) -> None:
     sent = await call.message.edit_media(
         media=types.InputMediaPhoto(

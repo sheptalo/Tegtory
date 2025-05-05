@@ -102,11 +102,11 @@ async def start_factory(
     call: types.CallbackQuery,
     factory: Factory,
     use_case: FromDishka[UCFactory],
-) -> None:
+) -> Any:
     product, time = await get_product_time(call, factory)
-    result: None = await use_case.start_factory(factory, time, product)
+    result: Any = await use_case.start_factory(factory, time, product)
     if result:
-        await call.answer(str(result), show_alert=True)
+        return await call.answer(str(result), show_alert=True)
     await callback_factory(call)
 
 
