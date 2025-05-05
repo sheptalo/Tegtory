@@ -3,10 +3,13 @@ from typing import Any
 from aiogram import Router, types
 from dishka import FromDishka
 
+from domain import results
+from domain.commands.user import StartUserWorkCommand
 from domain.context import UserFactoryContext
 from domain.entities import Factory, Product
 from domain.events import EventType
-from domain.use_cases import UCFactory, UCUser
+from domain.use_cases import UCFactory
+from infrastructure import CommandExecutor
 from infrastructure.injectors import inject, on_event
 from presenters.aiogram.filters.factory import (
     ChooseProductFilter,
@@ -78,11 +81,19 @@ async def choose_time(
 async def work_yourself(
     call: types.CallbackQuery,
     ctx: UserFactoryContext,
-    use_case: FromDishka[UCUser],
-) -> None:
+) -> Any:
     product, time = await get_product_time(call, ctx.factory)
-    await use_case.start_work(ctx.factory, product, time, ctx.user)
-    await callback_factory(call)
+    result = await CommandExecutor().execute(
+        StartUserWorkCommand(
+            user=ctx.user,
+            product=product,
+            time=time,
+            factory=ctx.factory,
+        )
+    )
+    if isinstance(result, results.Success):
+        return await callback_factory(call)
+    await call.answer(result.reason, show_alert=True)
 
 
 @router.callback_query(StartFactoryFilter())

@@ -1,13 +1,13 @@
+import dataclasses
 from datetime import datetime
-
-from pydantic import BaseModel
 
 from common.settings import DELIVERY_MIN_DISTANTION
 from domain.entities.contract import BaseContract
 from domain.entities.factory import Factory, Product
 
 
-class Shop(BaseModel):
+@dataclasses.dataclass(kw_only=True)
+class Shop:
     id: int
     title: str
     description: str
@@ -19,15 +19,17 @@ class Shop(BaseModel):
         return self.distance > DELIVERY_MIN_DISTANTION
 
 
-class ShopProduct(BaseModel):
+@dataclasses.dataclass(kw_only=True)
+class ShopProduct:
     id: int = 0
     shop: Shop
     product: Product
     amount: int
     is_demand: bool = False
-    created_at: datetime = datetime.now()
+    created_at: datetime = dataclasses.field(default_factory=datetime.now)
 
 
+@dataclasses.dataclass(kw_only=True, frozen=True)
 class ShopContract(BaseContract):
     shop: Shop
     factory: Factory

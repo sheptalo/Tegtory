@@ -1,17 +1,18 @@
+import dataclasses
 import math
 import time
-
-from pydantic import BaseModel
 
 from common.exceptions import DuringWorkException
 
 
-class Dignity(BaseModel):
+@dataclasses.dataclass(kw_only=True)
+class Dignity:
     name: str
     user: "User"
 
 
-class User(BaseModel):
+@dataclasses.dataclass(kw_only=True)
+class User:
     id: int
     name: str
     username: str
@@ -19,7 +20,7 @@ class User(BaseModel):
     stolar: int = 0
     rating: int = 0
     league: str = "Не в лиге"
-    titles: list[str] = list([])
+    titles: list[str] = dataclasses.field(default_factory=list)
     is_admin: bool = False
     end_work_time: float = 0
 
@@ -43,7 +44,7 @@ class User(BaseModel):
     def set_name(self, name: str) -> None:
         self.name = name
 
-    def substract_money(self, amount: int) -> None:
+    def subtract_money(self, amount: int) -> None:
         self.money -= amount
 
     def can_buy(self, price: int) -> bool:

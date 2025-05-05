@@ -33,15 +33,14 @@ async def create_factory_callback(
 @router.message(StateFilter(states.Create.name))
 async def finish_create_factory_handler(
     message: types.Message, state: FSMContext
-) -> None:
+) -> Any:
     await message.delete()
     result = await CommandExecutor().execute(
         CreateFactoryCommand(id=message.from_user.id, name=str(message.text))
     )
     if isinstance(result, results.Success):
         await state.clear()
-        await open_factory(message)
-        return
+        return await open_factory(message)
     await message.answer(msg.unique_name)
 
 
@@ -76,7 +75,7 @@ async def upgrade_factory(
 @with_context(UserFactoryContext)
 async def try_to_upgrade_factory(
     call: types.CallbackQuery, ctx: UserFactoryContext
-) -> None:
+) -> Any:
     result = await CommandExecutor().execute(
         UpgradeFactoryCommand(
             factory_id=ctx.factory.id,
@@ -87,8 +86,7 @@ async def try_to_upgrade_factory(
     )
 
     if isinstance(result, results.Success):
-        await upgrade_factory(call)
-        return
+        return await upgrade_factory(call)
     await call.message.edit_caption(
         caption=result.reason, reply_markup=kb.failed_upgrade_markup
     )

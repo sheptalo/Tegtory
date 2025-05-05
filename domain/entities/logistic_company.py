@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+import dataclasses
 
 from domain.entities.contract import BaseContract
 from domain.entities.factory import Factory, Product
@@ -6,6 +6,7 @@ from domain.entities.shop import Shop
 from domain.entities.user import User
 
 
+@dataclasses.dataclass(kw_only=True, frozen=True)
 class LogisticContract(BaseContract):
     product: Product
     amount: float
@@ -15,7 +16,8 @@ class LogisticContract(BaseContract):
     company: "LogisticCompany"
 
 
-class Transport(BaseModel):
+@dataclasses.dataclass(kw_only=True)
+class Transport:
     name: str
     speed: float
     price: float
@@ -23,13 +25,15 @@ class Transport(BaseModel):
     max_weight: float
 
 
-class LogisticCompanyTransport(BaseModel):
+@dataclasses.dataclass(kw_only=True)
+class LogisticCompanyTransport:
     transport: Transport
     company: "LogisticCompany"
     amount: int = 1
 
 
-class LogisticCompany(BaseModel):
+@dataclasses.dataclass(kw_only=True)
+class LogisticCompany:
     id: int
     title: str
     description: str

@@ -1,7 +1,6 @@
+import dataclasses
 from datetime import datetime
 from enum import Enum
-
-from pydantic import BaseModel
 
 
 class ContractStatus(Enum):
@@ -11,8 +10,9 @@ class ContractStatus(Enum):
     EXPIRED = "expired"
 
 
-class BaseContract(BaseModel):
+@dataclasses.dataclass(kw_only=True, frozen=True)
+class BaseContract:
     id: int
     status: ContractStatus
     estimated_date: datetime
-    created_at: datetime = datetime.now()
+    created_at: datetime = dataclasses.field(default_factory=datetime.now)

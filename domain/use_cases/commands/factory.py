@@ -10,7 +10,8 @@ from ...commands.factory import (
 )
 from ...interfaces import FactoryRepository, UserRepository
 from ...interfaces.storage import StorageRepository
-from .base import BaseCommandHandler, pay_required
+from .base import BaseCommandHandler
+from .pay_required import pay_required
 
 DEFAULT_AVAILABLE_PRODUCTS: list[Product] = [
     Product(

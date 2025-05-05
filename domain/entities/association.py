@@ -1,15 +1,17 @@
-from pydantic import BaseModel
+import dataclasses
 
 from domain.entities.user import User
 
 
-class Association(BaseModel):
+@dataclasses.dataclass(kw_only=True, frozen=True)
+class Association:
     title: str
     description: str
     owner: User
 
 
-class AssociationParticipant(BaseModel):
+@dataclasses.dataclass(kw_only=True)
+class AssociationParticipant:
     association: Association
     participant: User
     role: str

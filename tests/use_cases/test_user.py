@@ -1,13 +1,17 @@
+import time
 from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
-from domain.commands.user import RegisterUserCommand
-from domain.entities import User
+from domain.commands.user import RegisterUserCommand, StartUserWorkCommand
+from domain.entities import Factory, Product, User
 from domain.interfaces import UserRepository
-from domain.results import Success
-from domain.use_cases.commands.user import RegisterUserCommandHandler
-from domain.use_cases.user import UCUser, UserEvent
+from domain.results import Failure, Success
+from domain.use_cases.commands.user import (
+    RegisterUserCommandHandler,
+    StartUserWorkCommandHandler,
+)
+from domain.use_cases.user import UserEvent
 
 
 @pytest.fixture
@@ -24,11 +28,6 @@ def event_bus() -> MagicMock:
     bus = MagicMock()
     bus.emit = AsyncMock()
     return bus
-
-
-@pytest.fixture
-def uc_user(user_repo: MagicMock, event_bus: MagicMock) -> UCUser:
-    return UCUser(user_repo, event_bus)
 
 
 @pytest.mark.asyncio
@@ -55,3 +54,47 @@ async def test_subtract_money(user_repo: MagicMock) -> None:
 
     assert user.money == 100 - 30
     user_repo.update.assert_called_once_with(user)
+
+
+@pytest.mark.asyncio
+async def test_start_user_work(
+    user_repo: MagicMock, event_bus: MagicMock
+) -> None:
+    handler = StartUserWorkCommandHandler(user_repo, event_bus)
+
+    cmd = StartUserWorkCommand(
+        user=User(id=1, name="User", username="user", money=100),
+        factory=Factory(id=1, name="Factory"),
+        time=1,
+        product=Product(name=""),
+    )
+    result = await handler(cmd)
+
+    assert isinstance(result, Success)
+    event_bus.emit.assert_called_once()
+    user_repo.update.assert_called_once()
+
+
+@pytest.mark.asyncio
+async def test_start_user_work_failed_already_working(
+    user_repo: MagicMock, event_bus: MagicMock
+) -> None:
+    handler = StartUserWorkCommandHandler(user_repo, event_bus)
+    now = time.time()
+    cmd = StartUserWorkCommand(
+        user=User(
+            id=1,
+            name="User",
+            username="user",
+            money=100,
+            end_work_time=now * 2,
+        ),
+        factory=Factory(id=1, name="Factory"),
+        time=1,
+        product=Product(name=""),
+    )
+    result = await handler(cmd)
+
+    assert isinstance(result, Failure)
+    event_bus.emit.assert_not_called()
+    user_repo.update.assert_not_called()

@@ -36,4 +36,4 @@ async def city_callback(call: types.CallbackQuery) -> None:
 @router.callback_query(F.data == CityCB.trading_companies)
 @get_factory
 async def trading_companies_page(call: types.CallbackQuery) -> None:
-    await call.message.edit_text(text=msg.main)
+    await call.message.edit_caption(caption=msg.main)
