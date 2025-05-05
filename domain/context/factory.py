@@ -1,5 +1,7 @@
-from domain.entities import Factory, Product, User
 import dataclasses
+
+from domain.entities import Factory, Product, User
+
 
 @dataclasses.dataclass(kw_only=True, frozen=True)
 class StartWorkContext:

@@ -12,5 +12,7 @@ class CommandExecutor(BaseExecutor):
     handler_base_class: type[BaseCommandHandler] = BaseCommandHandler
 
     async def execute(self, command: BaseCommand) -> Success | Failure:
-        logger.info(f"Executing command: {command.__class__.__name__}({command})")
+        logger.info(
+            f"Executing command: {command.__class__.__name__}({command})"
+        )
         return await self.handlers[type(command)](command)
