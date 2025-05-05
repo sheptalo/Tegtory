@@ -5,12 +5,9 @@ from typing import Any
 
 from aiogram import types
 
-from domain.commands.user import RegisterUserCommand
-from domain.entities import Factory, User
+from domain.entities import Factory
 from domain.queries.factory import GetFactoryQuery, GetStorageQuery
-from domain.queries.user import UserQuery
 from domain.results import Failure, Success
-from infrastructure.command import CommandExecutor
 from infrastructure.query import QueryExecutor
 from presenters.aiogram.kb import factory as kb_factory
 from presenters.aiogram.messages import factory as factory_msg
@@ -49,24 +46,6 @@ def get_storage_from_factory(func: Callable) -> Callable:
     return wrapper
 
 
-def get_user(func: Callable) -> Callable:
-    @wraps(func)
-    async def wrapper(
-        event: types.Message | types.CallbackQuery,
-        *args: tuple,
-        **kwargs: dict,
-    ) -> Any:
-        if not event.from_user:
-            logger.error("Событие не от пользователя.игнорируем")
-            return None
-        user = kwargs.pop("user", await _get_user(event.from_user.id))
-        if not user:
-            user = await _create_user(event.from_user)
-        return await func(event, *args, user=user, **kwargs)
-
-    return wrapper
-
-
 def get_event_message(
     event: types.Message | types.CallbackQuery | None,
 ) -> types.Message | types.InaccessibleMessage | None:
@@ -85,30 +64,6 @@ async def _get_factory(user_id: int) -> Factory | None:
     )
     if isinstance(result, Success):
         return result.data
-    return None
-
-
-async def _get_user(user_id: int) -> User | None:
-    res: Success[User] | Failure = await QueryExecutor().ask(
-        UserQuery(user_id=user_id)
-    )
-    if isinstance(res, Success):
-        return res.data
-    return None
-
-
-async def _create_user(user: types.User) -> User | None:
-    logger.info(f"Registering user {user.id} - {user.username}")
-    result: Success[User] | Failure = await CommandExecutor().execute(
-        RegisterUserCommand(
-            user_id=user.id,
-            name=user.first_name,
-            username=user.username or "none",
-        )
-    )
-    if isinstance(result, Success):
-        return result.data
-    logger.error(result.reason)
     return None
 
 

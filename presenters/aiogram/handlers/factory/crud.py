@@ -8,7 +8,6 @@ from aiogram.fsm.context import FSMContext
 
 from domain import entities, results
 from domain.commands import CreateFactoryCommand, UpgradeFactoryCommand
-from domain.context import UserFactoryContext
 from infrastructure import CommandExecutor
 from presenters.aiogram.handlers.factory.main import open_factory
 from presenters.aiogram.images import Images
@@ -16,15 +15,14 @@ from presenters.aiogram.kb import FactoryCB
 from presenters.aiogram.kb import factory as kb
 from presenters.aiogram.messages import factory as msg
 from presenters.aiogram.states import factory as states
-from presenters.shared.utils import cache, get_factory, get_user, with_context
+from presenters.shared.utils import cache, get_factory
 
 router = Router()
 
 
 @router.callback_query(F.data == FactoryCB.create)
-@get_user
 async def create_factory_callback(
-    call: types.CallbackQuery, state: FSMContext, user: entities.User
+    call: types.CallbackQuery, state: FSMContext
 ) -> None:
     await call.message.edit_text(msg.set_name, reply_markup=None)
     await state.set_state(states.Create.name)
@@ -71,17 +69,15 @@ async def upgrade_factory(
 
 @router.callback_query(F.data == FactoryCB.upgrade_conf)
 @get_factory
-@get_user
-@with_context(UserFactoryContext)
 async def try_to_upgrade_factory(
-    call: types.CallbackQuery, ctx: UserFactoryContext
+    call: types.CallbackQuery, user: entities.User, factory: entities.Factory
 ) -> Any:
     result = await CommandExecutor().execute(
         UpgradeFactoryCommand(
-            factory_id=ctx.factory.id,
-            factory_upgrade_price=ctx.factory.upgrade_price,
-            user_id=ctx.user.id,
-            user_money=ctx.user.money,
+            factory_id=factory.id,
+            factory_upgrade_price=factory.upgrade_price,
+            user_id=user.id,
+            user_money=user.money,
         )
     )
 

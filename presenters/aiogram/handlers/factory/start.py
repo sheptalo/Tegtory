@@ -3,9 +3,8 @@ from typing import Any
 from aiogram import Router, types
 from dishka import FromDishka
 
-from domain import results
+from domain import entities, results
 from domain.commands.user import StartUserWorkCommand
-from domain.context import UserFactoryContext
 from domain.entities import Factory, Product
 from domain.events import EventType
 from domain.use_cases import UCFactory
@@ -21,37 +20,37 @@ from presenters.aiogram.handlers.factory.main import callback_factory
 from presenters.aiogram.kb import factory as kb
 from presenters.aiogram.messages import factory as msg
 from presenters.shared.bot import TegtorySingleton
-from presenters.shared.utils import get_factory, get_user, with_context
+from presenters.shared.utils import get_factory
 
 router = Router()
 
 
 @router.callback_query(ChooseProductFilter())
 @get_factory
-@get_user
-@with_context(UserFactoryContext)
 async def choose_product(
     call: types.CallbackQuery,
-    ctx: UserFactoryContext,
+    user: entities.User,
+    factory: entities.Factory,
     use_case: FromDishka[UCFactory],
 ) -> Any:
-    can_start = await check_can_start_factory(ctx)
+    can_start = await check_can_start_factory(user, factory)
     if can_start:
         return await call.answer(can_start, show_alert=True)
-    result = await use_case.get_available_products(ctx.factory)
+    result = await use_case.get_available_products(factory)
     markup = kb.get_choose_product_markup(str(call.data), result)
     await call.message.edit_caption(
         caption=msg.choose_product, reply_markup=markup
     )
 
 
-async def check_can_start_factory(ctx: UserFactoryContext) -> str | None:
-    factory = ctx.factory
+async def check_can_start_factory(
+    user: entities.User, factory: entities.Factory
+) -> str | None:
     result = None
     if factory.state:
         result = msg.start_factory_work.format(factory.minutes_to_work)
-    elif ctx.user.state:
-        result = msg.start_yourself_work.format(ctx.user.minutes_to_work)
+    elif user.state:
+        result = msg.start_yourself_work.format(user.minutes_to_work)
     return result
 
 
@@ -76,19 +75,16 @@ async def choose_time(
 
 @router.callback_query(StartYourselfFactoryFilter())
 @get_factory
-@get_user
-@with_context(UserFactoryContext)
 async def work_yourself(
-    call: types.CallbackQuery,
-    ctx: UserFactoryContext,
+    call: types.CallbackQuery, user: entities.User, factory: entities.Factory
 ) -> Any:
-    product, time = await get_product_time(call, ctx.factory)
+    product, time = await get_product_time(call, factory)
     result = await CommandExecutor().execute(
         StartUserWorkCommand(
-            user=ctx.user,
+            user=user,
             product=product,
             time=time,
-            factory=ctx.factory,
+            factory=factory,
         )
     )
     if isinstance(result, results.Success):
@@ -111,7 +107,11 @@ async def start_factory(
 
 
 @on_event(EventType.EndFactoryWork)
-async def end_factory_work(factory: Factory, stock: int) -> None:
+async def end_factory_work(data: dict[str, Factory | int]) -> None:
+    factory = data.get("factory")
+    stock = data.get("stock")
+    if not isinstance(factory, Factory) or not isinstance(stock, int):
+        return
     bot = TegtorySingleton()
     await bot.send_message(factory.id, msg.success_work_end.format(stock))
 

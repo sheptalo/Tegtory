@@ -5,13 +5,12 @@ from aiogram import F, Router, types
 
 from domain import entities, results
 from domain.commands import HireWorkerCommand
-from domain.context import UserFactoryContext
 from infrastructure import CommandExecutor
 from presenters.aiogram.images import Images
 from presenters.aiogram.kb import FactoryCB
 from presenters.aiogram.kb import factory as kb
 from presenters.aiogram.messages import factory as msg
-from presenters.shared.utils import cache, get_factory, get_user, with_context
+from presenters.shared.utils import cache, get_factory
 
 router = Router()
 
@@ -40,12 +39,12 @@ async def workers_page(
 
 @router.callback_query(F.data == FactoryCB.hire)
 @get_factory
-@get_user
-@with_context(UserFactoryContext)
-async def hire(call: types.CallbackQuery, ctx: UserFactoryContext) -> None:
+async def hire(
+    call: types.CallbackQuery, user: entities.User, factory: entities.Factory
+) -> None:
     result = await CommandExecutor().execute(
         HireWorkerCommand(
-            factory=ctx.factory, user_money=ctx.user.money, user_id=ctx.user.id
+            factory=factory, user_money=user.money, user_id=user.id
         )
     )
     markup = kb.failed_hire_markup
