@@ -50,9 +50,6 @@ class UCFactory(SafeCall, EventBased):
         self.logic = FactoryService()
         self.money = money
 
-    async def get_by_name(self, name: str) -> Factory | None:
-        return await self.repository.by_name(name)
-
     async def start_factory(
         self, factory: Factory, time: float, product: Product
     ) -> Any:
