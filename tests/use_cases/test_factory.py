@@ -2,14 +2,16 @@ from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
+from domain.commands import PayTaxCommand
 from domain.commands.factory import CreateFactoryCommand, HireWorkerCommand
 from domain.entities import Factory, Storage
 from domain.interfaces import FactoryRepository
 from domain.queries.factory import GetFactoryQuery
 from domain.results import Failure, Success
 from domain.use_cases.commands.factory import (
-    CreateFactoryHandler,
+    CreateFactoryCommandHandler,
     HireWorkerCommandHandler,
+    PayTaxCommandHandler,
 )
 from domain.use_cases.queries.factory import GetFactoryQueryHandler
 
@@ -48,7 +50,7 @@ async def test_get_factory(factory_repo: MagicMock) -> None:
 async def test_create_new_factory(factory_repo: MagicMock) -> None:
     factory_repo.by_name.return_value = None
 
-    command_handler = CreateFactoryHandler(factory_repo, AsyncMock())
+    command_handler = CreateFactoryCommandHandler(factory_repo, AsyncMock())
     await command_handler(CreateFactoryCommand(name="1", id=1))
 
     factory_repo.create.assert_called_once_with(Factory(name="1", id=1))
@@ -58,7 +60,7 @@ async def test_create_new_factory(factory_repo: MagicMock) -> None:
 async def test_create_new_factory_failed(factory_repo: MagicMock) -> None:
     factory_repo.by_name.return_value = Factory(id=1, name="")
 
-    command_handler = CreateFactoryHandler(factory_repo, AsyncMock())
+    command_handler = CreateFactoryCommandHandler(factory_repo, AsyncMock())
     result = await command_handler(CreateFactoryCommand(name="1", id=1))
 
     factory_repo.by_name.assert_called_once_with("1")
@@ -111,3 +113,14 @@ async def test_hire_worker_failure_max_workers(
     )
     assert isinstance(result, Failure)
     assert result.reason == "Вы достигли лимита рабочих для данного уровня"
+
+
+@pytest.mark.asyncio
+async def test_pay_tax_success(factory_repo: MagicMock) -> None:
+    handler = PayTaxCommandHandler(factory_repo, AsyncMock())
+    result = await handler(
+        PayTaxCommand(user_id=1, user_money=10000, factory_tax=1, factory_id=1)
+    )
+
+    assert isinstance(result, Success)
+    factory_repo.set_tax.assert_called_once_with(1, 0)

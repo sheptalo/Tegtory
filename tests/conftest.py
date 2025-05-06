@@ -42,3 +42,12 @@ def mock_factory() -> Mock:
     mock.workers = 0
     mock.tax = 10
     return mock
+
+
+@pytest.fixture
+def storage_repository(mock_factory: Mock) -> Mock:
+    mock = Mock()
+    mock.get = AsyncMock()
+    mock.upgrade = AsyncMock()
+
+    return mock

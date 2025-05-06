@@ -12,11 +12,11 @@ Query = TypeVar("Query", bound=BaseQuery)
 class BaseQueryHandler(DependencyRequired, Generic[Query]):
     object_type: type[BaseQuery]
 
-    async def __call__(self, command: Query) -> Success | Failure:
+    async def __call__(self, query: Query) -> Success | Failure:
         try:
-            return Success(data=await self.execute(command))
+            return Success(data=await self.execute(query))
         except AppException as e:
             return Failure(reason=e.message)
 
-    async def execute(self, command: Query) -> Any:
+    async def execute(self, query: Query) -> Any:
         raise NotImplementedError

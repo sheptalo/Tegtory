@@ -6,7 +6,6 @@ from ...commands.factory import (
     HireWorkerCommand,
     PayTaxCommand,
     UpgradeFactoryCommand,
-    UpgradeStorageCommand,
 )
 from ...interfaces import FactoryRepository, UserRepository
 from ...interfaces.storage import StorageRepository
@@ -35,7 +34,7 @@ DEFAULT_AVAILABLE_PRODUCTS: list[Product] = [
 ]
 
 
-class CreateFactoryHandler(BaseCommandHandler[CreateFactoryCommand]):
+class CreateFactoryCommandHandler(BaseCommandHandler[CreateFactoryCommand]):
     object_type = CreateFactoryCommand
 
     def __init__(
@@ -57,7 +56,7 @@ class CreateFactoryHandler(BaseCommandHandler[CreateFactoryCommand]):
 
 
 @pay_required
-class PayFactoryTaxHandler(BaseCommandHandler[PayTaxCommand]):
+class PayTaxCommandHandler(BaseCommandHandler[PayTaxCommand]):
     object_type = PayTaxCommand
 
     def __init__(
@@ -71,21 +70,7 @@ class PayFactoryTaxHandler(BaseCommandHandler[PayTaxCommand]):
 
 
 @pay_required
-class UpgradeStorageHandler(BaseCommandHandler[UpgradeStorageCommand]):
-    object_type = UpgradeStorageCommand
-
-    def __init__(
-        self, storage_repo: StorageRepository, money_repo: UserRepository
-    ) -> None:
-        self.storage_repo = storage_repo
-        self.money_repo = money_repo
-
-    async def execute(self, cmd: UpgradeStorageCommand) -> None:
-        await self.storage_repo.upgrade(cmd.factory_id)
-
-
-@pay_required
-class UpgradeFactoryHandler(BaseCommandHandler[UpgradeFactoryCommand]):
+class UpgradeFactoryCommandHandler(BaseCommandHandler[UpgradeFactoryCommand]):
     object_type = UpgradeFactoryCommand
 
     def __init__(
