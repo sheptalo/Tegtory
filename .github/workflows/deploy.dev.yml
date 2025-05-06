@@ -20,6 +20,11 @@ jobs:
         pip install ruff
         ruff check .
 
+    - name: check mypy
+      run: |
+        pip install mypy
+        mypy .
+
     - name: Test with pytest
       run: |
         pip install -r requirements.txt
