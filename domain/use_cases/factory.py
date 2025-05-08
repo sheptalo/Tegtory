@@ -1,41 +1,14 @@
-import asyncio
 from typing import Any
-
-from common import settings
-from common.exceptions import AppException, TaxException
 
 from ..entities import Factory, Product, StorageProduct
 from ..entities.factory import StartFactoryEvent
 from ..events import on_event
 from ..events.event_types import EventType
 from ..interfaces import EventBus, FactoryRepository
+from ..services.factory import FactoryService
 from ..services.money import MoneyService
+from ..services.work import WorkService
 from .base import EventBased, SafeCall
-
-
-class FactoryService:
-    @staticmethod
-    def hire_worker(factory: Factory) -> Factory:
-        if factory.hire_available == 0:
-            raise AppException("Максимальное количество рабочих достигнуто")
-        factory.hire()
-        return factory
-
-    @staticmethod
-    def start(factory: Factory, time: float) -> None:
-        if factory.state:
-            return
-        if factory.workers == 0:
-            raise AppException("Нельзя запустить фабрику без рабочих")
-        if factory.tax > settings.TAX_LIMIT:
-            raise TaxException
-        factory.start_work(time)
-
-
-class WorkSimulator:
-    @staticmethod
-    async def wait(time: float) -> None:
-        await asyncio.sleep(time)
 
 
 class UCFactory(SafeCall, EventBased):
@@ -44,10 +17,11 @@ class UCFactory(SafeCall, EventBased):
         repository: FactoryRepository,
         event_bus: EventBus,
         money: MoneyService,
+        service: FactoryService,
     ):
         super().__init__(event_bus)
         self.repository = repository
-        self.logic = FactoryService()
+        self.logic = service
         self.money = money
 
     async def start_factory(
@@ -77,7 +51,7 @@ class UCFactory(SafeCall, EventBased):
 
     @on_event(EventType.StartFactory)
     async def handle_start_factory(self, data: StartFactoryEvent) -> None:
-        await WorkSimulator.wait(data.time)
+        await WorkService.wait(data.time)
 
         bonus = data.factory.get_bonus(data)
         await self.repository.update(data.factory)

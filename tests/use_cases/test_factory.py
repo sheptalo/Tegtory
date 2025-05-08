@@ -3,7 +3,11 @@ from unittest.mock import AsyncMock, MagicMock
 import pytest
 
 from domain.commands import PayTaxCommand
-from domain.commands.factory import CreateFactoryCommand, HireWorkerCommand
+from domain.commands.factory import (
+    CreateFactoryCommand,
+    HireWorkerCommand,
+    UpgradeFactoryCommand,
+)
 from domain.entities import Factory, Storage
 from domain.interfaces import FactoryRepository
 from domain.queries.factory import GetFactoryQuery
@@ -12,6 +16,7 @@ from domain.use_cases.commands.factory import (
     CreateFactoryCommandHandler,
     HireWorkerCommandHandler,
     PayTaxCommandHandler,
+    UpgradeFactoryCommandHandler,
 )
 from domain.use_cases.queries.factory import GetFactoryQueryHandler
 
@@ -124,3 +129,15 @@ async def test_pay_tax_success(factory_repo: MagicMock) -> None:
 
     assert isinstance(result, Success)
     factory_repo.set_tax.assert_called_once_with(1, 0)
+
+
+@pytest.mark.asyncio
+async def test_upgrade_factory_success(factory_repo: MagicMock) -> None:
+    handler = UpgradeFactoryCommandHandler(factory_repo, AsyncMock())
+    result = await handler(
+        UpgradeFactoryCommand(
+            factory_id=1, factory_upgrade_price=1, user_id=1, user_money=100
+        )
+    )
+
+    assert isinstance(result, Success)

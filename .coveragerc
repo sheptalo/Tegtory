@@ -17,5 +17,6 @@ exclude_also =
     if __name__ == .__main__.:
     get_price
     __hash__
+    __init__
 
     @(abc\.)?abstractmethod

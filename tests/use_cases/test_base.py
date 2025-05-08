@@ -19,4 +19,3 @@ async def test_base_query_handler_failure() -> None:
     result = await handler(0)
 
     assert isinstance(result, Failure)
-

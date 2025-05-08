@@ -18,7 +18,7 @@ def mock_user() -> MagicMock:
 
 @pytest.fixture
 def uc_factory(factory_repository: Mock) -> UCFactory:
-    return UCFactory(factory_repository, AsyncMock(), AsyncMock())
+    return UCFactory(factory_repository, AsyncMock(), AsyncMock(), AsyncMock())
 
 
 @pytest.fixture
@@ -51,3 +51,19 @@ def storage_repository(mock_factory: Mock) -> Mock:
     mock.upgrade = AsyncMock()
 
     return mock
+
+
+@pytest.fixture
+def user_repo() -> MagicMock:
+    repo = MagicMock()
+    repo.create = AsyncMock()
+    repo.update = AsyncMock()
+    repo.get = AsyncMock()
+    return repo
+
+
+@pytest.fixture
+def event_bus() -> MagicMock:
+    bus = MagicMock()
+    bus.emit = AsyncMock()
+    return bus

@@ -3,6 +3,7 @@ from typing import Any
 from domain.interfaces import EventBus, UserRepository
 from domain.use_cases.base import EventBased
 
+from ..entities import User
 from ..events import EventType, on_event
 
 
@@ -16,7 +17,7 @@ class UserEvent(EventBased):
         user = data.get("user")
         amount = data.get("amount")
 
-        if not user or not amount:
+        if not isinstance(user, User) or not isinstance(amount, int):
             return
 
         user.subtract_money(amount)
