@@ -1,14 +1,14 @@
+import dataclasses
 import math
 import random
 import time
-
-from pydantic import BaseModel
 
 from common.exceptions import AppException, DuringWorkException
 from common.settings import HIRE_PRICE
 
 
-class Product(BaseModel):
+@dataclasses.dataclass(frozen=True, kw_only=True)
+class Product:
     name: str
     price_multiply: float = 1
     time_to_create: int = 10
@@ -18,9 +18,10 @@ class Product(BaseModel):
         return hash(self.name)
 
 
-class Storage(BaseModel):
+@dataclasses.dataclass()
+class Storage:
     max_stock: int = 20
-    products: dict[Product, int] = dict()
+    products: dict[Product, int] = dataclasses.field(default_factory=dict)
 
     @property
     def stock(self) -> int:
@@ -45,28 +46,32 @@ class Storage(BaseModel):
         return bonus
 
 
-class StorageProduct(BaseModel):
+@dataclasses.dataclass(frozen=True, kw_only=True)
+class StorageProduct:
     product: Product
     storage: Storage
     amount: int
 
 
-class AvailableProduct(BaseModel):
+@dataclasses.dataclass(frozen=True, kw_only=True)
+class AvailableProduct:
     product: Product
     factory: "Factory"
 
 
-class StartFactoryEvent(BaseModel):
+@dataclasses.dataclass(frozen=True, kw_only=True)
+class StartFactoryEvent:
     factory: "Factory"
     time: float | int
     product: Product
     workers: int = 1
 
 
-class Factory(BaseModel):
+@dataclasses.dataclass(kw_only=True)
+class Factory:
     id: int
     name: str
-    storage: Storage = Storage()
+    storage: Storage = dataclasses.field(default_factory=lambda: Storage())
     level: int = 10
     end_work_time: float = 0.0
     tax: int = 1

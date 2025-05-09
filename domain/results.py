@@ -1,13 +1,14 @@
+import dataclasses
 from typing import Generic, TypeVar
-
-from pydantic import BaseModel
 
 T = TypeVar("T")
 
 
-class Success(BaseModel, Generic[T]):
+@dataclasses.dataclass(frozen=True)
+class Success(Generic[T]):
     data: T
 
 
-class Failure(BaseModel):
+@dataclasses.dataclass(frozen=True)
+class Failure:
     reason: str
