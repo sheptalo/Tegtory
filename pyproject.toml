@@ -1,3 +1,31 @@
+[tool.mypy]
+python_version = 3.12
+check_untyped_defs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+disallow_untyped_calls = true
+warn_unused_ignores = true
+warn_redundant_casts = true
+warn_return_any = true
+strict_equality = true
+ignore_missing_imports = true
+show_error_codes = true
+warn_unreachable = true
+
+[[tool.mypy.overrides]]
+module = 'presenters.aiogram.*'
+disable_error_code="union-attr"
+
+[tool.pytest.ini_options]
+asyncio_default_fixture_loop_scope = "function"
+
+[tool.ruff]
+
+line-length = 79
+indent-width = 4
+target-version = "py313"
+
+[tool.ruff.lint]
 exclude = [
     ".bzr",
     ".direnv",
@@ -27,12 +55,6 @@ exclude = [
     "venv",
 ]
 
-line-length = 79
-indent-width = 4
-
-target-version = "py313"
-
-[lint]
 select = [
     "E4",
     "E7",
@@ -69,7 +91,7 @@ unfixable = []
 
 dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 
-[format]
+[tool.ruff.format]
 quote-style = "double"
 
 indent-style = "space"
