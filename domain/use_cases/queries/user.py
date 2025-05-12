@@ -10,5 +10,5 @@ class GetUserQueryHandler(BaseQueryHandler[UserQuery]):
     def __init__(self, repo: UserRepository) -> None:
         self.repo = repo
 
-    async def execute(self, query: UserQuery) -> User | None:
+    async def handle(self, query: UserQuery) -> User | None:
         return await self.repo.get(query.user_id)

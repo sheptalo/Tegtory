@@ -40,9 +40,12 @@ async def workers_page(
 @router.callback_query(F.data == FactoryCB.hire)
 @get_factory
 async def hire(
-    call: types.CallbackQuery, user: entities.User, factory: entities.Factory
+    call: types.CallbackQuery,
+    user: entities.User,
+    factory: entities.Factory,
+    cmd_executor: CommandExecutor,
 ) -> None:
-    result = await CommandExecutor().execute(
+    result = await cmd_executor.execute(
         HireWorkerCommand(
             factory=factory, user_money=user.money, user_id=user.id
         )

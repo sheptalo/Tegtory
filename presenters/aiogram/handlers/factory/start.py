@@ -76,10 +76,13 @@ async def choose_time(
 @router.callback_query(StartYourselfFactoryFilter())
 @get_factory
 async def work_yourself(
-    call: types.CallbackQuery, user: entities.User, factory: entities.Factory
+    call: types.CallbackQuery,
+    user: entities.User,
+    factory: entities.Factory,
+    cmd_executor: CommandExecutor,
 ) -> Any:
     product, time = await get_product_time(call, factory)
-    result = await CommandExecutor().execute(
+    result = await cmd_executor.execute(
         StartUserWorkCommand(
             user=user,
             product=product,

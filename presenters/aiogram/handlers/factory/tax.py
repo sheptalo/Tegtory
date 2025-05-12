@@ -37,9 +37,12 @@ async def tax_page(
 @router.callback_query(F.data == FactoryCB.pay_tax)
 @get_factory
 async def pay_tax(
-    call: types.CallbackQuery, factory: entities.Factory, user: entities.User
+    call: types.CallbackQuery,
+    factory: entities.Factory,
+    user: entities.User,
+    cmd_executor: CommandExecutor,
 ) -> None:
-    result = await CommandExecutor().execute(
+    result = await cmd_executor.execute(
         PayTaxCommand(
             user_id=user.id,
             user_money=user.money,

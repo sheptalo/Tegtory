@@ -8,14 +8,15 @@ from dishka.integrations.aiogram import setup_dishka
 from infrastructure.di import container
 from presenters.shared.bot import BotSingleton
 from presenters.shared.middlewares.auth import AuthMiddleware
+from presenters.shared.middlewares.executor import ExecutorMiddleware
 
 logger = logging.getLogger(__name__)
 
 
 class BaseService:
     bot_singleton: type[BotSingleton]
-    message_middlewares: list = [AuthMiddleware()]
-    callback_middlewares: list = [AuthMiddleware()]
+    message_middlewares: list = [AuthMiddleware(), ExecutorMiddleware()]
+    callback_middlewares: list = [AuthMiddleware(), ExecutorMiddleware()]
 
     def __init__(self, bot_token: str | None = "") -> None:
         self.bot = self._get_bot(bot_token)

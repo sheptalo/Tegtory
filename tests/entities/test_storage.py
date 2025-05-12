@@ -43,4 +43,4 @@ async def test_adjust_bonus_return_zero() -> None:
 @pytest.mark.asyncio
 async def test_adjust_bonus_return_maximum_value() -> None:
     stor = Storage()
-    assert stor.adjust_bonus(stor.max_stock+1) == stor.max_stock
+    assert stor.adjust_bonus(stor.max_stock + 1) == stor.max_stock

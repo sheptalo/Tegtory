@@ -30,10 +30,10 @@ async def create_factory_callback(
 
 @router.message(StateFilter(states.Create.name))
 async def finish_create_factory_handler(
-    message: types.Message, state: FSMContext
+    message: types.Message, state: FSMContext, cmd_executor: CommandExecutor
 ) -> Any:
     await message.delete()
-    result = await CommandExecutor().execute(
+    result = await cmd_executor.execute(
         CreateFactoryCommand(id=message.from_user.id, name=str(message.text))
     )
     if isinstance(result, results.Success):
@@ -70,9 +70,12 @@ async def upgrade_factory(
 @router.callback_query(F.data == FactoryCB.upgrade_conf)
 @get_factory
 async def try_to_upgrade_factory(
-    call: types.CallbackQuery, user: entities.User, factory: entities.Factory
+    call: types.CallbackQuery,
+    user: entities.User,
+    factory: entities.Factory,
+    cmd_executor: CommandExecutor,
 ) -> Any:
-    result = await CommandExecutor().execute(
+    result = await cmd_executor.execute(
         UpgradeFactoryCommand(
             factory_id=factory.id,
             factory_upgrade_price=factory.upgrade_price,

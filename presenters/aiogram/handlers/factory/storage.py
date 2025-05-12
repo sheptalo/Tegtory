@@ -31,9 +31,12 @@ async def open_storage(
 @router.callback_query(F.data == FactoryCB.upgrade_storage)
 @get_factory
 async def upgrade_storage(
-    call: types.CallbackQuery, user: entities.User, factory: entities.Factory
+    call: types.CallbackQuery,
+    user: entities.User,
+    factory: entities.Factory,
+    cmd_executor: CommandExecutor,
 ) -> Any:
-    result = await CommandExecutor().execute(
+    result = await cmd_executor.execute(
         UpgradeStorageCommand(
             factory_id=factory.id,
             storage=factory.storage,

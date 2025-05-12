@@ -14,7 +14,7 @@ def raise_app_exception(cmd: Any) -> None:
 @pytest.mark.asyncio
 async def test_base_query_handler_failure() -> None:
     handler: BaseQueryHandler[Any] = BaseQueryHandler()
-    setattr(handler, "execute", raise_app_exception)
+    setattr(handler, "handle", raise_app_exception)
 
     result = await handler(0)
 

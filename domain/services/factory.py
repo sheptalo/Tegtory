@@ -1,9 +1,10 @@
 from common import settings
 from common.exceptions import AppException, TaxException
 from domain.entities import Factory
+from domain.use_cases.base import DependencyRequired
 
 
-class FactoryService:
+class FactoryService(DependencyRequired):
     @staticmethod
     def hire_worker(factory: Factory) -> Factory:
         if factory.hire_available == 0:

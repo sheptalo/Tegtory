@@ -14,9 +14,9 @@ class BaseQueryHandler(DependencyRequired, Generic[Query]):
 
     async def __call__(self, query: Query) -> Success | Failure:
         try:
-            return Success(data=await self.execute(query))
+            return Success(data=await self.handle(query))
         except AppException as e:
             return Failure(reason=e.message)
 
-    async def execute(self, query: Query) -> Any:
+    async def handle(self, query: Query) -> Any:
         raise NotImplementedError

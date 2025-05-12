@@ -11,7 +11,7 @@ class GetFactoryQueryHandler(BaseQueryHandler[GetFactoryQuery]):
     def __init__(self, repo: FactoryRepository) -> None:
         self.repo = repo
 
-    async def execute(self, query: GetFactoryQuery) -> Factory | None:
+    async def handle(self, query: GetFactoryQuery) -> Factory | None:
         return await self.repo.get(query.factory_id)
 
 
@@ -21,5 +21,5 @@ class GetStorageQueryHandler(BaseQueryHandler[GetStorageQuery]):
     def __init__(self, repo: StorageRepository) -> None:
         self.repo = repo
 
-    async def execute(self, query: GetStorageQuery) -> Storage | None:
+    async def handle(self, query: GetStorageQuery) -> Storage | None:
         return await self.repo.get(query.factory_id)
