@@ -24,6 +24,7 @@ from .utils import get_children, load_packages
 
 logger = logging.getLogger(__name__)
 load_packages(use_cases)
+
 load_packages(services)
 
 provider = Provider(scope=Scope.APP)
