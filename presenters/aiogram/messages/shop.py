@@ -21,6 +21,7 @@ specific_shop = (
 )
 
 choose_amount = bot + "Выберите количество которое хотите предложить магазину"
+search_shop = "введите название магазина который вы ищите"
 
 
 def parse_contract(contract: ShopContract) -> str:

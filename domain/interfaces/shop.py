@@ -16,9 +16,6 @@ class ShopRepository(Protocol):
     async def update(self, item: Shop) -> Shop:
         pass
 
-    async def delete(self, item_id: int) -> None:
-        pass
-
     async def by_name(self, name: str) -> Shop | None:
         pass
 

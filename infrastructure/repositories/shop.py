@@ -4,7 +4,9 @@ from domain.interfaces.shop import ShopRepository
 
 class ShopRepositoryImpl(ShopRepository):
     def __init__(self) -> None:
-        self.shops: list[Shop] = []
+        self.shops: list[Shop] = [
+            Shop(id=1, title="dd", description="dsd", distance=1)
+        ]
         self.shop_products: list[ShopProduct] = []
 
     async def all(self) -> list[Shop]:
