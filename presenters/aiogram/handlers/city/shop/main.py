@@ -33,7 +33,9 @@ async def shop_list(
 async def shop_page(
     call: types.CallbackQuery, query_executor: QueryExecutor
 ) -> None:
-    shop_data = await query_executor.ask(ShopQuery(title=call.data.split(":")[1]))
+    shop_data = await query_executor.ask(
+        ShopQuery(title=call.data.split(":")[1])
+    )
     if isinstance(shop_data, Success):
         shop: Shop = shop_data.data
         markup = kb.get_shop_markup(shop)

@@ -9,6 +9,8 @@ repos:
         language: python
         types: [ python ]
         require_serial: true
+        pass_filenames: false
+        always_run: true
 
       - id: ruff
         name: ruff
@@ -16,8 +18,9 @@ repos:
         entry: ruff check
         language: python
         types: [ python ]
-
         require_serial: true
+        pass_filenames: false
+        always_run: true
 
       - id: pytest
         name: pytest
