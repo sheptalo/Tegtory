@@ -3,7 +3,7 @@ import math
 import random
 import time
 
-from common.exceptions import AppException, DuringWorkException
+from common.exceptions import AppError, DuringWorkError
 from common.settings import HIRE_PRICE
 
 
@@ -120,15 +120,15 @@ class Factory:
 
     def upgrade(self) -> None:
         if self.state:
-            raise DuringWorkException
+            raise DuringWorkError
 
         self.level += 1
 
     def hire(self) -> None:
         if self.state:
-            raise DuringWorkException
+            raise DuringWorkError
         if self.hire_available <= 0:
-            raise AppException("Вы достигли лимита рабочих для данного уровня")
+            raise AppError("Вы достигли лимита рабочих для данного уровня")
         self.workers += 1
 
     def set_tax(self, amount: int) -> None:

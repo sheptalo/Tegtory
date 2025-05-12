@@ -3,7 +3,7 @@ from functools import wraps
 from types import MethodType
 from typing import Any, Protocol
 
-from common.exceptions import AppException
+from common.exceptions import AppError
 from domain.interfaces.eventbus import EventBus
 
 
@@ -24,7 +24,7 @@ class SafeCall:
         async def wrapper(*args: tuple, **kwargs: dict) -> Any:
             try:
                 return await obj(*args, **kwargs)
-            except AppException as e:
+            except AppError as e:
                 return e.message
 
         return wrapper

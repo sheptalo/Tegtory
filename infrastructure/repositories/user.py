@@ -1,4 +1,5 @@
 import logging
+from typing import ClassVar
 
 from domain.entities import User
 from domain.interfaces import UserRepository
@@ -7,7 +8,7 @@ logger = logging.getLogger("infrastructure.user_repository")
 
 
 class UserRepositoryImpl(UserRepository):
-    _users: list[User] = []
+    _users: ClassVar[list[User]] = []
 
     def _filter_users(self, user_id: int) -> User | None:
         for i in filter(lambda u: u.id == user_id, self._users):

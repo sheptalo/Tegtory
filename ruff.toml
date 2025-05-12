@@ -62,7 +62,7 @@ select = [
     "FURB",
     "RUF",
 ]
-ignore = ["B010", "N818", "RUF001", "RUF002", "RUF012", "RUF006"]
+ignore = ["B010", "RUF001", "RUF006"]
 
 fixable = ["ALL"]
 unfixable = []

@@ -1,14 +1,14 @@
 from functools import wraps
 from typing import Any
 
-from common.exceptions import AppException
+from common.exceptions import AppError
 
 from ...commands.factory import PayRequiredCommand
 
 
 def pay_required(cls: type) -> type:
     if not hasattr(cls, "execute"):
-        raise AppException("Method execute must be overridden")
+        raise AppError("Method execute must be overridden")
 
     old_call = cls.execute
 

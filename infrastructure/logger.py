@@ -1,5 +1,5 @@
 import logging
-from typing import Any
+from typing import Any, ClassVar
 
 
 class CustomFormatter(logging.Formatter):
@@ -14,7 +14,7 @@ class CustomFormatter(logging.Formatter):
         "%(asctime)s | %(levelname)-6s | %(name)-40s | %(message)s" + reset
     )
 
-    FORMATS = {
+    FORMATS: ClassVar[dict] = {
         logging.DEBUG: debug + message_format,
         logging.INFO: info + message_format,
         logging.WARNING: warning + message_format,

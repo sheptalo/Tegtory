@@ -1,4 +1,4 @@
-from common.exceptions import NotEnoughPointsException
+from common.exceptions import NotEnoughPointsError
 from domain.entities import Factory, Storage
 
 from .base import BaseCommand
@@ -19,7 +19,7 @@ class PayRequiredCommand(BaseCommand):
 
     def can_pay(self) -> None:
         if self.user_money < self.get_price():
-            raise NotEnoughPointsException()
+            raise NotEnoughPointsError()
 
     def get_price(self) -> float | int:
         raise NotImplementedError

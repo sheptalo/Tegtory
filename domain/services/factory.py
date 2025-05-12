@@ -1,5 +1,5 @@
 from common import settings
-from common.exceptions import AppException, TaxException
+from common.exceptions import AppError, TaxError
 from domain.entities import Factory
 from domain.use_cases.base import DependencyRequired
 
@@ -8,7 +8,7 @@ class FactoryService(DependencyRequired):
     @staticmethod
     def hire_worker(factory: Factory) -> Factory:
         if factory.hire_available == 0:
-            raise AppException("Максимальное количество рабочих достигнуто")
+            raise AppError("Максимальное количество рабочих достигнуто")
         factory.hire()
         return factory
 
@@ -17,7 +17,7 @@ class FactoryService(DependencyRequired):
         if factory.state:
             return
         if factory.workers == 0:
-            raise AppException("Нельзя запустить фабрику без рабочих")
+            raise AppError("Нельзя запустить фабрику без рабочих")
         if factory.tax > settings.TAX_LIMIT:
-            raise TaxException
+            raise TaxError
         factory.start_work(time)

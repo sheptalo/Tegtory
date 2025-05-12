@@ -2,7 +2,7 @@ import dataclasses
 import math
 import time
 
-from common.exceptions import DuringWorkException
+from common.exceptions import DuringWorkError
 
 
 @dataclasses.dataclass(kw_only=True)
@@ -38,7 +38,7 @@ class User:
 
     def start_work(self, time_amount: float | int) -> None:
         if self.state:
-            raise DuringWorkException
+            raise DuringWorkError
         self.end_work_time = time.time() + time_amount
 
     def set_name(self, name: str) -> None:

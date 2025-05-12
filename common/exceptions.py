@@ -1,4 +1,4 @@
-class AppException(Exception):
+class AppError(Exception):
     message = ""
 
     def __init__(self, message: str = "") -> None:
@@ -6,13 +6,13 @@ class AppException(Exception):
             self.message = message
 
 
-class NotEnoughPointsException(AppException):
+class NotEnoughPointsError(AppError):
     message = "Недостаточно очков"
 
 
-class TaxException(AppException):
+class TaxError(AppError):
     message = "Выплатите Налоги чтобы продолжить"
 
 
-class DuringWorkException(AppException):
+class DuringWorkError(AppError):
     message = "Невозможно выполнить действие во время работы"

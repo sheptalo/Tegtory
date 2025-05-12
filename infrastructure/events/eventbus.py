@@ -1,7 +1,7 @@
 import asyncio
 import logging
 from collections.abc import Callable
-from typing import Any
+from typing import Any, ClassVar
 
 from domain.events import EventType
 from domain.interfaces import EventBus
@@ -10,7 +10,7 @@ logger = logging.getLogger("infrastructure.eventbus")
 
 
 class MemoryEventBus(EventBus):
-    events: dict[Any, list[Callable]] = {}
+    events: ClassVar[dict[Any, list[Callable]]] = {}
 
     @classmethod
     def subscribe(cls, callback: Callable, event_name: EventType) -> None:
@@ -30,7 +30,7 @@ class MemoryEventBus(EventBus):
         for callback in cls.events.get(event, []):
             logger.debug(f"Emitting callback: {callback}")
 
-            _ = asyncio.create_task(cls._event_wrapper(callback, data))
+            asyncio.create_task(cls._event_wrapper(callback, data))
 
     @classmethod
     def _format_dict(cls, data: dict) -> str:

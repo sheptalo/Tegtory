@@ -3,7 +3,7 @@ from unittest.mock import Mock
 
 import pytest
 
-from common.exceptions import AppException, TaxException
+from common.exceptions import AppError, TaxError
 from domain.services.factory import FactoryService
 
 
@@ -22,7 +22,7 @@ async def test_hire_worker_failure_working_max_workers(
 ) -> None:
     mock_factory.hire_available = 0
 
-    with pytest.raises(AppException):
+    with pytest.raises(AppError):
         FactoryService.hire_worker(mock_factory)
 
     mock_factory.hire.assert_not_called()
@@ -45,7 +45,7 @@ async def test_factory_start_failure_workers_zero(mock_factory: Mock) -> None:
     mock_factory.workers = 0
     mock_factory.tax = 0
 
-    with pytest.raises(AppException):
+    with pytest.raises(AppError):
         FactoryService.start(mock_factory, 1)
 
     mock_factory.start_work.assert_not_called()
@@ -59,7 +59,7 @@ async def test_factory_start_failure_already_working(
     mock_factory.workers = 1
     mock_factory.tax = math.inf
 
-    with pytest.raises(TaxException):
+    with pytest.raises(TaxError):
         FactoryService.start(mock_factory, 1)
 
     mock_factory.start_work.assert_not_called()

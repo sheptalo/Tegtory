@@ -1,4 +1,5 @@
 import logging
+from typing import ClassVar
 
 from domain.entities import Factory, Product, StorageProduct
 from domain.interfaces import FactoryRepository
@@ -7,7 +8,7 @@ logger = logging.getLogger("infrastructure.factory_repository")
 
 
 class FactoryRepositoryImpl(FactoryRepository):
-    _factories: list[Factory] = []
+    _factories: ClassVar[list[Factory]] = []
 
     def __init__(self) -> None:
         self.available_products: dict[int, list[Product]] = {}
@@ -66,5 +67,8 @@ class FactoryRepositoryImpl(FactoryRepository):
             factory.tax = amount
 
     async def hire(self, factory_id: int) -> None:
-        """ТК система inmemmory то изменять что-то еще раз не нужно"""
+        """
+        While system in-memory
+        we don't need change here all proceeded in factory.hire()
+        """
         pass

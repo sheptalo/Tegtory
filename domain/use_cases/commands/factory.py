@@ -1,4 +1,4 @@
-from common.exceptions import AppException
+from common.exceptions import AppError
 from domain.entities import Factory, Product
 
 from ...commands.factory import (
@@ -45,7 +45,7 @@ class CreateFactoryCommandHandler(BaseCommandHandler[CreateFactoryCommand]):
 
     async def execute(self, cmd: CreateFactoryCommand) -> Factory:
         if await self.repo.by_name(cmd.name):
-            raise AppException("Фабрика с таким именем уже существует")
+            raise AppError("Фабрика с таким именем уже существует")
 
         factory = await self.repo.create(Factory(name=cmd.name, id=cmd.id))
         factory.storage = await self.storage.create(factory.id)

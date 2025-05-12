@@ -2,7 +2,7 @@ from unittest.mock import Mock
 
 import pytest
 
-from common.exceptions import AppException
+from common.exceptions import AppError
 from domain.events import EventType
 from domain.services.money import MoneyService
 
@@ -26,6 +26,6 @@ async def test_money_service_failure_cannot_buy(
     service = MoneyService(event_bus)
     mock_user.can_buy.return_value = False
 
-    with pytest.raises(AppException):
+    with pytest.raises(AppError):
         await service.charge(mock_user, 1)
     event_bus.emit.assert_not_called()

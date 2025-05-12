@@ -1,5 +1,5 @@
 import logging
-from typing import Any
+from typing import Any, ClassVar
 
 from aiogram import Bot, Dispatcher
 from aiogram.client.default import DefaultBotProperties
@@ -15,8 +15,14 @@ logger = logging.getLogger(__name__)
 
 class BaseService:
     bot_singleton: type[BotSingleton]
-    message_middlewares: list = [AuthMiddleware(), ExecutorMiddleware()]
-    callback_middlewares: list = [AuthMiddleware(), ExecutorMiddleware()]
+    message_middlewares: ClassVar[list] = [
+        AuthMiddleware(),
+        ExecutorMiddleware(),
+    ]
+    callback_middlewares: ClassVar[list] = [
+        AuthMiddleware(),
+        ExecutorMiddleware(),
+    ]
 
     def __init__(self, bot_token: str | None = "") -> None:
         self.bot = self._get_bot(bot_token)

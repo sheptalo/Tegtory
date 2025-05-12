@@ -1,6 +1,6 @@
 from typing import Any, Generic, TypeVar
 
-from common.exceptions import AppException
+from common.exceptions import AppError
 
 from ...commands.base import BaseCommand
 from ...results import Failure, Success
@@ -15,7 +15,7 @@ class BaseCommandHandler(DependencyRequired, Generic[Command]):
     async def __call__(self, command: Command) -> Success | Failure:
         try:
             return Success(data=await self.execute(command))
-        except AppException as e:
+        except AppError as e:
             return Failure(reason=e.message)
 
     async def execute(self, command: Command) -> Any:
