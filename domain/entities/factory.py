@@ -118,12 +118,6 @@ class Factory:
     def rename(self, name: str) -> None:
         self.name = name
 
-    def upgrade(self) -> None:
-        if self.state:
-            raise DuringWorkError
-
-        self.level += 1
-
     def hire(self) -> None:
         if self.state:
             raise DuringWorkError

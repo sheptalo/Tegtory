@@ -1,6 +1,6 @@
 from typing import Protocol
 
-from domain.entities import Shop, ShopContract, ShopProduct
+from domain.entities import Shop, ShopProduct
 
 
 class ShopRepository(Protocol):
@@ -17,12 +17,6 @@ class ShopRepository(Protocol):
         pass
 
     async def by_name(self, name: str) -> Shop | None:
-        pass
-
-    async def sign_contract(self, contract: ShopContract) -> ShopContract:
-        pass
-
-    async def update_contract(self, contract: ShopContract) -> ShopContract:
         pass
 
     async def add_product(self, product: ShopProduct) -> ShopProduct:

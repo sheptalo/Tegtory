@@ -1,16 +1,17 @@
 from domain.entities import Storage
 from domain.interfaces.storage import StorageRepository
 
-_storages: dict[int, Storage] = {}
-
 
 class StorageRepositoryImpl(StorageRepository):
+    def __init__(self) -> None:
+        self._storages: dict[int, Storage] = {}
+
     async def create(self, factory_id: int) -> Storage:
-        _storages[factory_id] = Storage()
-        return _storages[factory_id]
+        self._storages[factory_id] = Storage()
+        return self._storages[factory_id]
 
     async def upgrade(self, factory_id: int) -> None:
-        _storages[factory_id].upgrade()
+        self._storages[factory_id].upgrade()
 
     async def get(self, factory_id: int) -> Storage | None:
-        return _storages.get(factory_id)
+        return self._storages.get(factory_id)

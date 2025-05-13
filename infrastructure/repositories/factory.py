@@ -4,7 +4,7 @@ from typing import ClassVar
 from domain.entities import Factory, Product, StorageProduct
 from domain.interfaces import FactoryRepository
 
-logger = logging.getLogger("infrastructure.factory_repository")
+logger = logging.getLogger(__name__)
 
 
 class FactoryRepositoryImpl(FactoryRepository):
@@ -22,6 +22,11 @@ class FactoryRepositoryImpl(FactoryRepository):
     async def get(self, owner_id: int) -> Factory | None:
         return self._filter_factories(owner_id)
 
+    async def by_name(self, name: str) -> Factory | None:
+        for i in filter(lambda f: f.name == name, self._factories):
+            return i
+        return None
+
     async def create(self, factory: Factory) -> Factory:
         logger.info(f"Creating Factory {factory.name} by user {factory.id}")
         self._factories.append(factory)
@@ -30,15 +35,10 @@ class FactoryRepositoryImpl(FactoryRepository):
     async def upgrade(self, factory_id: int) -> None:
         factory = self._filter_factories(factory_id)
         if factory:
-            factory.upgrade()
+            factory.level += 1
 
     async def update(self, factory: Factory) -> Factory:
         return factory
-
-    async def by_name(self, name: str) -> Factory | None:
-        for i in filter(lambda f: f.name == name, self._factories):
-            return i
-        return None
 
     async def add_available_product(
         self, factory: Factory, product: Product

@@ -4,7 +4,7 @@ from typing import ClassVar
 from domain.entities import User
 from domain.interfaces import UserRepository
 
-logger = logging.getLogger("infrastructure.user_repository")
+logger = logging.getLogger(__name__)
 
 
 class UserRepositoryImpl(UserRepository):

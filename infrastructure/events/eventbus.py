@@ -6,7 +6,7 @@ from typing import Any, ClassVar
 from domain.events import EventType
 from domain.interfaces import EventBus
 
-logger = logging.getLogger("infrastructure.eventbus")
+logger = logging.getLogger(__name__)
 
 
 class MemoryEventBus(EventBus):

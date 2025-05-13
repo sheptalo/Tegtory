@@ -1,3 +1,6 @@
+[project]
+name = "Tegtory"
+
 [tool.mypy]
 python_version = 3.12
 check_untyped_defs = true
@@ -103,3 +106,26 @@ line-ending = "auto"
 docstring-code-format = false
 
 docstring-code-line-length = "dynamic"
+
+[tool.coverage.run]
+branch = true
+omit = [
+    "common/*",
+    "tests/*",
+    "domain/interfaces/*",
+    "**/__init__.py",
+]
+
+
+[tool.coverage.report]
+exclude_also = [
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if 0:",
+    "if __name__ == .__main__.:",
+    "get_price",
+    "__hash__",
+    "__init__",
+
+   "@(abc\\.)?abstractmethod",
+]
