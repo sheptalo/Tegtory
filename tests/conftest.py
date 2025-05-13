@@ -63,6 +63,16 @@ def user_repo() -> MagicMock:
 
 
 @pytest.fixture
+def shop_repo() -> MagicMock:
+    repo = MagicMock()
+    repo.by_name = AsyncMock()
+    repo.all = AsyncMock()
+    repo.all_required_delivery = AsyncMock()
+    repo.all_not_required_delivery = AsyncMock()
+    return repo
+
+
+@pytest.fixture
 def event_bus() -> MagicMock:
     bus = MagicMock()
     bus.emit = AsyncMock()

@@ -7,6 +7,12 @@ class ShopRepository(Protocol):
     async def all(self) -> list[Shop]:
         pass
 
+    async def all_required_delivery(self) -> list[Shop]:
+        pass
+
+    async def all_not_required_delivery(self) -> list[Shop]:
+        pass
+
     async def get(self, item_id: int) -> Shop | None:
         pass
 

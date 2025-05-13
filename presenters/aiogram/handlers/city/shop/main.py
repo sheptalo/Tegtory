@@ -1,8 +1,14 @@
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from aiogram import F, Router, types
 
-from domain.queries.shop import ListShopQuery, ShopQuery
+from domain.queries.base import BaseQuery
+from domain.queries.shop import (
+    ListShopDeliveryQuery,
+    ListShopNoDeliveryQuery,
+    ListShopQuery,
+    ShopQuery,
+)
 from domain.results import Failure, Success
 from infrastructure import QueryExecutor
 from presenters.aiogram.kb import CityCB
@@ -15,12 +21,15 @@ if TYPE_CHECKING:
 router = Router()
 
 
+@router.callback_query(F.data.startswith(f"{CityCB.shop}-"))
 @router.callback_query(F.data == CityCB.shop)
 async def shop_list(
     call: types.CallbackQuery, query_executor: QueryExecutor
-) -> None:
+) -> Any:
+    query_type = get_shop_list_query_type(call.data) or ListShopQuery
+
     shops: Success[list[Shop]] | Failure = await query_executor.ask(
-        ListShopQuery()
+        query_type()
     )
     if isinstance(shops, Success):
         markup = kb.get_shop_list_markup(shops.data)
@@ -45,3 +54,15 @@ async def shop_page(
             ),
             reply_markup=markup,
         )
+
+
+def get_shop_list_query_type(data: str | None) -> type[BaseQuery] | None:
+    if not data:
+        data = "s-"
+
+    for i in filter(
+        lambda x: x.__name__ == data.split("-")[-1],
+        {ListShopNoDeliveryQuery, ListShopDeliveryQuery},
+    ):
+        return i
+    return None

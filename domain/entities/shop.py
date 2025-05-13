@@ -1,7 +1,7 @@
 import dataclasses
 from datetime import datetime
 
-from common.settings import DELIVERY_MIN_DISTANTION
+from common.settings import DELIVERY_MIN_DISTANT
 from domain.entities.contract import BaseContract
 from domain.entities.factory import Factory, Product
 
@@ -16,7 +16,7 @@ class Shop:
 
     @property
     def delivery_required(self) -> bool:
-        return self.distance > DELIVERY_MIN_DISTANTION
+        return self.distance >= DELIVERY_MIN_DISTANT
 
 
 @dataclasses.dataclass(kw_only=True)

@@ -1,4 +1,8 @@
-from aiogram.types import InlineKeyboardMarkup, LabeledPrice
+from aiogram.types import (
+    InlineKeyboardButton,
+    InlineKeyboardMarkup,
+    LabeledPrice,
+)
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 from domain.entities import Shop, ShopProduct
@@ -20,13 +24,25 @@ def get_shop_markup(shop: Shop) -> InlineKeyboardMarkup:
 
 def get_shop_list_markup(shops: list[Shop]) -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
+    builder.max_width = 2
+
     for shop in shops:
         builder.button(
             text=shop.title, callback_data=f"{CityCB.shop}:{shop.title}"
         )
-    builder.button(text="Очистить фильтры", callback_data=CityCB.back)
-    builder.button(text="назад", callback_data=CityCB.back)
     builder.adjust(1, repeat=True)
+    builder.row(
+        InlineKeyboardButton(
+            text="Без доставки",
+            callback_data=f"{CityCB.shop}-ListShopNoDeliveryQuery",
+        ),
+        InlineKeyboardButton(
+            text="Требуется доставка",
+            callback_data=f"{CityCB.shop}-ListShopDeliveryQuery",
+        ),
+    )
+    builder.button(text="Очистить", callback_data=CityCB.shop)
+    builder.button(text="назад", callback_data=CityCB.back)
     return builder.as_markup()
 
 
