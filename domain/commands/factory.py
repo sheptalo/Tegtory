@@ -1,5 +1,5 @@
 from common.exceptions import NotEnoughPointsError
-from domain.entities import Factory, Storage
+from domain.entities import Factory, Product, Storage
 
 from .base import BaseCommand
 
@@ -51,3 +51,9 @@ class HireWorkerCommand(PayRequiredCommand):
 
     def get_price(self) -> float | int:
         return self.factory.hire_price
+
+
+class StartFactoryCommand(BaseCommand):
+    factory: Factory
+    time: float
+    product: Product

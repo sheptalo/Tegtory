@@ -1,3 +1,5 @@
+import dataclasses
+
 from common.exceptions import AppError
 from domain.entities import Factory, Product
 
@@ -5,10 +7,14 @@ from ...commands.factory import (
     CreateFactoryCommand,
     HireWorkerCommand,
     PayTaxCommand,
+    StartFactoryCommand,
     UpgradeFactoryCommand,
 )
-from ...interfaces import FactoryRepository, UserRepository
+from ...entities.factory import StartFactoryEvent
+from ...events import EventType
+from ...interfaces import EventBus, FactoryRepository, UserRepository
 from ...interfaces.storage import StorageRepository
+from ...services.factory import FactoryService
 from .base import BaseCommandHandler
 from .pay_required import pay_required
 
@@ -34,14 +40,12 @@ DEFAULT_AVAILABLE_PRODUCTS: list[Product] = [
 ]
 
 
+@dataclasses.dataclass(frozen=True)
 class CreateFactoryCommandHandler(BaseCommandHandler[CreateFactoryCommand]):
     object_type = CreateFactoryCommand
 
-    def __init__(
-        self, repo: FactoryRepository, storage: StorageRepository
-    ) -> None:
-        self.repo = repo
-        self.storage = storage
+    repo: FactoryRepository
+    storage: StorageRepository
 
     async def execute(self, cmd: CreateFactoryCommand) -> Factory:
         if await self.repo.by_name(cmd.name):
@@ -55,44 +59,61 @@ class CreateFactoryCommandHandler(BaseCommandHandler[CreateFactoryCommand]):
         return factory
 
 
+@dataclasses.dataclass(frozen=True)
 @pay_required
 class PayTaxCommandHandler(BaseCommandHandler[PayTaxCommand]):
     object_type = PayTaxCommand
 
-    def __init__(
-        self, repo: FactoryRepository, money_repo: UserRepository
-    ) -> None:
-        self.repo = repo
-        self.money_repo = money_repo
+    repo: FactoryRepository
+    money_repo: UserRepository
 
     async def execute(self, cmd: PayTaxCommand) -> None:
         await self.repo.set_tax(cmd.factory_id, 0)
 
 
+@dataclasses.dataclass(frozen=True)
 @pay_required
 class UpgradeFactoryCommandHandler(BaseCommandHandler[UpgradeFactoryCommand]):
     object_type = UpgradeFactoryCommand
 
-    def __init__(
-        self, factory_repo: FactoryRepository, money_repo: UserRepository
-    ) -> None:
-        self.factory = factory_repo
-        self.money_repo = money_repo
+    factory: FactoryRepository
+    money_repo: UserRepository
 
     async def execute(self, cmd: UpgradeFactoryCommand) -> None:
         await self.factory.upgrade(cmd.factory_id)
 
 
+@dataclasses.dataclass(frozen=True)
 @pay_required
 class HireWorkerCommandHandler(BaseCommandHandler[HireWorkerCommand]):
     object_type = HireWorkerCommand
 
-    def __init__(
-        self, repo: FactoryRepository, money_repo: UserRepository
-    ) -> None:
-        self.repo = repo
-        self.money_repo = money_repo
+    repo: FactoryRepository
+    money_repo: UserRepository
 
     async def execute(self, cmd: HireWorkerCommand) -> None:
         cmd.factory.hire()
         await self.repo.hire(cmd.factory.id)
+
+
+@dataclasses.dataclass(frozen=True)
+class StartFactoryCommandHandler(BaseCommandHandler[StartFactoryCommand]):
+    object_type = StartFactoryCommand
+
+    repository: FactoryRepository
+    event_bus: EventBus
+    logic: FactoryService
+
+    async def execute(self, cmd: StartFactoryCommand) -> None:
+        self.logic.start(cmd.factory, cmd.time)
+        await self.repository.update(cmd.factory)
+
+        await self.event_bus.emit(
+            EventType.StartFactory,
+            data=StartFactoryEvent(
+                factory=cmd.factory,
+                workers=cmd.factory.workers,
+                time=cmd.time,
+                product=cmd.product,
+            ),
+        )

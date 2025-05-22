@@ -4,9 +4,11 @@ from aiogram import Router, types
 from dishka import FromDishka
 
 from domain import entities, results
+from domain.commands.factory import StartFactoryCommand
 from domain.commands.user import StartUserWorkCommand
 from domain.entities import Factory, Product
 from domain.events import EventType
+from domain.results import Failure, Success
 from domain.use_cases import UCFactory
 from infrastructure import CommandExecutor
 from infrastructure.injectors import inject, on_event
@@ -100,12 +102,14 @@ async def work_yourself(
 async def start_factory(
     call: types.CallbackQuery,
     factory: Factory,
-    use_case: FromDishka[UCFactory],
+    cmd_executor: CommandExecutor,
 ) -> Any:
     product, time = await get_product_time(call, factory)
-    result: Any = await use_case.start_factory(factory, time, product)
-    if result:
-        return await call.answer(str(result), show_alert=True)
+    result: Success[Factory] | Failure = await cmd_executor.execute(
+        StartFactoryCommand(factory=factory, time=time, product=product)
+    )
+    if isinstance(result, Success):
+        return await call.answer(str(result.data), show_alert=True)
     await callback_factory(call)
 
 

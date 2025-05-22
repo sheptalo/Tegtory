@@ -1,15 +1,12 @@
-from typing import Any, Generic, TypeVar
+from typing import Any
 
 from common.exceptions import AppError
 
-from ...commands.base import BaseCommand
 from ...results import Failure, Success
 from ..base import DependencyRequired
 
-Command = TypeVar("Command", bound=BaseCommand)
 
-
-class BaseCommandHandler(DependencyRequired, Generic[Command]):
+class BaseCommandHandler[Command](DependencyRequired):
     object_type: Any
 
     async def __call__(self, command: Command) -> Success | Failure:

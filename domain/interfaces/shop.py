@@ -1,25 +1,14 @@
 from typing import Protocol
 
 from domain.entities import Shop, ShopProduct
+from domain.interfaces.base import CrudRepository
 
 
-class ShopRepository(Protocol):
-    async def all(self) -> list[Shop]:
-        pass
-
+class ShopRepository(CrudRepository[Shop], Protocol):
     async def all_required_delivery(self) -> list[Shop]:
         pass
 
     async def all_not_required_delivery(self) -> list[Shop]:
-        pass
-
-    async def get(self, item_id: int) -> Shop | None:
-        pass
-
-    async def create(self, item: Shop) -> Shop:
-        pass
-
-    async def update(self, item: Shop) -> Shop:
         pass
 
     async def by_name(self, name: str) -> Shop | None:

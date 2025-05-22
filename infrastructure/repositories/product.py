@@ -14,8 +14,9 @@ class ProductRepositoryImpl(ProductRepository):
     async def all(self) -> list[Product]:
         return self.products
 
-    async def create(self, product: Product) -> None:
+    async def create(self, product: Product) -> Product:
         self.products.append(product)
+        return product
 
-    async def update(self, product: Product) -> None:
-        pass
+    async def update(self, product: Product) -> Product:
+        return product

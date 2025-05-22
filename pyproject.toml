@@ -110,10 +110,8 @@ docstring-code-line-length = "dynamic"
 [tool.coverage.run]
 branch = true
 omit = [
-    "common/*",
     "tests/*",
     "domain/interfaces/*",
-    "**/__init__.py",
 ]
 
 
@@ -121,11 +119,5 @@ omit = [
 exclude_also = [
     "raise AssertionError",
     "raise NotImplementedError",
-    "if 0:",
-    "if __name__ == .__main__.:",
-    "get_price",
-    "__hash__",
-    "__init__",
 
-   "@(abc\\.)?abstractmethod",
 ]

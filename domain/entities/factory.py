@@ -1,6 +1,5 @@
 import dataclasses
 import math
-import random
 import time
 
 from common.exceptions import AppError, DuringWorkError
@@ -126,7 +125,7 @@ class Factory:
         self.workers += 1
 
     def set_tax(self, amount: int) -> None:
-        self.tax = random.randint(1, 5) * amount // 3
+        self.tax = 4 * amount // 3
 
     def get_bonus(self, data: StartFactoryEvent) -> int:
         bonus = self.calculate_bonus(data)

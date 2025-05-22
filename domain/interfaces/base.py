@@ -1,9 +1,7 @@
-from typing import Protocol, TypeVar
-
-T = TypeVar("T")
+from typing import Protocol
 
 
-class CrudRepository(Protocol[T]):
+class CrudRepository[T](Protocol):
     async def all(self) -> list[T]:
         pass
 

@@ -1,5 +1,3 @@
-from typing import Any
-
 from ..entities import Factory, Product, StorageProduct
 from ..entities.factory import StartFactoryEvent
 from ..events import on_event
@@ -23,22 +21,6 @@ class UCFactory(SafeCall, EventBased):
         self.repository = repository
         self.logic = service
         self.money = money
-
-    async def start_factory(
-        self, factory: Factory, time: float, product: Product
-    ) -> Any:
-        self.logic.start(factory, time)
-        await self.repository.update(factory)
-
-        await self.event_bus.emit(
-            EventType.StartFactory,
-            data=StartFactoryEvent(
-                factory=factory,
-                workers=factory.workers,
-                time=time,
-                product=product,
-            ),
-        )
 
     async def get_available_products(self, factory: Factory) -> list[Product]:
         return await self.repository.get_available_products(factory)

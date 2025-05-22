@@ -6,9 +6,12 @@ from domain.commands import PayTaxCommand
 from domain.commands.factory import (
     CreateFactoryCommand,
     HireWorkerCommand,
+    StartFactoryCommand,
     UpgradeFactoryCommand,
 )
-from domain.entities import Factory, Storage
+from domain.entities import Factory, Product, Storage
+from domain.entities.factory import StartFactoryEvent
+from domain.events import EventType
 from domain.interfaces import FactoryRepository
 from domain.queries.factory import GetFactoryQuery
 from domain.results import Failure, Success
@@ -16,6 +19,7 @@ from domain.use_cases.commands.factory import (
     CreateFactoryCommandHandler,
     HireWorkerCommandHandler,
     PayTaxCommandHandler,
+    StartFactoryCommandHandler,
     UpgradeFactoryCommandHandler,
 )
 from domain.use_cases.queries.factory import GetFactoryQueryHandler
@@ -141,3 +145,29 @@ async def test_upgrade_factory_success(factory_repo: MagicMock) -> None:
     )
 
     assert isinstance(result, Success)
+
+
+@pytest.mark.asyncio
+async def test_start_factory_success(
+    factory_repo: MagicMock, mock_factory: MagicMock, event_bus: MagicMock
+) -> None:
+    cmd = StartFactoryCommand(
+        factory=mock_factory, time=1, product=Product(name="sd")
+    )
+
+    logic = MagicMock()
+    handler = StartFactoryCommandHandler(factory_repo, event_bus, logic)
+    result = await handler(cmd)
+
+    assert isinstance(result, Success)
+    logic.start.assert_called_once_with(mock_factory, 1)
+    factory_repo.update.assert_called_once_with(mock_factory)
+    event_bus.emit.assert_called_once_with(
+        EventType.StartFactory,
+        data=StartFactoryEvent(
+            factory=cmd.factory,
+            workers=cmd.factory.workers,
+            time=cmd.time,
+            product=cmd.product,
+        ),
+    )

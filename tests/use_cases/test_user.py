@@ -10,7 +10,7 @@ from domain.use_cases.commands.user import (
     RegisterUserCommandHandler,
     StartUserWorkCommandHandler,
 )
-from domain.use_cases.user import UserEvent
+from domain.use_cases.event.user import UserEvent
 
 
 @pytest.mark.asyncio
@@ -27,16 +27,6 @@ async def test_create_user(user_repo: MagicMock) -> None:
     assert isinstance(result.data, User)
 
     user_repo.create.assert_called_once_with(expected_result)
-
-
-@pytest.mark.asyncio
-async def test_subtract_money_success(user_repo: MagicMock) -> None:
-    event = UserEvent(user_repo, MagicMock())
-    user = User(id=1, name="User", username="user", money=100)
-    await event._subtract_user_money({"user": user, "amount": 30})
-
-    assert user.money == 100 - 30
-    user_repo.update.assert_called_once_with(user)
 
 
 @pytest.mark.asyncio

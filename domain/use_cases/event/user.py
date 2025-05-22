@@ -1,16 +1,15 @@
+import dataclasses
 from typing import Any
 
-from domain.interfaces import EventBus, UserRepository
+from domain.entities import User
+from domain.events import EventType, on_event
+from domain.interfaces import UserRepository
 from domain.use_cases.base import EventBased
 
-from ..entities import User
-from ..events import EventType, on_event
 
-
+@dataclasses.dataclass(frozen=True)
 class UserEvent(EventBased):
-    def __init__(self, repo: UserRepository, event_bus: EventBus) -> None:
-        super().__init__(event_bus)
-        self.repository = repo
+    repo: UserRepository
 
     @on_event(EventType.SubtractMoney)
     async def _subtract_user_money(self, data: dict[str, Any]) -> None:
@@ -21,4 +20,4 @@ class UserEvent(EventBased):
             return
 
         user.subtract_money(amount)
-        await self.repository.update(user)
+        await self.repo.update(user)

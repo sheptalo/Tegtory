@@ -1,18 +1,10 @@
 from typing import Protocol
 
 from domain.entities import Factory, Product, StorageProduct
+from domain.interfaces.base import CrudRepository
 
 
-class FactoryRepository(Protocol):
-    async def get(self, item_id: int) -> Factory | None:
-        pass
-
-    async def create(self, item: Factory) -> Factory:
-        pass
-
-    async def update(self, item: Factory) -> Factory:
-        pass
-
+class FactoryRepository(CrudRepository[Factory], Protocol):
     async def by_name(self, name: str) -> Factory | None:
         pass
 

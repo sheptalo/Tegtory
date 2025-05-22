@@ -1,17 +1,7 @@
-from typing import Protocol
-
 from domain.entities import Product
+from domain.interfaces.base import CrudRepository
 
 
-class ProductRepository(Protocol):
+class ProductRepository(CrudRepository[Product]):
     async def by_name(self, name: str) -> Product | None:
-        pass
-
-    async def all(self) -> list[Product]:
-        pass
-
-    async def create(self, product: Product) -> None:
-        pass
-
-    async def update(self, product: Product) -> None:
         pass

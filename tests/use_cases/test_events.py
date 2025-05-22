@@ -1,3 +1,4 @@
+import dataclasses
 from typing import Any
 
 import pytest
@@ -7,7 +8,8 @@ from domain.events.subscribe import on_event
 from domain.use_cases.base import EventBased
 
 
-class TestEventBased(EventBased):
+@dataclasses.dataclass(frozen=True)
+class MockEventBased(EventBased):
     @on_event(EventType.SubtractMoney)
     def sub_money(self, event: Any) -> None:
         pass
@@ -23,5 +25,5 @@ async def test_on_event() -> None:
 
 @pytest.mark.asyncio
 async def test_event_based_get_children() -> None:
-    assert TestEventBased in EventBased.__subclasses__()
-    assert len(TestEventBased.get_subscribers()) == 1
+    assert MockEventBased in EventBased.__subclasses__()
+    assert len(MockEventBased.get_subscribers()) == 1

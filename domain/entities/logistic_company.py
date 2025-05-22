@@ -16,7 +16,7 @@ class LogisticContract(BaseContract):
     company: "LogisticCompany"
 
 
-@dataclasses.dataclass(kw_only=True)
+@dataclasses.dataclass(kw_only=True, frozen=True)
 class Transport:
     name: str
     speed: float
@@ -25,7 +25,7 @@ class Transport:
     max_weight: float
 
 
-@dataclasses.dataclass(kw_only=True)
+@dataclasses.dataclass(kw_only=True, frozen=True)
 class LogisticCompanyTransport:
     transport: Transport
     company: "LogisticCompany"

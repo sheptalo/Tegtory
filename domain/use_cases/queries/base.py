@@ -1,4 +1,4 @@
-from typing import Any, Generic, TypeVar
+from typing import Any
 
 from common.exceptions import AppError
 from domain.queries.base import BaseQuery
@@ -6,10 +6,8 @@ from domain.results import Failure, Success
 
 from ..base import DependencyRequired
 
-Query = TypeVar("Query", bound=BaseQuery)
 
-
-class BaseQueryHandler(DependencyRequired, Generic[Query]):
+class BaseQueryHandler[Query](DependencyRequired):
     object_type: type[BaseQuery]
 
     async def __call__(self, query: Query) -> Success | Failure:

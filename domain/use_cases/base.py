@@ -1,13 +1,14 @@
+import dataclasses
 from collections.abc import Callable
 from functools import wraps
 from types import MethodType
-from typing import Any, Protocol
+from typing import Any
 
 from common.exceptions import AppError
 from domain.interfaces.eventbus import EventBus
 
 
-class DependencyRequired(Protocol):
+class DependencyRequired:
     pass
 
 
@@ -30,9 +31,9 @@ class SafeCall:
         return wrapper
 
 
+@dataclasses.dataclass(frozen=True)
 class EventBased(DependencyRequired):
-    def __init__(self, eventbus: EventBus) -> None:
-        self.event_bus = eventbus
+    event_bus: EventBus
 
     @classmethod
     def get_subscribers(cls) -> list[Callable]:
